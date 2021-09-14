@@ -1,0 +1,58 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Tue Sep 14 02:20:48 2021
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000002
+                   .org_2       code   0x000018    program   0x000002
+                   .org_3       code   0x000030    program   0x00000a
+                   .org_4       code   0x000040    program   0x000068
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000005      
+                            0x000008    0x000009      
+                            0x000018    0x000019      
+                            0x000030    0x000039      
+                            0x000040    0x0000a7      
+            124 out of 33048 program addresses used, program memory utilization is 0%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+            LED1_parpadea   0x000044    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                configura   0x000030    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                delay20ms   0x000092    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+               delay500ms   0x000058    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop1   0x000066    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop2   0x000078    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop3   0x00009a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  rutinaA   0x000058    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+         rutinaAntiRebote   0x000086    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    start   0x000040    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                configura   0x000030    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    start   0x000040    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+            LED1_parpadea   0x000044    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+               delay500ms   0x000058    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  rutinaA   0x000058    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop1   0x000066    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop2   0x000078    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+         rutinaAntiRebote   0x000086    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                delay20ms   0x000092    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    loop3   0x00009a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+
+
