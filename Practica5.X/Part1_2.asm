@@ -20,7 +20,7 @@ b2	EQU 1
 b3	EQU 2
 b4	EQU 6
 ; Equivalencias para variables.
-LED	EQU 0 ; GUARDAMOS EL VALOR DEL LED
+LED	EQU 2 ; GUARDAMOS EL VALOR DEL LED
 ; Equivalencias para el delay de 500ms.
 _256	EQU 10
 _20	EQU 11
@@ -37,7 +37,8 @@ MAIN_CONF
     SETF TRISC ; ACTIVAMOS PUERTO 'C' COMO ENTRADA
     CLRF LATB  ; LIMPIAMOS EL PUERTO DE B
     MOVLW D'1' ; MOVEMOS EL VALOR HACIA EL WREG
-    MOVWF LED,0 ; MOVEMOS EL VALOR DEL WREF A NUESTRO REGISTRO LED
+    MOVWF LED,A ; MOVEMOS EL VALOR DEL WREF A NUESTRO REGISTRO LED
+    GOTO MENU
 
 MENU_ANTIREBOTE
     CALL RUTINA_ANTIREBOTE  ; Mandar llamar antirebote hasta que no este presionado ninguno.
@@ -142,14 +143,12 @@ B4	; RUTINA PARA VERIFICAR SI SE VUELVE A PRESIONAR EL BOTON DE PAUSA
 B4_ANTIREBOTE ; RUTINA PARA HACER UN ANTIREBOTE ANTES DE VOLVER
     CALL RUTINA_ANTIREBOTE  ; ANTIREBOTE
     BTFSS PORTC,b4	    ; Revisamos si sigue presionado el boton 4
-    GOTO PAUSE		    ; En caso de que siga, volvemos a llamar la rutina
+    GOTO B4_ANTIREBOTE		    ; En caso de que siga, volvemos a llamar la rutina
     RETURN		    ; Si no, regresar.
     
 delay
     movlw   .0			
     movwf   _256
-    movlw   .20
-    movwf   _20
     movlw   .2
     movwf   _2	
     movlw   .137
@@ -157,8 +156,6 @@ delay
     ; 7us approx. in this section    
 loop1				
     decfsz  _256
-    goto    loop1		; (3)*256^2
-    decfsz  _20
     goto    loop1		; (3)*256
     decfsz  _2
     goto    loop1		; (3)*(256^2+256)*2 + (3)*2 = 6*256^2 + 6*256 + 6
