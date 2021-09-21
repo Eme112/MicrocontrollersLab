@@ -1,4 +1,4 @@
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  1
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00005C 2E13           00041     decfsz  _17         
 00005E EF?? F???      00042     goto    loop2               ; (3)*256*17 + (3)*17 = 51*256 + 51
                       00043     ; 13,107us approx.
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  2
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -66,7 +66,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00044     ; ===1.000021 seg approx.===
 000062 0012           00045     return
                       00046   end
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  3
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  3
 
 
 SYMBOL TABLE
@@ -125,7 +125,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  4
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  4
 
 
 SYMBOL TABLE
@@ -184,7 +184,7 @@ BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  5
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  5
 
 
 SYMBOL TABLE
@@ -243,7 +243,7 @@ CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  6
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  6
 
 
 SYMBOL TABLE
@@ -302,7 +302,7 @@ CRC16EE                           00000002
 CRC16EF                           00000002
 CRC5EE                            00000001
 CRC5EF                            00000001
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  7
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  7
 
 
 SYMBOL TABLE
@@ -361,7 +361,7 @@ ECCP1DEL                          00000FB7
 ECCP2CON                          00000F97
 EDG1POL                           00000004
 EDG1SEL0                          00000002
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  8
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  8
 
 
 SYMBOL TABLE
@@ -420,7 +420,7 @@ FSR2L                             00000FD9
 FVREN                             00000007
 FVRS0                             00000004
 FVRS1                             00000005
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE  9
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE  9
 
 
 SYMBOL TABLE
@@ -479,7 +479,7 @@ INTEDG0                           00000006
 INTEDG1                           00000005
 INTEDG2                           00000004
 INTSRC                            00000005
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 10
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 10
 
 
 SYMBOL TABLE
@@ -538,7 +538,7 @@ LATB7                             00000007
 LATC                              00000F8B
 LATC0                             00000000
 LATC1                             00000001
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 11
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 11
 
 
 SYMBOL TABLE
@@ -597,7 +597,7 @@ OSCFIP                            00000007
 OSCTUNE                           00000F9B
 OSTS                              00000003
 OV                                00000003
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 12
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 12
 
 
 SYMBOL TABLE
@@ -656,7 +656,7 @@ POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
 PPB0                              00000000
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 13
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 13
 
 
 SYMBOL TABLE
@@ -715,7 +715,7 @@ RC5                               00000005
 RC6                               00000006
 RC7                               00000007
 RCEN                              00000003
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 14
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 14
 
 
 SYMBOL TABLE
@@ -774,7 +774,7 @@ SLRE                              00000004
 SMP                               00000007
 SOFIE                             00000006
 SOFIF                             00000006
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 15
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 15
 
 
 SYMBOL TABLE
@@ -833,7 +833,7 @@ SSP1ADD7                          00000007
 SSP1BUF                           00000FC9
 SSP1CON1                          00000FC6
 SSP1CON2                          00000FC5
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 16
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 16
 
 
 SYMBOL TABLE
@@ -892,7 +892,7 @@ STR1C                             00000002
 STR1D                             00000003
 STR1SYNC                          00000004
 STRA                              00000000
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 17
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 17
 
 
 SYMBOL TABLE
@@ -951,7 +951,7 @@ T3CKPS0                           00000004
 T3CKPS1                           00000005
 T3CON                             00000FB1
 T3DONE                            00000003
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 18
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 18
 
 
 SYMBOL TABLE
@@ -1010,7 +1010,7 @@ TMR3CS1                           00000007
 TMR3GE                            00000007
 TMR3GIE                           00000001
 TMR3GIF                           00000001
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 19
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 19
 
 
 SYMBOL TABLE
@@ -1069,7 +1069,7 @@ TRISD7                            00000007
 TRISE                             00000F96
 TRISE0                            00000000
 TRISE1                            00000001
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 20
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 20
 
 
 SYMBOL TABLE
@@ -1128,7 +1128,7 @@ UEP7                              00000F71
 UEP8                              00000F72
 UEP9                              00000F73
 UERRIE                            00000001
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 21
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 21
 
 
 SYMBOL TABLE
@@ -1187,7 +1187,7 @@ _BOREN_OFF_2L                     000000F9
 _BOREN_ON_2L                      000000FB
 _BOREN_SBORDIS_2L                 000000FF
 _BORV_190_2L                      000000FF
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 22
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 22
 
 
 SYMBOL TABLE
@@ -1246,7 +1246,7 @@ _FCMEN_OFF_1H                     000000BF
 _FCMEN_ON_1H                      000000FF
 _FOSC_ECHCLKO_1H                  000000F4
 _FOSC_ECHIO_1H                    000000F5
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 23
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 23
 
 
 SYMBOL TABLE
@@ -1305,7 +1305,7 @@ _WDTPS_16_2H                      000000D3
 _WDTPS_1_2H                       000000C3
 _WDTPS_2048_2H                    000000EF
 _WDTPS_256_2H                     000000E3
-MPASM 5.87                          MAIN.ASM   9-14-2021  1:51:04         PAGE 24
+MPASM 5.87                          MAIN.ASM   9-17-2021  12:38:23         PAGE 24
 
 
 SYMBOL TABLE

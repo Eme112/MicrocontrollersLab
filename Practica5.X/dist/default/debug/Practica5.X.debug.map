@@ -1,80 +1,90 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Wed Sep 15 17:58:07 2021
+Linker Map File - Created Wed Sep 15 21:03:02 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
-                   .org_0       code   0x000000    program   0x000160
-                   .cinit    romdata   0x000160    program   0x000002
-.config_300000_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300000    program   0x000001
-.config_300001_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300001    program   0x000001
-.config_300002_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300002    program   0x000001
-.config_300003_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300003    program   0x000001
-.config_300005_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300005    program   0x000001
-.config_300006_BUILD/DEFAULT/DEBUG/PART1_2.O    romdata   0x300006    program   0x000001
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000004
+                   .org_2       code   0x000018    program   0x000004
+                   .org_3       code   0x001000    program   0x000004
+                   .org_5       code   0x001018    program   0x00018a
+.config_300000_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300000    program   0x000001
+.config_300001_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300001    program   0x000001
+.config_300002_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300002    program   0x000001
+.config_300003_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300003    program   0x000001
+.config_300005_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300005    program   0x000001
+.config_300006_BUILD/DEFAULT/DEBUG/PART1.O    romdata   0x300006    program   0x000001
 
 
 
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000161      
+                            0x000000    0x000005      
+                            0x000008    0x00000b      
+                            0x000018    0x00001b      
+                            0x001000    0x001003      
+                            0x001018    0x0011a1      
                             0x300000    0x300003      
                             0x300005    0x300006      
-            360 out of 33048 program addresses used, program memory utilization is 1%
+            418 out of 33048 program addresses used, program memory utilization is 1%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                       B1   0x000068    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B2   0x000090    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B3   0x0000b8    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                     B3.2   0x0000e0    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B4   0x00010e    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-            B4_ANTIREBOTE   0x000118    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                MAIN_CONF   0x000000    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                     MENU   0x000030    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-          MENU_ANTIREBOTE   0x000014    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 PARPADEO   0x00004c    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    PAUSE   0x000104    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_A   0x00005e    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-        RUTINA_ANTIREBOTE   0x00014a    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_B   0x000086    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_C   0x0000ae    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                RevisarB3   0x0000d6    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-              RevisarB3.2   0x0000fa    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    delay   0x000124    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop1   0x000130    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop2   0x00013c    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop3   0x000152    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
+                   BOTONA   0x001054    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   BOTONB   0x001062    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   BOTONC   0x001070    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    CHECK   0x0010ee    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                 DEBOUNCE   0x001120    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DELAY1S   0x001174    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DELAY20   0x001188    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DERECHA   0x0010fc    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   ESPERA   0x00113e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                IZQUIERDA   0x00110e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP4   0x00118c    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP5   0x001190    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP7   0x00117a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                     MENU   0x00102e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_A   0x00114a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_B   0x001158    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_C   0x001166    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    PAUSA   0x00112a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAA   0x00107e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAB   0x0010a4    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAC   0x0010ca    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    SETUP   0x001018    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
 
 
 
                               Symbols - Sorted by Address
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                MAIN_CONF   0x000000    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-          MENU_ANTIREBOTE   0x000014    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                     MENU   0x000030    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 PARPADEO   0x00004c    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_A   0x00005e    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B1   0x000068    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_B   0x000086    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B2   0x000090    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                 RUTINA_C   0x0000ae    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B3   0x0000b8    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                RevisarB3   0x0000d6    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                     B3.2   0x0000e0    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-              RevisarB3.2   0x0000fa    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    PAUSE   0x000104    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                       B4   0x00010e    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-            B4_ANTIREBOTE   0x000118    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    delay   0x000124    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop1   0x000130    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop2   0x00013c    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-        RUTINA_ANTIREBOTE   0x00014a    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
-                    loop3   0x000152    program     static C:\MicrochipProjects\Practica5.X\Part1_2.asm
+                    SETUP   0x001018    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                     MENU   0x00102e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   BOTONA   0x001054    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   BOTONB   0x001062    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   BOTONC   0x001070    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAA   0x00107e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAB   0x0010a4    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  RUTINAC   0x0010ca    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    CHECK   0x0010ee    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DERECHA   0x0010fc    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                IZQUIERDA   0x00110e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                 DEBOUNCE   0x001120    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    PAUSA   0x00112a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   ESPERA   0x00113e    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_A   0x00114a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_B   0x001158    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                   OTRO_C   0x001166    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DELAY1S   0x001174    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP7   0x00117a    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                  DELAY20   0x001188    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP4   0x00118c    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
+                    LOOP5   0x001190    program     static C:\MicrochipProjects\Practica5.X\Part1.asm
 
 

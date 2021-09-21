@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Part1_2.asm
+SOURCEFILES_QUOTED_IF_SPACED=Part2.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Part1_2.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Part1_2.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Part2.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Part2.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Part1_2.o
+OBJECTFILES=${OBJECTDIR}/Part2.o
 
 # Source Files
-SOURCEFILES=Part1_2.asm
+SOURCEFILES=Part2.asm
 
 
 
@@ -95,22 +95,22 @@ MP_LINKER_DEBUG_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/Part1_2.o: Part1_2.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/Part2.o: Part2.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Part1_2.o.d 
-	@${RM} ${OBJECTDIR}/Part1_2.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Part1_2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG  -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Part1_2.lst\" -e\"${OBJECTDIR}/Part1_2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Part1_2.o\" \"Part1_2.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/Part1_2.o"
-	@${FIXDEPS} "${OBJECTDIR}/Part1_2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/Part2.o.d 
+	@${RM} ${OBJECTDIR}/Part2.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Part2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG  -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Part2.lst\" -e\"${OBJECTDIR}/Part2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Part2.o\" \"Part2.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/Part2.o"
+	@${FIXDEPS} "${OBJECTDIR}/Part2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/Part1_2.o: Part1_2.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/Part2.o: Part2.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Part1_2.o.d 
-	@${RM} ${OBJECTDIR}/Part1_2.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Part1_2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Part1_2.lst\" -e\"${OBJECTDIR}/Part1_2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Part1_2.o\" \"Part1_2.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/Part1_2.o"
-	@${FIXDEPS} "${OBJECTDIR}/Part1_2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/Part2.o.d 
+	@${RM} ${OBJECTDIR}/Part2.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Part2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Part2.lst\" -e\"${OBJECTDIR}/Part2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Part2.o\" \"Part2.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/Part2.o"
+	@${FIXDEPS} "${OBJECTDIR}/Part2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 

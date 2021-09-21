@@ -1,91 +1,257 @@
-    #include "p18f45k50.inc"
-    processor 18f45k50		; (opcional)
-    
-    org	0x00
-    goto configura
-    org	0x08			; posición para interrupciones.
-    retfie
-    org	0x18			; posición para interrupciones.
-    retfie
-    org	0x30			; Origen real (opcional pero recomendado).
-configura			; Configuración.
-    movlb   .15			; BSR = 15.
-    clrf    ANSELA, BANKED	; RA = DIGITAL.
-    clrf    TRISA, BANKED	; RA = OUTPUT.	Usado para LEDs.
-    clrf    ANSELB, BANKED	; RB = DIGITAL.
-    setf    TRISB, BANKED	; RB = INPUT.	Usado para botones.
-    
-; Equivalencias
-numLED	EQU 0x10
-B1	EQU 0
-B2	EQU 1
-B3	EQU 2
-B4	EQU 3
-; Equivalencias para el delay de 500ms.
-_256_1	EQU 0x20
-_256_2	EQU 0x21
-_2	EQU 0x22
-_137	EQU 0x23
-; Equivalencias para el delay de 20ms.
-_26	EQU 0x24
+RADIX DEC   ;Default base: decimal
+    PROCESSOR 18F45K50  ;Tipo de procesador
+#INCLUDE <P18F45K50.INC>
 
-	org	0x40		; Código principal.
-start
-    movlw   .1
-    movwf   numLED, A		; numLED = .1
     
-LED1_parpadea
-    btg	    LATA, 0, A		; Invierte el LED0.
-    call    delay500ms		; Espera 500ms.
-    btfsc   PORTB, B1, A	; Si no se presiona el botón, se cicla.
-    goto    LED1_parpadea
-    call    rutinaAntiRebote	; Si se presiona B1, hacer rutina de anti-rebote e ir a rutinaA.
-    goto    rutinaA
+;   SECCION PARA DEFINIR VARIABLES
+VAR1 EQU 0x10
+VAR2 EQU 0x11
+VAR3 EQU 0x12
+VAR4 EQU 0x13
+VAR5 EQU 0x14
+VAR6 EQU 0x15
+VAR7 EQU 0x16
+AUX EQU  0X20
+AUX2 EQU 0x21
+ 
+;   SOFTWARE SIMULATION
+    ORG 0		;RESET VECTOR
+    GOTO 0X1000
+ 
+    ORG 0X08	;INTERRUPCION DE ALTA PRIORIDAD
+    GOTO 0X1008
+ 
+    ORG 0X18	;INTERRUPCION DE BAJA PRIORIDAD
+    GOTO 0X1018
+ 
+;	**INICIO DEL PROGRAMA**
+;   ORIGEN DEL PROGRAMA
+    ORG 0X1000
+    GOTO SETUP
+ 
+    ORG 0X1008	    ;INTERRUPCION DE ALTA PRIORIDAD
+    ;GOTO ISR_HIGH	    ;**QUITAR COMMENT CUANDO SE USE**
+ 
+    ORG 0X1018	    ;INTERRUPCION DE BAJA PRIORIDAD
+    ;GOTO ISR_LOW	    ;**QUITAR COMMENT CUANDO SE USE**
     
-rutinaA
+SETUP
+    MOVLB .15
+    CLRF ANSELB, BANKED	    ;PUERTOS B Y C SON DIGITALES
+    CLRF ANSELC, BANKED
+    CLRF ANSELA, BANKED
+    SETF TRISC, A	    ;PUERTO C INPUT
+    CLRF TRISB, A	    ;PORTB = OUTPUT
+    CLRF TRISA, A	    ;PORTA = OUTPUT
+    CLRF LATB, A	    ;LIMPIAR PUERTO B
+    CLRF LATA, A	    ;LIMPIAR PUERTO A
+    CLRF AUX, A		    ;LIMPIAR AUX
+    BSF AUX,0,A		    ;AUXLIAR EMPIEZA EN 1
     
-    
-delay500ms
-    movlw   .0			
-    movwf   _256_1
-    movwf   _256_2
-    movlw   .2
-    movwf   _2	
-    movlw   .137
-    movwf   _137	
-    ; 7us approx. in this section    
-loop1				
-    decfsz  _256_1
-    goto    loop1		; (3)*256^2
-    decfsz  _256_2
-    goto    loop1		; (3)*256
-    decfsz  _2
-    goto    loop1		; (3)*(256^2+256)*2 + (3)*2 = 6*256^2 + 6*256 + 6
-    ; 394,758us approx.
-loop2				
-    decfsz  _256_1		
-    goto    loop2		; (3)*256
-    decfsz  _137		
-    goto    loop2		; (3)*256*137 + (3)*137 = 411*256 + 411
-    ; 105,627us approx.
-    ; === 500,385ms approx.===
-    return
+MENU
+    BSF LATA,7		    ;ACTIVAR LED PARA INDICAR QUE ESTAMOS EN MENU
+    MOVFF AUX, LATB	    ;ENCENDER LED 1
+    CALL DELAY1S	    ;DELAY DE 1 SEG
+    CLRF LATB		    ;APAGAR LED
+    CALL DELAY1S	    ;DELAY DE 1 SEG
+    BTFSS PORTC, 0	    ;VERIFICAR BOTON DE RUTINA A
+    CALL BOTONA		    ;LLAMAR RUTINA A
+    BTFSS PORTC, 1	    ;VERIFICAR BOTON DE RUTINA B
+    CALL BOTONB		    ;LLAMAR RUTINA B
+     BTFSS PORTC, 2	    ;VERIFICAR BOTON DE RUTINA C
+    CALL BOTONC		    ;LLAMAR RUTINA C
+    GOTO MENU		    ;REGRESAR AL INICIO Y REPETIR CICLO
 
-rutinaAntiRebote
-    call    delay20ms
-    btfss   PORTB, B1, A
-    goto    rutinaAntiRebote
-    return
-delay20ms
-    movlw   .0			
-    movwf   _256_1
-    movlw   .26
-    movwf   _26	
-loop3
-    decfsz  _256_1
-    goto    loop3		; (3)*256
-    decfsz  _26
-    goto    loop3		; (3)*256*26 + (3)*26 = 78*256 + 78
-    ; 20046+4 = 20.05ms approx. 
-    return
-  end
+BOTONA			    ;RUTINA A
+    CALL DELAY20	    ;DEBOUNCE DEL BOTON
+    BTFSC PORTC, 0
+    CALL RUTINAA	    ;RUTINA DE LEDS
+    GOTO BOTONA
+
+BOTONB			    ;RUTINA B
+    CALL DELAY20	    ;DEBOUNCE DEL BOTON
+    BTFSC PORTC, 1
+    GOTO RUTINAB	    ;RUTINA DE LEDS
+    GOTO BOTONB
+    
+BOTONC			    ;RUTINA C
+    CALL DELAY20	    ;DEBOUNCE DEL BOTON
+    BTFSC PORTC, 2
+    GOTO RUTINAC	    ;RUTINA DE LEDS
+    GOTO BOTONC
+    
+RUTINAA
+    BCF LATA, 7		    ;APAGAR TODOS LOS LEDS DE CURIOSITY MENOS EL 6
+    BSF LATA, 6		    ;LED 6 = ESTAMOS EN RUTINA A
+    BCF LATA, 5
+    BCF LATA, 4
+    MOVFF AUX, LATB	    ;MOVER AUX A LATB
+    CALL DELAY1S	    ;ESPERAR 1 SEGUNDO
+    BTFSS PORTC, 7	    ;VERIFICAR QUE NO SE QUIERA PONER PAUSA
+    CALL DEBOUNCE	    ;RUTINA DE PAUSA
+    BTFSS PORTC, 0	    ;VERIFICAR QUE NO SE QUIERA CAMBIAR DE RUTINA
+    CALL OTRO_A		    ;SUBRUTINA PARA ENVIAR AL MENU
+    MOVFF AUX, AUX2	    ;MOVER CONTENIDO DE AUX A AUX2
+    RLNCF AUX, 1, A	    ;ROTAR A IZQUIERDA AUX
+    GOTO RUTINAA	    ;REGRESAR
+
+RUTINAB
+    BCF LATA, 7		    ;APAGAR TODOS LOS LEDS DE CURIOSITY MENOS EL 5
+    BCF LATA, 6		    
+    BSF LATA, 5		    ;LED 5 ON = RUTINA B
+    BCF LATA, 4
+    MOVFF AUX, LATB
+    CALL DELAY1S    
+    BTFSS PORTC, 7	    ;VERIFICAR BOTON DE PAUSA
+    CALL DEBOUNCE	    ;SUBRUTINA DE PAUSA
+    BTFSS PORTC, 1	    ;VERIFICAR BOTON PARA CAMBIAR RUTINA
+    CALL OTRO_B		    ;SUBRUTINA QUE REGRESA A MENU
+    MOVFF AUX, AUX2
+    RRNCF AUX, 1, A	    ;ROTAR A DERECHA AUX
+    GOTO RUTINAB    
+    
+RUTINAC
+    BCF LATA, 7		    ;APAGAR TODOS LOS LEDS DE CURIOSITY MENOS EL 5
+    BCF LATA, 6
+    BCF LATA, 5
+    BSF LATA, 4		    ;LEDS 4 ON = RUTINA C
+    MOVFF AUX, LATB
+    CALL DELAY1S 
+    CALL CHECK		    ;REVISA EN DONDE SE QUEDÓ EL LED ANTERIOR 
+    BTFSS PORTC, 7	    ;REVISA BOTON DE PAUSA Y EJECUTA RUTINA
+    CALL DEBOUNCE
+    BTFSS PORTC, 2	    ;REVISA BOTON DE RUTINA Y REGRESA A MENU
+    CALL OTRO_C
+    GOTO RUTINAC
+    
+CHECK			    ;SUBRUTINA PARA CHECAR DONDE QUEDÓ LED ANTERIOR
+    MOVF AUX2, 0, A	    ;MUEVE AUX 2 A W
+    CPFSGT AUX, A	    ;AUX > AUX2? SI = SALTA A DERECHA, NO = GOTO IZQUIERDA
+    GOTO IZQUIERDA	    ;RUTINA PARA MOVER DE IZQ-DER
+    GOTO DERECHA	    ;RUTINA PARA MOVER DE DER-IZQ
+    RETURN
+    
+DERECHA			    ;RUTINA PARA MOVER DE DER-IZQ
+    BTFSC PORTB, 7, A	    ;REVISA QUE EL ULTIMO BIT NO ESTE ENCENDIDO
+    GOTO IZQUIERDA	    ;SI ESTABA ENCENDIDO EL SENTIDO CAMBIA
+    MOVFF AUX, AUX2	    ;SI NO PROSIGUE NORMAL
+    RLNCF AUX, 1, A	    ;ROTA A LA IZQ EL REGISTRO
+    MOVFF AUX, PORTB	    ;ESCRIBE SALIDA
+    RETURN	    
+    
+IZQUIERDA		    ;RUTINA PARA MOVER DE IZQ-DER
+    BTFSC PORTB, 0, A	    ;REVISA QUE B0 NO ESTE EN 1
+    GOTO DERECHA	    ;ESTA EN 1, CAMBIA SENTIDO DE MOV (REBOTE)
+    MOVFF AUX, AUX2	    ;CONT DE AUX PASA A AUX2
+    RRNCF AUX, 1, A	    ;ROTAR REGISTRO A DERECHA
+    MOVFF AUX, PORTB	    ;ESCRIBIR SALIDA
+    RETURN
+   
+;RUTINA PAUSA
+DEBOUNCE
+ CALL DELAY20		    
+ BTFSS PORTC,7		    ;VERIFICAR QUE SE SOLTO EL BOTON
+ GOTO DEBOUNCE
+PAUSA			    
+    MOVFF AUX,LATB	    ;HACER QUE EL LED DONDE SE QUEDO PARPADEE
+    CALL DELAY1S
+    CLRF LATB, A
+    CALL DELAY1S
+    BTFSC PORTC, 7	    ;CHECAR SI SE PRESIONO PARA SALIR DE PAUSA
+    GOTO PAUSA		    ;LOOP HASTA QUE SE VUELVA A PRESIONAR
+ESPERA			    ;SI SE VOLVIO A PRESIONAR CAE AQUI
+    CALL DELAY20	    ;DEBOUNCE DEL BOTON
+    BTFSS PORTC,7
+    GOTO ESPERA
+    RETURN		    ;REGRESA A RUTINA DONDE SE QUEDÓ
+
+;MENU RUTINA A
+OTRO_A
+    CALL DELAY20	    ;DEBOUNCE BOTON A Y REGRESA A MENU PARA NUEVA RUTINA
+    BTFSS PORTC, 0, A
+    GOTO OTRO_A
+    GOTO MENU
+
+;MENU RUTINA B
+OTRO_B			    ;DEBOUNCE BOTON B Y REGRESA A MENU PARA NUEVA RUTINA
+    CALL DELAY20
+    BTFSS PORTC, 1, A
+    GOTO OTRO_B
+    GOTO MENU
+
+;MENU RUTINA C
+OTRO_C			    ;DEBOUNCE BOTON C Y REGRESA A MENU PARA NUEVA RUTINA
+    CALL DELAY20
+    BTFSS PORTC, 2, A
+    GOTO OTRO_C
+    GOTO MENU
+    
+DELAY1S			    ;RETARDO DE 1 SEGUNDO
+    MOVLW 0XFF		    ;MUEVE 255 A ESOS DOS REGISTROS
+    MOVWF VAR6		
+    MOVWF VAR7
+LOOP7
+    DECFSZ VAR7		    ;DECREMENTA VAR7 HASTA 0, BRINCA SI ES 0
+    GOTO LOOP7
+    DECFSZ VAR6		    ;DECREMENTA VAR6 HASTA 0, LOOP ACABA
+    GOTO LOOP7
+    RETURN
+
+DELAY20			    ;RETARDO DE 20 MS
+    MOVLW .0
+    MOVWF VAR4, A	    
+LOOP4
+    MOVLW .235
+    MOVWF VAR5, A
+LOOP5
+    INCF VAR5, F, A	;Comienza retardo
+    BTFSS STATUS, 2	;REVISAR Z DE STATUS (SE ACTIVA CUANDO VAR 5=0)
+    GOTO LOOP5		;REGRESA A LOOP5 SI Z NO ES 0
+    INCF VAR4, F, A	;VAR 5 YA ES CERO Y SE EJECUTA ESTA PARTE
+    BTFSS STATUS, 2	;REVISA SI Z NO ES CERO
+    GOTO LOOP4
+    RETURN		;SE ACABA SI Z ES 0 DE NUEVO
+    
+;
+; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
+; AFTER RESET. ONCE PROGRAMMED IN THIS PRACTICA THIS IS NOT NECESARY TO INCLUDE IN FUTURE PROGRAMS
+; IF THIS SETTINGS ARE NOT CHANGED. SEE SECTION 26 OF DATA SHEET. 
+;   
+
+
+; CONFIG1L
+  CONFIG  PLLSEL = PLL4X        ; PLL Selection (4x clock multiplier)
+  CONFIG  CFGPLLEN = OFF        ; PLL Enable Configuration bit (PLL Disabled (firmware controlled))
+  CONFIG  CPUDIV = NOCLKDIV     ; CPU System Clock Postscaler (CPU uses system clock (no divide))
+  CONFIG  LS48MHZ = SYS24X4     ; Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, USB clock divider is set to 4)
+
+; CONFIG1H
+  CONFIG  FOSC = INTOSCIO       ; Oscillator Selection (Internal oscillator)
+  CONFIG  PCLKEN = ON           ; Primary Oscillator Shutdown (Primary oscillator enabled)
+  CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor (Fail-Safe Clock Monitor disabled)
+  CONFIG  IESO = OFF            ; Internal/External Oscillator Switchover (Oscillator Switchover mode disabled)
+
+; CONFIG2L
+  CONFIG  nPWRTEN = OFF         ; Power-up Timer Enable (Power up timer disabled)
+  CONFIG  BOREN = SBORDIS       ; Brown-out Reset Enable (BOR enabled in hardware (SBOREN is ignored))
+  CONFIG  BORV = 190            ; Brown-out Reset Voltage (BOR set to 1.9V nominal)
+  CONFIG  nLPBOR = OFF          ; Low-Power Brown-out Reset (Low-Power Brown-out Reset disabled)
+
+; CONFIG2H
+  CONFIG  WDTEN = OFF           ; Watchdog Timer Enable bits (WDT disabled in hardware (SWDTEN ignored))
+  CONFIG  WDTPS = 32768         ; Watchdog Timer Postscaler (1:32768)
+
+; CONFIG3H
+  CONFIG  CCP2MX = RC1          ; CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
+  CONFIG  PBADEN = ON           ; PORTB A/D Enable bit (PORTB<5:0> pins are configured as analog input channels on Reset)
+  CONFIG  T3CMX = RC0           ; Timer3 Clock Input MUX bit (T3CKI function is on RC0)
+  CONFIG  SDOMX = RB3           ; SDO Output MUX bit (SDO function is on RB3)
+  CONFIG  MCLRE = ON            ; Master Clear Reset Pin Enable (MCLR pin enabled; RE3 input disabled)
+
+; CONFIG4L
+  CONFIG  STVREN = ON           ; Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
+  CONFIG  LVP = ON              ; Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is also 1)
+  CONFIG  ICPRT = OFF           ; Dedicated In-Circuit Debug/Programming Port Enable (ICPORT disabled)
+  CONFIG  XINST = OFF           ; Extended Instruction Set Enable bit (Instruction set extension and Indexed Addressing mode disabled)
+ 
+    END
