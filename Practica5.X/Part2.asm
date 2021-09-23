@@ -22,6 +22,7 @@ mas	EQU 6
 menos	EQU 7
 ; Equivalencias para variables.
 counter	EQU 10
+gray_c	EQU 11
 ; Equivalencias para el delay de 20ms.
 _256	EQU 20
 _26	EQU 21
@@ -59,11 +60,14 @@ RUTINA_A_REBOTE
     btfss   PORTC, gray		    ; Esperar a que se suelte el boton.
     goto    RUTINA_A_REBOTE	    ; Si aun no se suelta, ciclarse.
     call    RUTINA_ANTIREBOTE	    ; Llamar rutina antirebote para evitar señales de regreso.
-RUTINA_A			    ; CONTADOR GRAY.
+RUTINA_A_START			    ; CONTADOR GRAY.
     BCF	    LATA, 7		    
     BCF	    LATA, 6		    ; Apagar todos los LEDs menos el 4.
     BCF	    LATA, 5		    ; LED 4 = Estamos en la rutina A.
     BSF	    LATA, 4
+    clrf    counter		    ; Reset al contador.
+RUTINA_A_LOOP
+    movff   gray_c, LATB	    ; Prender los LEDs correspondientes.
     btfss   PORTC, gray
     goto    WAITING_REBOTE	    ; Si se vuelve a presionar el boton 1, ir a espera.
     btfss   PORTC, impar
@@ -74,6 +78,28 @@ RUTINA_A			    ; CONTADOR GRAY.
     call    INCREMENTAR		    ; Si se presiona el boton 4, aumentar el contador.
     btfss   PORTC, menos
     call    DECREMENTAR		    ; Si se presiona el boton 5, decrementar el contador.
+CONVERSION_GRAY
+    movf    counter, W, A	    ; Copiamos counter en WREG.
+    movff   counter, gray_c	    ; Copiamos counter en gray_c.
+    rrncf   gray_c, F, A	    ; Rotamos a la derecha el registro counter para poder hacer un XOR.
+    xorwf   gray_c, F, A	    ; Hacemos XOR y guardamos resultado en counter.
+    bcf	    gray_c, 7, A
+    btfsc   WREG, 7, A		    ; Si el bit 7 de WREG es 1, lo pasamos a counter.
+    bsf	    gray_c, 7, A	    ; Si no es 1, se queda en 0.
+    goto    RUTINA_A_LOOP
+
+INCREMENTAR
+    btfss   PORTC, mas		    ; Esperar a que se suelte el boton.
+    goto    INCREMENTAR		    ; Si aun no se suelta, ciclarse.
+    call    RUTINA_ANTIREBOTE	    ; Llamar rutina antirebote para evitar señales de regreso.
+    incf    counter, F, A	    ; Incrementar en uno el contador.
+    return
+DECREMENTAR
+    btfss   PORTC, menos	    ; Esperar a que se suelte el boton.
+    goto    DECREMENTAR		    ; Si aun no se suelta, ciclarse.
+    call    RUTINA_ANTIREBOTE	    ; Llamar rutina antirebote para evitar señales de regreso.
+    decf    counter, F, A	    ; Decrementar en uno el contador.
+    return
     
 RUTINA_B_REBOTE			    ; CONTADOR IMPAR.
     btfss   PORTC, impar	    ; Esperar a que se suelte el boton.
@@ -140,19 +166,6 @@ RUTINA_C_LOOP
     btfss   PORTC, menos
     call    DECREMENTAR_2	    ; Si se presiona el boton 5, decrementar el contador en 2.
     goto    RUTINA_C_LOOP	    ; Repetir hasta salir de la rutina.
-
-INCREMENTAR
-    btfss   PORTC, mas		    ; Esperar a que se suelte el boton.
-    goto    INCREMENTAR		    ; Si aun no se suelta, ciclarse.
-    call    RUTINA_ANTIREBOTE	    ; Llamar rutina antirebote para evitar señales de regreso.
-    incf    counter, F, A	    ; Incrementar en uno el contador.
-    return
-DECREMENTAR
-    btfss   PORTC, menos	    ; Esperar a que se suelte el boton.
-    goto    DECREMENTAR		    ; Si aun no se suelta, ciclarse.
-    call    RUTINA_ANTIREBOTE	    ; Llamar rutina antirebote para evitar señales de regreso.
-    decf    counter, F, A	    ; Decrementar en uno el contador.
-    return
     
 INCREMENTAR_2
     btfss   PORTC, mas		    ; Esperar a que se suelte el boton.
