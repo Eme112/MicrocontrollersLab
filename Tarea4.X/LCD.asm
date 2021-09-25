@@ -35,7 +35,8 @@ START
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
 WRITING
-    movlw   b'11000101'		; Move cursor to 0x45.
+    movlw   0x45		; Move cursor to 0x45.
+    bsf	    WREG, 7, A		
     call    INSTRUCTION_WRITE
     movlw   'c'			; Write a 'c'.
     call    DATA_WRITE
