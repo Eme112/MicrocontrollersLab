@@ -1,55 +1,72 @@
 MPLINK 5.09, LINKER
-Linker Error Map File - Created Sun Sep 26 17:48:16 2021
+Linker Map File - Created Mon Sep 27 00:21:17 2021
 
-*Warning* - This is only a partial map file due to a link time error.
-   Only sections which were allocated prior to the error are shown below.
-
-CODEPAGES:
-    Memory      Start        End              Section    Address Size(Bytes)
- ---------  ---------  ---------            ---------  ---------  ---------
-      page     0x0000     0x7fff               .org_0     0x0000     0x0004
-                                               .org_1     0x0008     0x0002
-                                               .org_2     0x0018     0x0002
-                                               .org_3     0x0030     0x0012
-
-    idlocs     0x0000     0x0007                                           
-
-    config     0x0000     0x000d                                           
-
-     devid     0xfffe     0xffff                                           
-
-    eedata     0x0000     0x00ff                                           
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000002
+                   .org_2       code   0x000018    program   0x000002
+                   .org_3       code   0x000030    program   0x000130
+.config_300000_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300000    program   0x000001
+.config_300001_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300001    program   0x000001
+.config_300002_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300002    program   0x000001
+.config_300003_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300003    program   0x000001
+.config_300005_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300005    program   0x000001
+.config_300006_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300006    program   0x000001
 
 
-SHAREBANKS:
 
-DATABANKS:
-    Memory      Start        End              Section    Address Size(Bytes)
- ---------  ---------  ---------            ---------  ---------  ---------
-      gpr0     0x0060     0x00ff                                           
-
-      gpr1     0x0100     0x01ff                                           
-
-      gpr2     0x0200     0x02ff                                           
-
-      gpr3     0x0300     0x03ff                                           
-
-      gpr4     0x0400     0x04ff                                           
-
-      gpr5     0x0500     0x05ff                                           
-
-      gpr6     0x0600     0x06ff                                           
-
-      gpr7     0x0700     0x07ff                                           
-
-     sfr15     0x0f53     0x0f5f                                           
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000005      
+                            0x000008    0x000009      
+                            0x000018    0x000019      
+                            0x000030    0x00015f      
+                            0x300000    0x300003      
+                            0x300005    0x300006      
+            320 out of 33048 program addresses used, program memory utilization is 0%
 
 
-ACCESSBANKS:
-    Memory      Start        End              Section    Address Size(Bytes)
- ---------  ---------  ---------            ---------  ---------  ---------
- accessram     0x0000     0x005f                                           
 
- accesssfr     0x0f60     0x0fff                                           
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     CERO   0x000138    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    CINCO   0x0000de    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                   CUATRO   0x0000cc    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+               DELAY_20ms   0x00014a    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                      DOS   0x0000a8    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    LOOP1   0x000152    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    NUEVE   0x000126    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     OCHO   0x000114    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                RECORRIDO   0x000042    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     SEIS   0x0000f0    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    SIETE   0x000102    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     TRES   0x0000ba    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                      UNO   0x000096    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                RECORRIDO   0x000042    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                      UNO   0x000096    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                      DOS   0x0000a8    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     TRES   0x0000ba    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                   CUATRO   0x0000cc    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    CINCO   0x0000de    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     SEIS   0x0000f0    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    SIETE   0x000102    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     OCHO   0x000114    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    NUEVE   0x000126    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                     CERO   0x000138    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+               DELAY_20ms   0x00014a    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
+                    LOOP1   0x000152    program     static C:\MicrochipProjects\RetoTeclado.X\RetoTeclado.asm
 
 

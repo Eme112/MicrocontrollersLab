@@ -8,9 +8,6 @@
     retfie
     org 0x30 		; Origen real (opcional pero recomendado).
     
-; VARIABLES
-V1 EQU 0
-V2 EQU 1
 ; Equivalencias para el delay de 20ms.
 _256	EQU 20
 _26	EQU 21
