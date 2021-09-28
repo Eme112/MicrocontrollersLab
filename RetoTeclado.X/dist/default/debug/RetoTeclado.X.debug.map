@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Mon Sep 27 00:21:17 2021
+Linker Map File - Created Tue Sep 28 01:59:09 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -9,12 +9,6 @@ Linker Map File - Created Mon Sep 27 00:21:17 2021
                    .org_1       code   0x000008    program   0x000002
                    .org_2       code   0x000018    program   0x000002
                    .org_3       code   0x000030    program   0x000130
-.config_300000_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300000    program   0x000001
-.config_300001_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300001    program   0x000001
-.config_300002_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300002    program   0x000001
-.config_300003_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300003    program   0x000001
-.config_300005_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300005    program   0x000001
-.config_300006_BUILD/DEFAULT/DEBUG/RETOTECLADO.    romdata   0x300006    program   0x000001
 
 
 
@@ -25,9 +19,7 @@ Linker Map File - Created Mon Sep 27 00:21:17 2021
                             0x000008    0x000009      
                             0x000018    0x000019      
                             0x000030    0x00015f      
-                            0x300000    0x300003      
-                            0x300005    0x300006      
-            320 out of 33048 program addresses used, program memory utilization is 0%
+            314 out of 33048 program addresses used, program memory utilization is 0%
 
 
 
