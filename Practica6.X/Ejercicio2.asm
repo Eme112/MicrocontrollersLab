@@ -1,4 +1,4 @@
-    #include "p18f45k50.inc"
+#include "p18f45k50.inc"
     processor 18f45k50 	; (opcional).
     org 0x00
     goto CONFIGURA
@@ -12,14 +12,15 @@ NUM1	EQU 0x10
 NUM2	EQU 0x11
 OP	EQU 0x12
 TEMP	EQU 0x13
+TEMP2	EQU 0x14
 ; Definicion de registros para el delay de 20ms.
 _256	EQU 0x20
 _26	EQU 0x21
 ; Definicion de equivalencias para bit que representa operaciones.
-BIT_SUMA    EQU 7
-BIT_RESTA   EQU 6
-BIT_MULT    EQU 5
-BIT_DIV	    EQU 4
+	#define BIT_SUMA OP, 7, A
+	#define BIT_RESTA OP, 6, A
+	#define BIT_MULT OP, 5, A
+	#define BIT_DIV OP, 4, A
  
 CONFIGURA
     movlb .15
@@ -31,12 +32,30 @@ CONFIGURA
     movwf WPUB				; Mitad pull-ups.
     clrf TRISA				; REGA -> OUTPUT.
     clrf LATA				; Limpiar la salida A.
+    clrf NUM1				; El numero 1 empieza en 0.
 
+; PROCESO PARA RECIBIR DATOS Y MANDAR LLAMAR LA OPERACION ADECUADA.
 NUMERO1
+    movff NUM1, LATA			; Antes, encender el resultado anterior.
     call RECORRIDO
     movff TEMP, NUM1			; El ultimo numero presionado sera NUM1.
-    movwf OP, A				; El ultimo operando presionado sera OP.
+    movff TEMP2, OP			; El ultimo operando presionado sera OP.
     
+NUMERO2
+    call RECORRIDO
+    movff TEMP, NUM2			; El ultimo numero presionado sera NUM2.
+    movf OP, F, A			; Activar OP en STATUS.
+    btfsc STATUS, 2, A			; Revisa si OP = 0.
+    goto NUMERO1			; Eso significa RESET.
+    
+OPERACIONES
+    btfsc BIT_SUMA
+    goto SUMA				; Si esta activo el bit de suma, ir a SUMA.
+    movf OP, F, A			; Activar OP en STATUS.
+    btfsc STATUS, 2, A			; Revisa si OP = 0.
+    goto NUMERO1			; Eso significa RESET.
+
+; PROCESO PARA HACER UN RECORRIDO Y DETECTAR ENTRADA DEL TECLADO.
 RECORRIDO
     movlw b'11101111'			; ACTIVAR COLUMNA 1 (1, 4, 7, *).
     movwf LATB, A
@@ -47,7 +66,7 @@ RECORRIDO
     btfss PORTB, 2, A			; Revisar si se presiona el 7.
     goto SIETE
     btfss PORTB, 3, A			; Revisar si se presiona el *.
-    goto ASTERISCO
+    goto ASTERISCO_RETURN
     movlw b'11011111'			; ACTIVAR COLUMNA 2 (2, 5, 8, 0).
     movwf LATB, A
     btfss PORTB, 0, A			; Revisar si se presiona el 2.
@@ -67,7 +86,7 @@ RECORRIDO
     btfss PORTB, 2, A			; Revisar si se presiona el 9.
     goto NUEVE
     btfss PORTB, 3, A			; Revisar si se presiona el #.
-    goto GATO
+    goto GATO_RETURN
     movlw b'01111111'			; ACTIVAR COLUMNA 4 (A, B, C, D).
     movwf LATB, A
     btfss PORTB, 0, A			; Revisar si se presiona el A.
@@ -105,14 +124,6 @@ TRES
     movwf LATA, A			; Prender un 3 en binario.
     call DELAY_20ms			; Antirebote.
     goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-_A
-    btfss PORTB, 0, A			; Revisar si sigue presionado el A.
-    goto _A				; Si aun no se suleta, esperar.
-    movlw '10000000'			; Se enciende bit de suma.
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender un 10 en binario.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
 CUATRO
     btfss PORTB, 1, A			; Revisar si sigue presionado el 4.
     goto CUATRO				; Si aun no se suleta, esperar.
@@ -135,14 +146,6 @@ SEIS
     movlw .6
     movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
     movwf LATA, A			; Prender un 6 en binario.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-_B
-    btfss PORTB, 1, A			; Revisar si sigue presionado el B.
-    goto _B				; Si aun no se suleta, esperar.
-    movlw '01000000'			; Se enciende bit de resta.
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender un 11 en binario.
     call DELAY_20ms			; Antirebote.
     goto RECORRIDO			; Regresar a ver si se presiona otro boton.
 SIETE
@@ -169,22 +172,6 @@ NUEVE
     movwf LATA, A			; Prender un 9 en binario.
     call DELAY_20ms			; Antirebote.
     goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-_C
-    btfss PORTB, 2, A			; Revisar si sigue presionado el C.
-    goto _C				; Si aun no se suleta, esperar.
-    movlw '00100000'			; Se enciende bit de multiplicacion.
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender un 12 en binario.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-ASTERISCO
-    btfss PORTB, 3, A			; Revisar si sigue presionado el *.
-    goto ASTERISCO			; Si aun no se suleta, esperar.
-    movlw b'11110000'
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender la primera mitad de los LEDs.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
 CERO
     btfss PORTB, 3, A			; Revisar si sigue presionado el 0.
     goto CERO				; Si aun no se suleta, esperar.
@@ -193,136 +180,63 @@ CERO
     movwf LATA, A			; Prender un 0 en binario.
     call DELAY_20ms			; Antirebote.
     goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-GATO
-    btfss PORTB, 3, A			; Revisar si sigue presionado el #.
-    goto GATO				; Si aun no se suleta, esperar.
-    movlw b'00001111'
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender la segunda mitad de los LEDs.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
-_D
-    btfss PORTB, 3, A			; Revisar si sigue presionado el D.
-    goto _D				; Si aun no se suleta, esperar.
-    movlw '00010000'			; Se enciende bit de division.
-    movwf TEMP, A			; TEMP sirve para guardar el ultimo valor de WREG.
-    movwf LATA, A			; Prender un 13 en binario.
-    call DELAY_20ms			; Antirebote.
-    goto RECORRIDO			; Regresar a ver si se presiona otro boton.
     
 ; MENU DE BOTONES QUE LLEVAN A UN RETURN.
-UNO_RETURN
-    btfss PORTB, 0, A			; Revisar si sigue presionado el 1.
-    goto UNO_RETURN			; Si aun no se suleta, esperar.
-    movlw .1
-    movwf LATA, A			; Prender un 1 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-DOS_RETURN
-    btfss PORTB, 0, A			; Revisar si sigue presionado el 2.
-    goto DOS_RETURN			; Si aun no se suleta, esperar.
-    movlw .2
-    movwf LATA, A			; Prender un 2 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-TRES_RETURN
-    btfss PORTB, 0, A			; Revisar si sigue presionado el 3.
-    goto TRES_RETURN			; Si aun no se suleta, esperar.
-    movlw .3
-    movwf LATA, A			; Prender un 3 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-_A_RETURN
+_A_RETURN				; SUMA.
     btfss PORTB, 0, A			; Revisar si sigue presionado el A.
     goto _A_RETURN			; Si aun no se suleta, esperar.
-    movlw '10000000'			; Se enciende bit de suma.
-    movwf LATA, A			; Prender un 10 en binario.
+    movlw b'10000000'			; Se enciende bit de suma.
+    movwf TEMP2, A			; TEMP sirve para guardar el operando.
+    movwf LATA, A			; Prender bit 7.
     call DELAY_20ms			; Antirebote.
     return
-CUATRO_RETURN
-    btfss PORTB, 1, A			; Revisar si sigue presionado el 4.
-    goto CUATRO_RETURN			; Si aun no se suleta, esperar.
-    movlw .4
-    movwf LATA, A			; Prender un 4 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-CINCO_RETURN
-    btfss PORTB, 1, A			; Revisar si sigue presionado el 5.
-    goto CINCO_RETURN			; Si aun no se suleta, esperar.
-    movlw .5
-    movwf LATA, A			; Prender un 5 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-SEIS_RETURN
-    btfss PORTB, 1, A			; Revisar si sigue presionado el 6.
-    goto SEIS_RETURN			; Si aun no se suleta, esperar.
-    movlw .6
-    movwf LATA, A			; Prender un 6 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-_B_RETURN
+_B_RETURN				; RESTA.
     btfss PORTB, 1, A			; Revisar si sigue presionado el B.
     goto _B_RETURN			; Si aun no se suleta, esperar.
-    movlw '00010000'			; Se enciende bit de resta.
-    movwf LATA, A			; Prender un 11 en binario.
+    movlw b'00010000'			; Se enciende bit de resta.
+    movwf TEMP2, A			; TEMP sirve para guardar el operando.
+    movwf LATA, A			; Prender bit 6.
     call DELAY_20ms			; Antirebote.
     return
-SIETE_RETURN
-    btfss PORTB, 2, A			; Revisar si sigue presionado el 7.
-    goto SIETE_RETURN			; Si aun no se suleta, esperar.
-    movlw .7
-    movwf LATA, A			; Prender un 7 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-OCHO_RETURN
-    btfss PORTB, 2, A			; Revisar si sigue presionado el 8.
-    goto OCHO_RETURN			; Si aun no se suleta, esperar.
-    movlw .8
-    movwf LATA, A			; Prender un 8 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-NUEVE_RETURN
-    btfss PORTB, 2, A			; Revisar si sigue presionado el 9.
-    goto NUEVE_RETURN			; Si aun no se suleta, esperar.
-    movlw .9
-    movwf LATA, A			; Prender un 9 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-_C_RETURN
+_C_RETURN				; MULTIPLICACION.
     btfss PORTB, 2, A			; Revisar si sigue presionado el C.
     goto _C_RETURN			; Si aun no se suleta, esperar.
-    movlw '00100000'			; Se enciende bit de multiplicacion.
-    movwf LATA, A			; Prender un 12 en binario.
+    movlw b'00100000'			; Se enciende bit de multiplicacion.
+    movwf TEMP2, A			; TEMP sirve para guardar el operando.
+    movwf LATA, A			; Prender bit 5.
     call DELAY_20ms			; Antirebote.
     return
-ASTERISCO_RETURN
-    btfss PORTB, 3, A			; Revisar si sigue presionado el *.
-    goto ASTERISCO_RETURN		; Si aun no se suleta, esperar.
-    movlw b'11110000'
-    movwf LATA, A			; Prender la primera mitad de los LEDs.
-    call DELAY_20ms			; Antirebote.
-    return
-CERO_RETURN
-    btfss PORTB, 3, A			; Revisar si sigue presionado el 0.
-    goto CERO_RETURN			; Si aun no se suleta, esperar.
-    movlw .0
-    movwf LATA, A			; Prender un 0 en binario.
-    call DELAY_20ms			; Antirebote.
-    return
-GATO_RETURN
-    btfss PORTB, 3, A			; Revisar si sigue presionado el #.
-    goto GATO_RETURN			; Si aun no se suleta, esperar.
-    movlw b'00001111'
-    movwf LATA, A			; Prender la segunda mitad de los LEDs.
-    call DELAY_20ms			; Antirebote.
-    return
-_D_RETURN
+_D_RETURN				; DIVISION.
     btfss PORTB, 3, A			; Revisar si sigue presionado el D.
     goto _D_RETURN			; Si aun no se suleta, esperar.
-    movlw '00010000'			; Se enciende bit de division.
-    movwf LATA, A			; Prender un 13 en binario.
+    movlw b'00010000'			; Se enciende bit de division.
+    movwf TEMP2, A			; TEMP sirve para guardar el operando.
+    movwf LATA, A			; Prender bit 4.
     call DELAY_20ms			; Antirebote.
     return
+ASTERISCO_RETURN			; IGUAL.
+    btfss PORTB, 3, A			; Revisar si sigue presionado el *.
+    goto ASTERISCO_RETURN		; Si aun no se suleta, esperar.
+    call DELAY_20ms			; Antirebote.
+    return				; Ir a la seleccion de operaciones.
+GATO_RETURN				; RESET.
+    btfss PORTB, 3, A			; Revisar si sigue presionado el #.
+    goto GATO_RETURN			; Si aun no se suleta, esperar.
+    clrf WREG				; Borrar todo.
+    clrf NUM1
+    clrf NUM2
+    clrf OP
+    clrf TEMP
+    clrf TEMP2
+    clrf LATA
+    call DELAY_20ms			; Antirebote.
+    return
+; OPERACIONES
+SUMA
+    movf NUM1, W, A			; Mover NUM1 a WREG.
+    addwf NUM2, W, A			; Sumarle NUM2.
+    movwf NUM1, A			; Guardar el resultado en NUM1.
+    goto NUMERO1
     
 DELAY_20ms
     movlw   .0			
