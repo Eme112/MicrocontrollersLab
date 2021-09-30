@@ -30,19 +30,26 @@ START
     call    delay100ms
     movlw   b'00111000'		; 8-bit, 2 lines, 5x7.
     call    INSTRUCTION_WRITE
-    movlw   b'00001111'		; Display on, cursor on, blynk on.
+    movlw   b'00001100'		; Display on, cursor off, blynk off.
     call    INSTRUCTION_WRITE
     movlw   b'00000111'		; Increment cursor position, diplay shift.
     call    INSTRUCTION_WRITE
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
 WRITING
-    movlw   0x45		; Move cursor to 0x45.
+    movlw   0x06		; Move cursor to the 6th position of line 1.
     bsf	    WREG, 7, A		
     call    INSTRUCTION_WRITE
-    movlw   'c'			; Write a 'c'.
+    movlw   'H'			; Write a 'c'.
     call    DATA_WRITE
-    movlw   '4'			; Write a '4'.
+    movlw   'o'			; Write a '4'.
+    call    DATA_WRITE
+    movlw   0x48		; Move cursor to the 8th position of line 2.
+    bsf	    WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    movlw   'L'			; Write a 'c'.
+    call    DATA_WRITE
+    movlw   'a'			; Write a '4'.
     call    DATA_WRITE
     
 INFINITE    goto    INFINITE	; Infinite loop.

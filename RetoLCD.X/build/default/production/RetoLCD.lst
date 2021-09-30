@@ -1,4 +1,4 @@
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  1
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -17,273 +17,129 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       02340         LIST
                       00002     processor 18f45k50  ; (opcional).
                       00003     org 0x00
-000000 EF?? F???      00004     goto CONFIGURA
+000000 EF?? F???      00004     goto PORTS
                       00005     org 0x08            ; posición para interrupciones.
 000008 0010           00006     retfie
                       00007     org 0x18            ; posición para interrupciones.
 000018 0010           00008     retfie
                       00009     org 0x30            ; Origen real (opcional pero recomendado).
-                      00010     
-                      00011 ; VARIABLES
-  00000000            00012 V1 EQU 0
-  00000001            00013 V2 EQU 1
-                      00014 ; Equivalencias para el delay de 20ms.
-  00000020            00015 _256    EQU 20
-  00000021            00016 _26     EQU 21
-                      00017  
-000030                00018 CONFIGURA
-000030 010F           00019     movlb .15
-000032 6B5B           00020     clrf ANSELA, BANKED                 ; REGA -> DIGITAL.
-000034 6B5C           00021     clrf ANSELB, BANKED                 ; REGB -> DIGITAL.
-000036 9EF1           00022     bcf INTCON2, 7                      ; ENABLE pull-ups.
-000038 0E0F           00023     movlw B'00001111'                   
-00003A 6E93           00024     movwf TRISB                         ; Mitad entradas/salidas.
-00003C 6E85           00025     movwf WPUB                          ; Mitad pull-ups.
-00003E 6A92           00026     clrf TRISA                          ; REGA -> OUTPUT.
-000040 6A89           00027     clrf LATA                           ; Limpiar la salida A.
-                      00028     
-000042                00029 RECORRIDO
-000042 0EEF           00030     movlw b'11101111'                   ; ACTIVAR COLUMNA 1 (1, 4, 7, *).
-000044 6E8A           00031     movwf LATB, A
-000046 A081           00032     btfss PORTB, 0, A                   ; Revisar si se presiona el 1.
-000048 EF?? F???      00033     goto UNO
-00004C A281           00034     btfss PORTB, 1, A                   ; Revisar si se presiona el 4.
-00004E EF?? F???      00035     goto CUATRO
-000052 A481           00036     btfss PORTB, 2, A                   ; Revisar si se presiona el 7.
-000054 EF?? F???      00037     goto SIETE
-000058 A681           00038     btfss PORTB, 3, A                   ; Revisar si se presiona el *.
-00005A EF?? F???      00039     goto ASTERISCO
-00005E 0EDF           00040     movlw b'11011111'                   ; ACTIVAR COLUMNA 2 (2, 5, 8, 0).
-000060 6E8A           00041     movwf LATB, A
-000062 A081           00042     btfss PORTB, 0, A                   ; Revisar si se presiona el 2.
-000064 EF?? F???      00043     goto DOS
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  2
+000030                00010 PORTS
+                      00011     #define RS LATB, 0, A       ; RB0 -> Register Select.
+                      00012     #define E LATB, 1, A        ; RB1 -> Enable.
+                      00013     #define RW LATB, 2, A       ; RB2 -> Read/Write.
+                      00014     #define flag PORTD, 7, A    ; RD7 -> Busy flag.
+                      00015     #define configFlag TRISD, 7, A  ; Switch flag from INPUT to OUTPUT and viceversa.
+                      00016     #define dataLCD LATD, A
+                      00017 ; ETIQUETAS
+  00000010            00018 var1    equ 0x10
+  00000011            00019 var2    equ 0x11
+  00000012            00020 var3    equ 0x12
+000030                00021 CONFIGURE
+000030 0E0F           00022     movlw       .15
+000032 6B5C           00023     clrf        ANSELB, BANKED  ; REGB -> Digital. 
+000034 6B5E           00024     clrf        ANSELD, BANKED  ; REGD -> Digital.
+000036 6A93           00025     clrf        TRISB, A        ; REGB -> Output.
+000038 6A95           00026     clrf        TRISD, A        ; REGD -> Output.
+                      00027     org 0x40            ; Código principal.
+000040                00028 START   
+000040 928A           00029     bcf     E
+000042 EC?? F???      00030     call    delay100ms
+000046 0E38           00031     movlw   b'00111000'         ; 8-bit, 2 lines, 5x7.
+000048 EC?? F???      00032     call    INSTRUCTION_WRITE
+00004C 0E0C           00033     movlw   b'00001100'         ; Display on, cursor off, blynk off.
+00004E EC?? F???      00034     call    INSTRUCTION_WRITE
+000052 0E07           00035     movlw   b'00000111'         ; Increment cursor position, diplay shift.
+000054 EC?? F???      00036     call    INSTRUCTION_WRITE
+000058 0E01           00037     movlw   b'00000001'         ; Clear display and return to home position.
+00005A EC?? F???      00038     call    INSTRUCTION_WRITE
+00005E                00039 WRITING
+00005E 0E06           00040     movlw   0x06                ; Move cursor to the 6th position of line 1.
+000060 8EE8           00041     bsf     WREG, 7, A          
+000062 EC?? F???      00042     call    INSTRUCTION_WRITE
+000066 0E48           00043     movlw   'H'                 ; Write a 'c'.
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000068 A281           00044     btfss PORTB, 1, A                   ; Revisar si se presiona el 5.
-00006A EF?? F???      00045     goto CINCO
-00006E A481           00046     btfss PORTB, 2, A                   ; Revisar si se presiona el 8.
-000070 EF?? F???      00047     goto OCHO
-000074 A681           00048     btfss PORTB, 3, A                   ; Revisar si se presiona el 0.
-000076 EF?? F???      00049     goto CERO
-00007A 0EBF           00050     movlw b'10111111'                   ; ACTIVAR COLUMNA 3 (3, 6, 9, #).
-00007C 6E8A           00051     movwf LATB, A
-00007E A081           00052     btfss PORTB, 0, A                   ; Revisar si se presiona el 3.
-000080 EF?? F???      00053     goto TRES
-000084 A281           00054     btfss PORTB, 1, A                   ; Revisar si se presiona el 6.
-000086 EF?? F???      00055     goto SEIS
-00008A A481           00056     btfss PORTB, 2, A                   ; Revisar si se presiona el 9.
-00008C EF?? F???      00057     goto NUEVE
-000090 A681           00058     btfss PORTB, 3, A                   ; Revisar si se presiona el #.
-000092 EF?? F???      00059     goto GATO
-000096 0E7F           00060     movlw b'01111111'                   ; ACTIVAR COLUMNA 4 (A, B, C, D).
-000098 6E8A           00061     movwf LATB, A
-00009A A081           00062     btfss PORTB, 0, A                   ; Revisar si se presiona el A.
-00009C EF?? F???      00063     goto _A
-0000A0 A281           00064     btfss PORTB, 1, A                   ; Revisar si se presiona el B.
-0000A2 EF?? F???      00065     goto _B
-0000A6 A481           00066     btfss PORTB, 2, A                   ; Revisar si se presiona el C.
-0000A8 EF?? F???      00067     goto _C
-0000AC A681           00068     btfss PORTB, 3, A                   ; Revisar si se presiona el D.
-0000AE EF?? F???      00069     goto _D
-0000B2 EF?? F???      00070     goto RECORRIDO                      ; Si no se presiona nada, seguir en espera.
-                      00071     
-0000B6                00072 UNO
-0000B6 A681           00073     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 1.
-0000B8 EF?? F???      00074     goto UNO                            ; Si aun no se suleta, esperar.
-0000BC 0E01           00075     movlw .1
-0000BE 6E89           00076     movwf LATA, A                       ; Prender un 1 en binario.
-0000C0 EC?? F???      00077     call DELAY_20ms                     ; Antirebote.
-0000C4 EF?? F???      00078     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000C8                00079 DOS
-0000C8 A681           00080     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 2.
-0000CA EF?? F???      00081     goto DOS                            ; Si aun no se suleta, esperar.
-0000CE 0E02           00082     movlw .2
-0000D0 6E89           00083     movwf LATA, A                       ; Prender un 2 en binario.
-0000D2 EC?? F???      00084     call DELAY_20ms                     ; Antirebote.
-0000D6 EF?? F???      00085     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000DA                00086 TRES
-0000DA A681           00087     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 3.
-0000DC EF?? F???      00088     goto TRES                           ; Si aun no se suleta, esperar.
-0000E0 0E03           00089     movlw .3
-0000E2 6E89           00090     movwf LATA, A                       ; Prender un 3 en binario.
-0000E4 EC?? F???      00091     call DELAY_20ms                     ; Antirebote.
-0000E8 EF?? F???      00092     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000EC                00093 _A
-0000EC A681           00094     btfss PORTB, 3, A                   ; Revisar si sigue presionado el A.
-0000EE EF?? F???      00095     goto _A                             ; Si aun no se suleta, esperar.
-0000F2 0E0A           00096     movlw .10
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  3
+000068 EC?? F???      00044     call    DATA_WRITE
+00006C 0E6F           00045     movlw   'o'                 ; Write a '4'.
+00006E EC?? F???      00046     call    DATA_WRITE
+000072 0E48           00047     movlw   0x48                ; Move cursor to the 8th position of line 2.
+000074 8EE8           00048     bsf     WREG, 7, A          
+000076 EC?? F???      00049     call    INSTRUCTION_WRITE
+00007A 0E4C           00050     movlw   'L'                 ; Write a 'c'.
+00007C EC?? F???      00051     call    DATA_WRITE
+000080 0E61           00052     movlw   'a'                 ; Write a '4'.
+000082 EC?? F???      00053     call    DATA_WRITE
+                      00054     
+000086 EF?? F???      00055 INFINITE    goto    INFINITE    ; Infinite loop.
+                      00056     
+00008A                00057 INSTRUCTION_WRITE
+00008A 908A           00058     bcf     RS                  ; RS -> 0
+00008C 948A           00059     bcf     RW                  ; RW -> 0
+00008E EF?? F???      00060     goto    SEND_DATA
+000092                00061 DATA_WRITE
+000092 808A           00062     bsf     RS                  ; RS -> 1
+000094 948A           00063     bcf     RW                  ; RW -> 0
+000096 EF?? F???      00064     goto    SEND_DATA
+00009A                00065 DATA_READ
+00009A 808A           00066     bsf     RS                  ; RS -> 1
+00009C 848A           00067     bsf     RW                  ; RW -> 1
+00009E EF?? F???      00068     goto    SEND_DATA
+0000A2                00069 SEND_DATA
+0000A2 828A           00070     bsf     E                   ; Enable.
+0000A4 6E8C           00071     movwf   dataLCD             ; Data transmission.
+0000A6 0000           00072     nop                         ; Wait 1us to make sure the instruction was recieved.
+0000A8 928A           00073     bcf     E                   ; Stop Enable.
+0000AA 6A8C           00074     clrf    dataLCD
+0000AC EC?? F???      00075     call    ESPERA_LCD          ; Wait to see if LCD is done.
+0000B0 0012           00076     return
+                      00077     
+0000B2                00078 ESPERA_LCD
+0000B2 8E95           00079     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+0000B4 908A           00080     bcf     RS                  ; RS -> 0
+0000B6 848A           00081     bsf     RW                  ; RW -> 1
+0000B8 828A           00082     bsf     E                   ; E -> 1
+0000BA 0000           00083     nop
+0000BC                00084 REGRESA
+0000BC EC?? F???      00085     call    delay100us          ; Wait 100us.
+0000C0 BE83           00086     btfsc   flag                ; Read bussy flag.
+0000C2 EF?? F???      00087     goto    REGRESA             ; If set, keep waiting.
+0000C6 928A           00088     bcf     E
+0000C8 9E95           00089     bcf     configFlag          ; RD7 -> OUTPUT again.
+0000CA 0012           00090     return                      ; If not set, return.
+                      00091     
+0000CC                00092 delay100us
+0000CC 0E21           00093     movlw   .33
+0000CE 6E10           00094     movwf   var1
+0000D0                00095 loop1                           
+0000D0 2E10           00096     decfsz  var1
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0000F4 6E89           00097     movwf LATA, A                       ; Prender un 10 en binario.
-0000F6 EC?? F???      00098     call DELAY_20ms                     ; Antirebote.
-0000FA EF?? F???      00099     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000FE                00100 CUATRO
-0000FE A481           00101     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 4.
-000100 EF?? F???      00102     goto CUATRO                         ; Si aun no se suleta, esperar.
-000104 0E04           00103     movlw .4
-000106 6E89           00104     movwf LATA, A                       ; Prender un 4 en binario.
-000108 EC?? F???      00105     call DELAY_20ms                     ; Antirebote.
-00010C EF?? F???      00106     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000110                00107 CINCO
-000110 A481           00108     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 5.
-000112 EF?? F???      00109     goto CINCO                          ; Si aun no se suleta, esperar.
-000116 0E05           00110     movlw .5
-000118 6E89           00111     movwf LATA, A                       ; Prender un 5 en binario.
-00011A EC?? F???      00112     call DELAY_20ms                     ; Antirebote.
-00011E EF?? F???      00113     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000122                00114 SEIS
-000122 A481           00115     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 6.
-000124 EF?? F???      00116     goto SEIS                           ; Si aun no se suleta, esperar.
-000128 0E06           00117     movlw .6
-00012A 6E89           00118     movwf LATA, A                       ; Prender un 6 en binario.
-00012C EC?? F???      00119     call DELAY_20ms                     ; Antirebote.
-000130 EF?? F???      00120     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000134                00121 _B
-000134 A481           00122     btfss PORTB, 2, A                   ; Revisar si sigue presionado el B.
-000136 EF?? F???      00123     goto _B                             ; Si aun no se suleta, esperar.
-00013A 0E0B           00124     movlw .11
-00013C 6E89           00125     movwf LATA, A                       ; Prender un 11 en binario.
-00013E EC?? F???      00126     call DELAY_20ms                     ; Antirebote.
-000142 EF?? F???      00127     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000146                00128 SIETE
-000146 A281           00129     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 7.
-000148 EF?? F???      00130     goto SIETE                          ; Si aun no se suleta, esperar.
-00014C 0E07           00131     movlw .7
-00014E 6E89           00132     movwf LATA, A                       ; Prender un 7 en binario.
-000150 EC?? F???      00133     call DELAY_20ms                     ; Antirebote.
-000154 EF?? F???      00134     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000158                00135 OCHO
-000158 A281           00136     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 8.
-00015A EF?? F???      00137     goto OCHO                           ; Si aun no se suleta, esperar.
-00015E 0E08           00138     movlw .8
-000160 6E89           00139     movwf LATA, A                       ; Prender un 8 en binario.
-000162 EC?? F???      00140     call DELAY_20ms                     ; Antirebote.
-000166 EF?? F???      00141     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-00016A                00142 NUEVE
-00016A A281           00143     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 9.
-00016C EF?? F???      00144     goto NUEVE                          ; Si aun no se suleta, esperar.
-000170 0E09           00145     movlw .9
-000172 6E89           00146     movwf LATA, A                       ; Prender un 9 en binario.
-000174 EC?? F???      00147     call DELAY_20ms                     ; Antirebote.
-000178 EF?? F???      00148     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-00017C                00149 _C
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  4
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-00017C A281           00150     btfss PORTB, 1, A                   ; Revisar si sigue presionado el C.
-00017E EF?? F???      00151     goto _C                             ; Si aun no se suleta, esperar.
-000182 0E0C           00152     movlw .12
-000184 6E89           00153     movwf LATA, A                       ; Prender un 12 en binario.
-000186 EC?? F???      00154     call DELAY_20ms                     ; Antirebote.
-00018A EF?? F???      00155     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-00018E                00156 ASTERISCO
-00018E A081           00157     btfss PORTB, 0, A                   ; Revisar si sigue presionado el *.
-000190 EF?? F???      00158     goto ASTERISCO                      ; Si aun no se suleta, esperar.
-000194 0EF0           00159     movlw b'11110000'
-000196 6E89           00160     movwf LATA, A                       ; Prender la primera mitad de los LEDs.
-000198 EC?? F???      00161     call DELAY_20ms                     ; Antirebote.
-00019C EF?? F???      00162     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001A0                00163 CERO
-0001A0 A081           00164     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 0.
-0001A2 EF?? F???      00165     goto CERO                           ; Si aun no se suleta, esperar.
-0001A6 0E00           00166     movlw .0
-0001A8 6E89           00167     movwf LATA, A                       ; Prender un 0 en binario.
-0001AA EC?? F???      00168     call DELAY_20ms                     ; Antirebote.
-0001AE EF?? F???      00169     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001B2                00170 GATO
-0001B2 A081           00171     btfss PORTB, 0, A                   ; Revisar si sigue presionado el #.
-0001B4 EF?? F???      00172     goto GATO                           ; Si aun no se suleta, esperar.
-0001B8 0E0F           00173     movlw b'00001111'
-0001BA 6E89           00174     movwf LATA, A                       ; Prender la segunda mitad de los LEDs.
-0001BC EC?? F???      00175     call DELAY_20ms                     ; Antirebote.
-0001C0 EF?? F???      00176     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001C4                00177 _D
-0001C4 A081           00178     btfss PORTB, 0, A                   ; Revisar si sigue presionado el D.
-0001C6 EF?? F???      00179     goto _D                             ; Si aun no se suleta, esperar.
-0001CA 0E0D           00180     movlw .13
-0001CC 6E89           00181     movwf LATA, A                       ; Prender un 13 en binario.
-0001CE EC?? F???      00182     call DELAY_20ms                     ; Antirebote.
-0001D2 EF?? F???      00183     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-                      00184     
-0001D6                00185 DELAY_20ms
-0001D6 0E00           00186     movlw   .0                  
-0001D8 6E20           00187     movwf   _256
-0001DA 0E1A           00188     movlw   .26
-0001DC 6E21           00189     movwf   _26 
-0001DE                00190 LOOP1
-0001DE 2E20           00191     decfsz  _256
-0001E0 EF?? F???      00192     goto    LOOP1               ; (3)*256
-0001E4 2E21           00193     decfsz  _26
-0001E6 EF?? F???      00194     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
-                      00195     ; 20046+4 = 20.05ms approx. 
-0001EA 0012           00196     return
-                      00197   
-                      00198 ;
-                      00199 ; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
-                      00200 ; AFTER RESET. ONCE PROGRAMMED IN THIS PRACTICA THIS IS NOT NECESARY TO INCLUDE IN FUTURE PROGRAMS
-                      00201 ; IF THIS SETTINGS ARE NOT CHANGED. SEE SECTION 26 OF DATA SHEET. 
-                      00202 ;   
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  5
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00203 
-                      00204 
-                      00205 ; CONFIG1L
-                      00206   CONFIG  PLLSEL = PLL4X        ; PLL Selection (4x clock multiplier)
-                      00207   CONFIG  CFGPLLEN = OFF        ; PLL Enable Configuration bit (PLL Disabled (firmware controlled))
-                      00208   CONFIG  CPUDIV = NOCLKDIV     ; CPU System Clock Postscaler (CPU uses system clock (no divide))
-                      00209   CONFIG  LS48MHZ = SYS24X4     ; Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, U
-                            SB clock divider is set to 4)
-                      00210 
-                      00211 ; CONFIG1H
-                      00212   CONFIG  FOSC = INTOSCIO       ; Oscillator Selection (Internal oscillator)
-                      00213   CONFIG  PCLKEN = ON           ; Primary Oscillator Shutdown (Primary oscillator enabled)
-                      00214   CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor (Fail-Safe Clock Monitor disabled)
-                      00215   CONFIG  IESO = OFF            ; Internal/External Oscillator Switchover (Oscillator Switchover mode di
-                            sabled)
-                      00216 
-                      00217 ; CONFIG2L
-                      00218   CONFIG  nPWRTEN = OFF         ; Power-up Timer Enable (Power up timer disabled)
-                      00219   CONFIG  BOREN = SBORDIS       ; Brown-out Reset Enable (BOR enabled in hardware (SBOREN is ignored))
-                      00220   CONFIG  BORV = 190            ; Brown-out Reset Voltage (BOR set to 1.9V nominal)
-                      00221   CONFIG  nLPBOR = OFF          ; Low-Power Brown-out Reset (Low-Power Brown-out Reset disabled)
-                      00222 
-                      00223 ; CONFIG2H
-                      00224   CONFIG  WDTEN = OFF           ; Watchdog Timer Enable bits (WDT disabled in hardware (SWDTEN ignored))
-                      00225   CONFIG  WDTPS = 32768         ; Watchdog Timer Postscaler (1:32768)
-                      00226 
-                      00227 ; CONFIG3H
-                      00228   CONFIG  CCP2MX = RC1          ; CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
-                      00229   CONFIG  PBADEN = ON           ; PORTB A/D Enable bit (PORTB<5:0> pins are configured as analog input c
-                            hannels on Reset)
-                      00230   CONFIG  T3CMX = RC0           ; Timer3 Clock Input MUX bit (T3CKI function is on RC0)
-                      00231   CONFIG  SDOMX = RB3           ; SDO Output MUX bit (SDO function is on RB3)
-                      00232   CONFIG  MCLRE = ON            ; Master Clear Reset Pin Enable (MCLR pin enabled; RE3 input disabled)
-                      00233 
-                      00234 ; CONFIG4L
-                      00235   CONFIG  STVREN = ON           ; Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
-                      00236   CONFIG  LVP = ON              ; Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is 
-                            also 1)
-                      00237   CONFIG  ICPRT = OFF           ; Dedicated In-Circuit Debug/Programming Port Enable (ICPORT disabled)
-                      00238   CONFIG  XINST = OFF           ; Extended Instruction Set Enable bit (Instruction set extension and Ind
-                            exed Addressing mode disabled)
-                      00239   
-                      00240   end
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  6
+0000D2 EF?? F???      00097     goto    loop1
+                      00098     ; 100us approx.
+0000D6 0012           00099     return
+                      00100 
+0000D8                00101 delay100ms
+0000D8 0E00           00102     movlw   .0                  ; 256
+0000DA 6E10           00103     movwf   var1
+0000DC 0E80           00104     movlw   .128
+0000DE 6E11           00105     movwf   var2
+0000E0                00106 loop2                           
+0000E0 2E10           00107     decfsz  var1
+0000E2 EF?? F???      00108     goto    loop2
+0000E6 2E11           00109     decfsz  var2
+0000E8 EF?? F???      00110     goto    loop2
+                      00111     ; 100ms approx.
+0000EC 0012           00112     return
+                      00113         end
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  4
 
 
 SYMBOL TABLE
@@ -342,7 +198,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  7
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  5
 
 
 SYMBOL TABLE
@@ -380,7 +236,6 @@ ANSELB                            00000F5C
 ANSELC                            00000F5D
 ANSELD                            00000F5E
 ANSELE                            00000F5F
-ASTERISCO                         0000018E
 BANKED                            00000001
 BAUDCON                           00000FB8
 BAUDCON1                          00000FB8
@@ -401,13 +256,13 @@ BRG11                             00000003
 BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  8
+BRG15                             00000007
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  6
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-BRG15                             00000007
 BRG16                             00000003
 BRG2                              00000002
 BRG3                              00000003
@@ -460,13 +315,13 @@ CCP1                              00000002
 CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE  9
+CCP1IF                            00000002
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  7
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-CCP1IF                            00000002
 CCP1IP                            00000002
 CCP1M0                            00000000
 CCP1M1                            00000001
@@ -493,9 +348,7 @@ CCPR2                             00000F90
 CCPR2H                            00000F91
 CCPR2L                            00000F90
 CCPTMRS                           00000F59
-CERO                              000001A0
 CFGS                              00000006
-CINCO                             00000110
 CK                                00000006
 CK1SPP                            00000000
 CK2SPP                            00000001
@@ -515,19 +368,19 @@ CMP1MD                            00000003
 CMP2MD                            00000004
 COE                               00000005
 CON                               00000007
-CONFIGURA                         00000030
+CONFIGURE                         00000030
 COUT1                             00000006
 COUT2                             00000006
 CPOL                              00000004
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 10
+CRC16EE                           00000002
+CRC16EF                           00000002
+CRC5EE                            00000001
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  8
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-CRC16EE                           00000002
-CRC16EF                           00000002
-CRC5EE                            00000001
 CRC5EF                            00000001
 CREF                              00000002
 CREN                              00000004
@@ -544,7 +397,6 @@ CTMUIP                            00000003
 CTMUMD                            00000005
 CTMUSIDL                          00000005
 CTTRIG                            00000000
-CUATRO                            000000FE
 DACEN                             00000007
 DACLPS                            00000006
 DACNSS                            00000000
@@ -556,6 +408,8 @@ DACR1                             00000001
 DACR2                             00000002
 DACR3                             00000003
 DACR4                             00000004
+DATA_READ                         0000009A
+DATA_WRITE                        00000092
 DC                                00000001
 DC1B0                             00000004
 DC1B1                             00000005
@@ -566,27 +420,26 @@ DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
-DELAY_20ms                        000001D6
 DFN8EE                            00000003
 DFN8EF                            00000003
 DHEN                              00000000
 DIR                               00000002
 DONE                              00000001
-DOS                               000000C8
 DTRXP                             00000005
 D_NOT_A                           00000005
+E                                 LATB, 1, A
 ECCP1AS                           00000FB6
 ECCP1AS0                          00000004
 ECCP1AS1                          00000005
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 11
+ECCP1AS2                          00000006
+ECCP1ASE                          00000007
+ECCP1CON                          00000FBD
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE  9
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-ECCP1AS2                          00000006
-ECCP1ASE                          00000007
-ECCP1CON                          00000FBD
 ECCP1DEL                          00000FB7
 ECCP2CON                          00000F97
 EDG1POL                           00000004
@@ -616,6 +469,7 @@ EPHSHK                            00000004
 EPINEN                            00000001
 EPOUTEN                           00000002
 EPSTALL                           00000000
+ESPERA_LCD                        000000B2
 FAST                              00000001
 FERR                              00000002
 FLTS                              00000002
@@ -637,21 +491,20 @@ FSR0H                             00000FEA
 FSR0L                             00000FE9
 FSR1                              00000001
 FSR1H                             00000FE2
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 12
+FSR1L                             00000FE1
+FSR2                              00000002
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 10
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-FSR1L                             00000FE1
-FSR2                              00000002
 FSR2H                             00000FDA
 FSR2L                             00000FD9
 FVREN                             00000007
 FVRS0                             00000004
 FVRS1                             00000005
 FVRST                             00000006
-GATO                              000001B2
 GCEN                              00000007
 GIE                               00000007
 GIEH                              00000007
@@ -678,6 +531,8 @@ IDLEN                             00000007
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
+INFINITE                          00000086
+INSTRUCTION_WRITE                 0000008A
 INT0                              00000000
 INT0E                             00000004
 INT0F                             00000001
@@ -696,13 +551,13 @@ INT2F                             00000001
 INT2IE                            00000004
 INT2IF                            00000001
 INT2IP                            00000007
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 13
+INT2P                             00000007
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-INT2P                             00000007
 INTCON                            00000FF2
 INTCON2                           00000FF1
 INTCON3                           00000FF0
@@ -755,13 +610,13 @@ LATB                              00000F8A
 LATB0                             00000000
 LATB1                             00000001
 LATB2                             00000002
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 14
+LATB3                             00000003
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-LATB3                             00000003
 LATB4                             00000004
 LATB5                             00000005
 LATB6                             00000006
@@ -788,7 +643,6 @@ LATE0                             00000000
 LATE1                             00000001
 LATE2                             00000002
 LFIOFS                            00000000
-LOOP1                             000001DE
 LVDIE                             00000002
 LVDIF                             00000002
 LVDIN                             00000005
@@ -809,21 +663,19 @@ NOT_T1SYNC                        00000002
 NOT_T3DONE                        00000003
 NOT_T3SYNC                        00000002
 NOT_TO                            00000003
-NUEVE                             0000016A
 NVCFG0                            00000000
 NVCFG1                            00000001
-OCHO                              00000158
 OERR                              00000001
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 15
+OESPP                             00000002
+ON                                00000007
+OSC2                              00000006
+OSCCON                            00000FD3
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-OESPP                             00000002
-ON                                00000007
-OSC2                              00000006
-OSCCON                            00000FD3
 OSCCON2                           00000FD2
 OSCFIE                            00000007
 OSCFIF                            00000007
@@ -873,16 +725,17 @@ PMD0                              00000F7E
 PMD1                              00000F7F
 POR                               00000001
 PORTA                             00000F80
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 16
+PORTB                             00000F81
+PORTC                             00000F82
+PORTD                             00000F83
+PORTE                             00000F84
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 14
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-PORTB                             00000F81
-PORTC                             00000F82
-PORTD                             00000F83
-PORTE                             00000F84
+PORTS                             00000030
 POSTDEC0                          00000FED
 POSTDEC1                          00000FE5
 POSTDEC2                          00000FDD
@@ -932,15 +785,15 @@ RB5                               00000005
 RB6                               00000006
 RB7                               00000007
 RBPU                              00000007
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 17
+RC0                               00000000
+RC1                               00000001
+RC1IE                             00000005
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 15
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-RC0                               00000000
-RC1                               00000001
-RC1IE                             00000005
 RC1IF                             00000005
 RC1IP                             00000005
 RC2                               00000002
@@ -973,10 +826,12 @@ RE0                               00000000
 RE1                               00000001
 RE2                               00000002
 RE3                               00000003
-RECORRIDO                         00000042
+REGRESA                           000000BC
 RESUME                            00000002
 RI                                00000004
+RS                                LATB, 0, A
 RSEN                              00000001
+RW                                LATB, 2, A
 RX                                00000007
 RX9                               00000006
 RX9D                              00000000
@@ -991,17 +846,16 @@ SCS0                              00000000
 SCS1                              00000001
 SDAHT                             00000003
 SE0                               00000005
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 18
+SEN                               00000000
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 16
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-SEIS                              00000122
-SEN                               00000000
 SENDB                             00000003
+SEND_DATA                         000000A2
 SIDL                              00000005
-SIETE                             00000146
 SLRA                              00000000
 SLRB                              00000001
 SLRC                              00000002
@@ -1050,14 +904,14 @@ SRRCKE                            00000002
 SRRPE                             00000003
 SRSC1E                            00000004
 SRSC2E                            00000005
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 19
+SRSCKE                            00000006
+SRSPE                             00000007
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 17
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-SRSCKE                            00000006
-SRSPE                             00000007
 SSP1ADD                           00000FC8
 SSP1ADD0                          00000000
 SSP1ADD1                          00000001
@@ -1104,18 +958,19 @@ SSPOV                             00000006
 SSPSTAT                           00000FC7
 STALLIE                           00000005
 STALLIF                           00000005
+START                             00000040
 STATUS                            00000FD8
 STCON                             00000FB5
 STEN                              00000007
 STIE                              00000007
 STIF                              00000007
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 20
+STIP                              00000007
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 18
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-STIP                              00000007
 STKFUL                            00000007
 STKOVF                            00000007
 STKPTR                            00000FFC
@@ -1168,13 +1023,13 @@ T1GVAL                            00000002
 T1OSCEN                           00000003
 T1OSI                             00000001
 T1OSO                             00000000
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 21
+T1RD16                            00000001
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 19
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-T1RD16                            00000001
 T1SOSCEN                          00000003
 T1SYNC                            00000002
 T2CKPS0                           00000000
@@ -1227,13 +1082,13 @@ TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 22
+TMR1MD                            00000000
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 20
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-TMR1MD                            00000000
 TMR1ON                            00000000
 TMR2                              00000FBC
 TMR2IE                            00000001
@@ -1260,7 +1115,6 @@ TOS                               00000FFD
 TOSH                              00000FFE
 TOSL                              00000FFD
 TOSU                              00000FFF
-TRES                              000000DA
 TRIGEN                            00000000
 TRIGSEL                           00000007
 TRISA                             00000F92
@@ -1286,14 +1140,14 @@ TRISC0                            00000000
 TRISC1                            00000001
 TRISC2                            00000002
 TRISC4                            00000004
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 23
+TRISC5                            00000005
+TRISC6                            00000006
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 21
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-TRISC5                            00000005
-TRISC6                            00000006
 TRISC7                            00000007
 TRISD                             00000F95
 TRISD0                            00000000
@@ -1345,14 +1199,14 @@ UEIE                              00000F66
 UEIR                              00000F67
 UEP0                              00000F6A
 UEP1                              00000F6B
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 24
+UEP10                             00000F74
+UEP11                             00000F75
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 22
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-UEP10                             00000F74
-UEP11                             00000F75
 UEP12                             00000F76
 UEP13                             00000F77
 UEP14                             00000F78
@@ -1372,7 +1226,6 @@ UFRMH                             00000F69
 UFRML                             00000F68
 UIE                               00000F64
 UIR                               00000F65
-UNO                               000000B6
 UOEMON                            00000006
 UPUEN                             00000004
 URSTIE                            00000000
@@ -1385,8 +1238,6 @@ USBMD                             00000005
 USTAT                             00000F61
 UTEYE                             00000007
 UTRDIS                            00000003
-V1                                00000000
-V2                                00000001
 VDIRMAG                           00000007
 VREFCON0                          00000F7D
 VREFCON1                          00000F7C
@@ -1404,25 +1255,22 @@ WPUB2                             00000002
 WPUB3                             00000003
 WPUB4                             00000004
 WPUB5                             00000005
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 25
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 WPUB6                             00000006
 WPUB7                             00000007
 WPUE3                             00000007
 WR                                00000001
 WREG                              00000FE8
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 WREN                              00000002
 WRERR                             00000003
+WRITING                           0000005E
 WUE                               00000001
 Z                                 00000002
-_256                              00000020
-_26                               00000021
-_A                                000000EC
-_B                                00000134
 _BOREN_NOSLP_2L                   000000FD
 _BOREN_OFF_2L                     000000F9
 _BOREN_ON_2L                      000000FB
@@ -1431,7 +1279,6 @@ _BORV_190_2L                      000000FF
 _BORV_220_2L                      000000F7
 _BORV_250_2L                      000000EF
 _BORV_285_2L                      000000E7
-_C                                0000017C
 _CCP2MX_RB3_3H                    000000FE
 _CCP2MX_RC1_3H                    000000FF
 _CFGPLLEN_OFF_1L                  000000FD
@@ -1463,14 +1310,7 @@ _CPD_ON_5H                        0000007F
 _CPUDIV_CLKDIV2_1L                000000EF
 _CPUDIV_CLKDIV3_1L                000000F7
 _CPUDIV_CLKDIV6_1L                000000FF
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 26
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _CPUDIV_NOCLKDIV_1L               000000E7
-_D                                000001C4
 _DEBUG_OFF_4L                     000000FF
 _DEBUG_ON_4L                      0000007F
 _DEVID1                           003FFFFE
@@ -1479,6 +1319,12 @@ _EBTR0_OFF_7L                     000000FF
 _EBTR0_ON_7L                      000000FE
 _EBTR1_OFF_7L                     000000FF
 _EBTR1_ON_7L                      000000FD
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _EBTR2_OFF_7L                     000000FF
 _EBTR2_ON_7L                      000000FB
 _EBTR3_OFF_7L                     000000FF
@@ -1522,12 +1368,6 @@ _MCLRE_ON_3H                      000000FF
 _PBADEN_OFF_3H                    000000FD
 _PBADEN_ON_3H                     000000FF
 _PCLKEN_OFF_1H                    000000DF
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 27
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _PCLKEN_ON_1H                     000000FF
 _PLLSEL_PLL3X_1L                  000000FF
 _PLLSEL_PLL4X_1L                  000000FE
@@ -1538,6 +1378,12 @@ _STVREN_ON_4L                     000000FF
 _T3CMX_RB5_3H                     000000EF
 _T3CMX_RC0_3H                     000000FF
 _WDTEN_NOSLP_2H                   000000FD
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _WDTEN_OFF_2H                     000000FC
 _WDTEN_ON_2H                      000000FF
 _WDTEN_SWON_2H                    000000FE
@@ -1578,8 +1424,18 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
+configFlag                        TRISD, 7, A
+dataLCD                           LATD, A
+delay100ms                        000000D8
+delay100us                        000000CC
+flag                              PORTD, 7, A
+loop1                             000000D0
+loop2                             000000E0
+var1                              00000010
+var2                              00000011
+var3                              00000012
 
-MPASM 5.87                    EJERCICIO1.ASM   9-26-2021  19:34:21         PAGE 28
+MPASM 5.87                       RETOLCD.ASM   9-28-2021  17:23:30         PAGE 26
 
 
 

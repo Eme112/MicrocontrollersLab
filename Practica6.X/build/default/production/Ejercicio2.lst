@@ -1,4 +1,4 @@
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  1
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -23,422 +23,435 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00007     org 0x18            ; posición para interrupciones.
 000018 0010           00008     retfie
                       00009     org 0x30            ; Origen real (opcional pero recomendado).
-                      00010 ; Definicion de variables.
+                      00010 ; Definicion de registros variables.
   00000010            00011 NUM1    EQU 0x10
   00000011            00012 NUM2    EQU 0x11
   00000012            00013 OP      EQU 0x12
   00000013            00014 TEMP    EQU 0x13
-                      00015 ; Equivalencias para el delay de 20ms.
+                      00015 ; Definicion de registros para el delay de 20ms.
   00000020            00016 _256    EQU 0x20
   00000021            00017 _26     EQU 0x21
-                      00018  
-000030                00019 CONFIGURA
-000030 010F           00020     movlb .15
-000032 6B5B           00021     clrf ANSELA, BANKED                 ; REGA -> DIGITAL.
-000034 6B5C           00022     clrf ANSELB, BANKED                 ; REGB -> DIGITAL.
-000036 9EF1           00023     bcf INTCON2, 7                      ; ENABLE pull-ups.
-000038 0E0F           00024     movlw B'00001111'                   
-00003A 6E93           00025     movwf TRISB                         ; Mitad entradas/salidas.
-00003C 6E85           00026     movwf WPUB                          ; Mitad pull-ups.
-00003E 6A92           00027     clrf TRISA                          ; REGA -> OUTPUT.
-000040 6A89           00028     clrf LATA                           ; Limpiar la salida A.
-                      00029 
-000042                00030 NUMERO1
-000042 EC?? F???      00031     call RECORRIDO
-000046 C013 F010      00032     movff TEMP, NUM1                    ; El ultimo numero presionado sera NUM1.
-00004A 6E12           00033     movwf OP, A                         ; El ultimo operando presionado sera OP.
-                      00034     
-00004C                00035 RECORRIDO
-00004C 0EEF           00036     movlw b'11101111'                   ; ACTIVAR COLUMNA 1 (1, 4, 7, *).
-00004E 6E8A           00037     movwf LATB, A
-000050 A081           00038     btfss PORTB, 0, A                   ; Revisar si se presiona el 1.
-000052 EF?? F???      00039     goto UNO
-000056 A281           00040     btfss PORTB, 1, A                   ; Revisar si se presiona el 4.
-000058 EF?? F???      00041     goto CUATRO
-00005C A481           00042     btfss PORTB, 2, A                   ; Revisar si se presiona el 7.
-00005E EF?? F???      00043     goto SIETE
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  2
+                      00018 ; Definicion de equivalencias para bit que representa operaciones.
+  00000007            00019 BIT_SUMA    EQU 7
+  00000006            00020 BIT_RESTA   EQU 6
+  00000005            00021 BIT_MULT    EQU 5
+  00000004            00022 BIT_DIV     EQU 4
+                      00023  
+000030                00024 CONFIGURA
+000030 010F           00025     movlb .15
+000032 6B5B           00026     clrf ANSELA, BANKED                 ; REGA -> DIGITAL.
+000034 6B5C           00027     clrf ANSELB, BANKED                 ; REGB -> DIGITAL.
+000036 9EF1           00028     bcf INTCON2, 7                      ; ENABLE pull-ups.
+000038 0E0F           00029     movlw B'00001111'                   
+00003A 6E93           00030     movwf TRISB                         ; Mitad entradas/salidas.
+00003C 6E85           00031     movwf WPUB                          ; Mitad pull-ups.
+00003E 6A92           00032     clrf TRISA                          ; REGA -> OUTPUT.
+000040 6A89           00033     clrf LATA                           ; Limpiar la salida A.
+                      00034 
+000042                00035 NUMERO1
+000042 EC?? F???      00036     call RECORRIDO
+000046 C013 F010      00037     movff TEMP, NUM1                    ; El ultimo numero presionado sera NUM1.
+00004A 6E12           00038     movwf OP, A                         ; El ultimo operando presionado sera OP.
+                      00039     
+00004C                00040 RECORRIDO
+00004C 0EEF           00041     movlw b'11101111'                   ; ACTIVAR COLUMNA 1 (1, 4, 7, *).
+00004E 6E8A           00042     movwf LATB, A
+000050 A081           00043     btfss PORTB, 0, A                   ; Revisar si se presiona el 1.
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000062 A681           00044     btfss PORTB, 3, A                   ; Revisar si se presiona el *.
-000064 EF?? F???      00045     goto ASTERISCO
-000068 0EDF           00046     movlw b'11011111'                   ; ACTIVAR COLUMNA 2 (2, 5, 8, 0).
-00006A 6E8A           00047     movwf LATB, A
-00006C A081           00048     btfss PORTB, 0, A                   ; Revisar si se presiona el 2.
-00006E EF?? F???      00049     goto DOS
-000072 A281           00050     btfss PORTB, 1, A                   ; Revisar si se presiona el 5.
-000074 EF?? F???      00051     goto CINCO
-000078 A481           00052     btfss PORTB, 2, A                   ; Revisar si se presiona el 8.
-00007A EF?? F???      00053     goto OCHO
-00007E A681           00054     btfss PORTB, 3, A                   ; Revisar si se presiona el 0.
-000080 EF?? F???      00055     goto CERO
-000084 0EBF           00056     movlw b'10111111'                   ; ACTIVAR COLUMNA 3 (3, 6, 9, #).
-000086 6E8A           00057     movwf LATB, A
-000088 A081           00058     btfss PORTB, 0, A                   ; Revisar si se presiona el 3.
-00008A EF?? F???      00059     goto TRES
-00008E A281           00060     btfss PORTB, 1, A                   ; Revisar si se presiona el 6.
-000090 EF?? F???      00061     goto SEIS
-000094 A481           00062     btfss PORTB, 2, A                   ; Revisar si se presiona el 9.
-000096 EF?? F???      00063     goto NUEVE
-00009A A681           00064     btfss PORTB, 3, A                   ; Revisar si se presiona el #.
-00009C EF?? F???      00065     goto GATO
-0000A0 0E7F           00066     movlw b'01111111'                   ; ACTIVAR COLUMNA 4 (A, B, C, D).
-0000A2 6E8A           00067     movwf LATB, A
-0000A4 A081           00068     btfss PORTB, 0, A                   ; Revisar si se presiona el A.
-0000A6 EF?? F???      00069     goto _A_RETURN                      ; Los operandos son motivo para salir del ciclo.
-0000AA A281           00070     btfss PORTB, 1, A                   ; Revisar si se presiona el B.
-0000AC EF?? F???      00071     goto _B_RETURN                      ; Los operandos son motivo para salir del ciclo.
-0000B0 A481           00072     btfss PORTB, 2, A                   ; Revisar si se presiona el C.
-0000B2 EF?? F???      00073     goto _C_RETURN                      ; Los operandos son motivo para salir del ciclo.
-0000B6 A681           00074     btfss PORTB, 3, A                   ; Revisar si se presiona el D.
-0000B8 EF?? F???      00075     goto _D_RETURN                      ; Los operandos son motivo para salir del ciclo.
-0000BC EF?? F???      00076     goto RECORRIDO                      ; Si no se presiona un operando, seguir en espera.
-                      00077 
-                      00078 ; MENU DE BOTONES QUE NO LLEVAN A UN RETURN.
-0000C0                00079 UNO
-0000C0 A081           00080     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 1.
-0000C2 EF?? F???      00081     goto UNO                            ; Si aun no se suleta, esperar.
-0000C6 0E01           00082     movlw .1
-0000C8 6E13           00083     movwf TEMP, A
-0000CA 6E89           00084     movwf LATA, A                       ; Prender un 1 en binario.
-0000CC EC?? F???      00085     call DELAY_20ms                     ; Antirebote.
-0000D0 EF?? F???      00086     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000D4                00087 DOS
-0000D4 A081           00088     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 2.
-0000D6 EF?? F???      00089     goto DOS                            ; Si aun no se suleta, esperar.
-0000DA 0E02           00090     movlw .2
-0000DC 6E13           00091     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0000DE 6E89           00092     movwf LATA, A                       ; Prender un 2 en binario.
-0000E0 EC?? F???      00093     call DELAY_20ms                     ; Antirebote.
-0000E4 EF?? F???      00094     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000E8                00095 TRES
-0000E8 A081           00096     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 3.
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  3
+000052 EF?? F???      00044     goto UNO
+000056 A281           00045     btfss PORTB, 1, A                   ; Revisar si se presiona el 4.
+000058 EF?? F???      00046     goto CUATRO
+00005C A481           00047     btfss PORTB, 2, A                   ; Revisar si se presiona el 7.
+00005E EF?? F???      00048     goto SIETE
+000062 A681           00049     btfss PORTB, 3, A                   ; Revisar si se presiona el *.
+000064 EF?? F???      00050     goto ASTERISCO
+000068 0EDF           00051     movlw b'11011111'                   ; ACTIVAR COLUMNA 2 (2, 5, 8, 0).
+00006A 6E8A           00052     movwf LATB, A
+00006C A081           00053     btfss PORTB, 0, A                   ; Revisar si se presiona el 2.
+00006E EF?? F???      00054     goto DOS
+000072 A281           00055     btfss PORTB, 1, A                   ; Revisar si se presiona el 5.
+000074 EF?? F???      00056     goto CINCO
+000078 A481           00057     btfss PORTB, 2, A                   ; Revisar si se presiona el 8.
+00007A EF?? F???      00058     goto OCHO
+00007E A681           00059     btfss PORTB, 3, A                   ; Revisar si se presiona el 0.
+000080 EF?? F???      00060     goto CERO
+000084 0EBF           00061     movlw b'10111111'                   ; ACTIVAR COLUMNA 3 (3, 6, 9, #).
+000086 6E8A           00062     movwf LATB, A
+000088 A081           00063     btfss PORTB, 0, A                   ; Revisar si se presiona el 3.
+00008A EF?? F???      00064     goto TRES
+00008E A281           00065     btfss PORTB, 1, A                   ; Revisar si se presiona el 6.
+000090 EF?? F???      00066     goto SEIS
+000094 A481           00067     btfss PORTB, 2, A                   ; Revisar si se presiona el 9.
+000096 EF?? F???      00068     goto NUEVE
+00009A A681           00069     btfss PORTB, 3, A                   ; Revisar si se presiona el #.
+00009C EF?? F???      00070     goto GATO
+0000A0 0E7F           00071     movlw b'01111111'                   ; ACTIVAR COLUMNA 4 (A, B, C, D).
+0000A2 6E8A           00072     movwf LATB, A
+0000A4 A081           00073     btfss PORTB, 0, A                   ; Revisar si se presiona el A.
+0000A6 EF?? F???      00074     goto _A_RETURN                      ; Los operandos son motivo para salir del ciclo.
+0000AA A281           00075     btfss PORTB, 1, A                   ; Revisar si se presiona el B.
+0000AC EF?? F???      00076     goto _B_RETURN                      ; Los operandos son motivo para salir del ciclo.
+0000B0 A481           00077     btfss PORTB, 2, A                   ; Revisar si se presiona el C.
+0000B2 EF?? F???      00078     goto _C_RETURN                      ; Los operandos son motivo para salir del ciclo.
+0000B6 A681           00079     btfss PORTB, 3, A                   ; Revisar si se presiona el D.
+0000B8 EF?? F???      00080     goto _D_RETURN                      ; Los operandos son motivo para salir del ciclo.
+0000BC EF?? F???      00081     goto RECORRIDO                      ; Si no se presiona un operando, seguir en espera.
+                      00082 
+                      00083 ; MENU DE BOTONES QUE NO LLEVAN A UN RETURN.
+0000C0                00084 UNO
+0000C0 A081           00085     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 1.
+0000C2 EF?? F???      00086     goto UNO                            ; Si aun no se suleta, esperar.
+0000C6 0E01           00087     movlw .1
+0000C8 6E13           00088     movwf TEMP, A
+0000CA 6E89           00089     movwf LATA, A                       ; Prender un 1 en binario.
+0000CC EC?? F???      00090     call DELAY_20ms                     ; Antirebote.
+0000D0 EF?? F???      00091     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0000D4                00092 DOS
+0000D4 A081           00093     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 2.
+0000D6 EF?? F???      00094     goto DOS                            ; Si aun no se suleta, esperar.
+0000DA 0E02           00095     movlw .2
+0000DC 6E13           00096     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0000EA EF?? F???      00097     goto TRES                           ; Si aun no se suleta, esperar.
-0000EE 0E03           00098     movlw .3
-0000F0 6E13           00099     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0000F2 6E89           00100     movwf LATA, A                       ; Prender un 3 en binario.
-0000F4 EC?? F???      00101     call DELAY_20ms                     ; Antirebote.
-0000F8 EF?? F???      00102     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0000FC                00103 _A
-0000FC A081           00104     btfss PORTB, 0, A                   ; Revisar si sigue presionado el A.
-0000FE EF?? F???      00105     goto _A                             ; Si aun no se suleta, esperar.
-000102 0E0A           00106     movlw .10
-000104 6E13           00107     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-000106 6E89           00108     movwf LATA, A                       ; Prender un 10 en binario.
-000108 EC?? F???      00109     call DELAY_20ms                     ; Antirebote.
-00010C EF?? F???      00110     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000110                00111 CUATRO
-000110 A281           00112     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 4.
-000112 EF?? F???      00113     goto CUATRO                         ; Si aun no se suleta, esperar.
-000116 0E04           00114     movlw .4
-000118 6E13           00115     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-00011A 6E89           00116     movwf LATA, A                       ; Prender un 4 en binario.
-00011C EC?? F???      00117     call DELAY_20ms                     ; Antirebote.
-000120 EF?? F???      00118     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000124                00119 CINCO
-000124 A281           00120     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 5.
-000126 EF?? F???      00121     goto CINCO                          ; Si aun no se suleta, esperar.
-00012A 0E05           00122     movlw .5
-00012C 6E13           00123     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-00012E 6E89           00124     movwf LATA, A                       ; Prender un 5 en binario.
-000130 EC?? F???      00125     call DELAY_20ms                     ; Antirebote.
-000134 EF?? F???      00126     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000138                00127 SEIS
-000138 A281           00128     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 6.
-00013A EF?? F???      00129     goto SEIS                           ; Si aun no se suleta, esperar.
-00013E 0E06           00130     movlw .6
-000140 6E13           00131     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-000142 6E89           00132     movwf LATA, A                       ; Prender un 6 en binario.
-000144 EC?? F???      00133     call DELAY_20ms                     ; Antirebote.
-000148 EF?? F???      00134     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-00014C                00135 _B
-00014C A281           00136     btfss PORTB, 1, A                   ; Revisar si sigue presionado el B.
-00014E EF?? F???      00137     goto _B                             ; Si aun no se suleta, esperar.
-000152 0E0B           00138     movlw .11
-000154 6E13           00139     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-000156 6E89           00140     movwf LATA, A                       ; Prender un 11 en binario.
-000158 EC?? F???      00141     call DELAY_20ms                     ; Antirebote.
-00015C EF?? F???      00142     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000160                00143 SIETE
-000160 A481           00144     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 7.
-000162 EF?? F???      00145     goto SIETE                          ; Si aun no se suleta, esperar.
-000166 0E07           00146     movlw .7
-000168 6E13           00147     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-00016A 6E89           00148     movwf LATA, A                       ; Prender un 7 en binario.
-00016C EC?? F???      00149     call DELAY_20ms                     ; Antirebote.
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  4
+0000DE 6E89           00097     movwf LATA, A                       ; Prender un 2 en binario.
+0000E0 EC?? F???      00098     call DELAY_20ms                     ; Antirebote.
+0000E4 EF?? F???      00099     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0000E8                00100 TRES
+0000E8 A081           00101     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 3.
+0000EA EF?? F???      00102     goto TRES                           ; Si aun no se suleta, esperar.
+0000EE 0E03           00103     movlw .3
+0000F0 6E13           00104     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0000F2 6E89           00105     movwf LATA, A                       ; Prender un 3 en binario.
+0000F4 EC?? F???      00106     call DELAY_20ms                     ; Antirebote.
+0000F8 EF?? F???      00107     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0000FC                00108 _A
+0000FC A081           00109     btfss PORTB, 0, A                   ; Revisar si sigue presionado el A.
+0000FE EF?? F???      00110     goto _A                             ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+000102 0E31           00111     movlw '10000000'                    ; Se enciende bit de suma.
+000104 6E13           00112     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+000106 6E89           00113     movwf LATA, A                       ; Prender un 10 en binario.
+000108 EC?? F???      00114     call DELAY_20ms                     ; Antirebote.
+00010C EF?? F???      00115     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+000110                00116 CUATRO
+000110 A281           00117     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 4.
+000112 EF?? F???      00118     goto CUATRO                         ; Si aun no se suleta, esperar.
+000116 0E04           00119     movlw .4
+000118 6E13           00120     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+00011A 6E89           00121     movwf LATA, A                       ; Prender un 4 en binario.
+00011C EC?? F???      00122     call DELAY_20ms                     ; Antirebote.
+000120 EF?? F???      00123     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+000124                00124 CINCO
+000124 A281           00125     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 5.
+000126 EF?? F???      00126     goto CINCO                          ; Si aun no se suleta, esperar.
+00012A 0E05           00127     movlw .5
+00012C 6E13           00128     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+00012E 6E89           00129     movwf LATA, A                       ; Prender un 5 en binario.
+000130 EC?? F???      00130     call DELAY_20ms                     ; Antirebote.
+000134 EF?? F???      00131     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+000138                00132 SEIS
+000138 A281           00133     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 6.
+00013A EF?? F???      00134     goto SEIS                           ; Si aun no se suleta, esperar.
+00013E 0E06           00135     movlw .6
+000140 6E13           00136     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+000142 6E89           00137     movwf LATA, A                       ; Prender un 6 en binario.
+000144 EC?? F???      00138     call DELAY_20ms                     ; Antirebote.
+000148 EF?? F???      00139     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+00014C                00140 _B
+00014C A281           00141     btfss PORTB, 1, A                   ; Revisar si sigue presionado el B.
+00014E EF?? F???      00142     goto _B                             ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+000152 0E30           00143     movlw '01000000'                    ; Se enciende bit de resta.
+000154 6E13           00144     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+000156 6E89           00145     movwf LATA, A                       ; Prender un 11 en binario.
+000158 EC?? F???      00146     call DELAY_20ms                     ; Antirebote.
+00015C EF?? F???      00147     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000170 EF?? F???      00150     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000174                00151 OCHO
-000174 A481           00152     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 8.
-000176 EF?? F???      00153     goto OCHO                           ; Si aun no se suleta, esperar.
-00017A 0E08           00154     movlw .8
-00017C 6E13           00155     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-00017E 6E89           00156     movwf LATA, A                       ; Prender un 8 en binario.
-000180 EC?? F???      00157     call DELAY_20ms                     ; Antirebote.
-000184 EF?? F???      00158     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-000188                00159 NUEVE
-000188 A481           00160     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 9.
-00018A EF?? F???      00161     goto NUEVE                          ; Si aun no se suleta, esperar.
-00018E 0E09           00162     movlw .9
-000190 6E13           00163     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-000192 6E89           00164     movwf LATA, A                       ; Prender un 9 en binario.
-000194 EC?? F???      00165     call DELAY_20ms                     ; Antirebote.
-000198 EF?? F???      00166     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-00019C                00167 _C
-00019C A481           00168     btfss PORTB, 2, A                   ; Revisar si sigue presionado el C.
-00019E EF?? F???      00169     goto _C                             ; Si aun no se suleta, esperar.
-0001A2 0E0C           00170     movlw .12
-0001A4 6E13           00171     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0001A6 6E89           00172     movwf LATA, A                       ; Prender un 12 en binario.
-0001A8 EC?? F???      00173     call DELAY_20ms                     ; Antirebote.
-0001AC EF?? F???      00174     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001B0                00175 ASTERISCO
-0001B0 A681           00176     btfss PORTB, 3, A                   ; Revisar si sigue presionado el *.
-0001B2 EF?? F???      00177     goto ASTERISCO                      ; Si aun no se suleta, esperar.
-0001B6 0EF0           00178     movlw b'11110000'
-0001B8 6E13           00179     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0001BA 6E89           00180     movwf LATA, A                       ; Prender la primera mitad de los LEDs.
-0001BC EC?? F???      00181     call DELAY_20ms                     ; Antirebote.
-0001C0 EF?? F???      00182     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001C4                00183 CERO
-0001C4 A681           00184     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 0.
-0001C6 EF?? F???      00185     goto CERO                           ; Si aun no se suleta, esperar.
-0001CA 0E00           00186     movlw .0
-0001CC 6E13           00187     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0001CE 6E89           00188     movwf LATA, A                       ; Prender un 0 en binario.
-0001D0 EC?? F???      00189     call DELAY_20ms                     ; Antirebote.
-0001D4 EF?? F???      00190     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001D8                00191 GATO
-0001D8 A681           00192     btfss PORTB, 3, A                   ; Revisar si sigue presionado el #.
-0001DA EF?? F???      00193     goto GATO                           ; Si aun no se suleta, esperar.
-0001DE 0E0F           00194     movlw b'00001111'
-0001E0 6E13           00195     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0001E2 6E89           00196     movwf LATA, A                       ; Prender la segunda mitad de los LEDs.
-0001E4 EC?? F???      00197     call DELAY_20ms                     ; Antirebote.
-0001E8 EF?? F???      00198     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-0001EC                00199 _D
-0001EC A681           00200     btfss PORTB, 3, A                   ; Revisar si sigue presionado el D.
-0001EE EF?? F???      00201     goto _D                             ; Si aun no se suleta, esperar.
-0001F2 0E0D           00202     movlw .13
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  5
+000160                00148 SIETE
+000160 A481           00149     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 7.
+000162 EF?? F???      00150     goto SIETE                          ; Si aun no se suleta, esperar.
+000166 0E07           00151     movlw .7
+000168 6E13           00152     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+00016A 6E89           00153     movwf LATA, A                       ; Prender un 7 en binario.
+00016C EC?? F???      00154     call DELAY_20ms                     ; Antirebote.
+000170 EF?? F???      00155     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+000174                00156 OCHO
+000174 A481           00157     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 8.
+000176 EF?? F???      00158     goto OCHO                           ; Si aun no se suleta, esperar.
+00017A 0E08           00159     movlw .8
+00017C 6E13           00160     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+00017E 6E89           00161     movwf LATA, A                       ; Prender un 8 en binario.
+000180 EC?? F???      00162     call DELAY_20ms                     ; Antirebote.
+000184 EF?? F???      00163     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+000188                00164 NUEVE
+000188 A481           00165     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 9.
+00018A EF?? F???      00166     goto NUEVE                          ; Si aun no se suleta, esperar.
+00018E 0E09           00167     movlw .9
+000190 6E13           00168     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+000192 6E89           00169     movwf LATA, A                       ; Prender un 9 en binario.
+000194 EC?? F???      00170     call DELAY_20ms                     ; Antirebote.
+000198 EF?? F???      00171     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+00019C                00172 _C
+00019C A481           00173     btfss PORTB, 2, A                   ; Revisar si sigue presionado el C.
+00019E EF?? F???      00174     goto _C                             ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+0001A2 0E30           00175     movlw '00100000'                    ; Se enciende bit de multiplicacion.
+0001A4 6E13           00176     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0001A6 6E89           00177     movwf LATA, A                       ; Prender un 12 en binario.
+0001A8 EC?? F???      00178     call DELAY_20ms                     ; Antirebote.
+0001AC EF?? F???      00179     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0001B0                00180 ASTERISCO
+0001B0 A681           00181     btfss PORTB, 3, A                   ; Revisar si sigue presionado el *.
+0001B2 EF?? F???      00182     goto ASTERISCO                      ; Si aun no se suleta, esperar.
+0001B6 0EF0           00183     movlw b'11110000'
+0001B8 6E13           00184     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0001BA 6E89           00185     movwf LATA, A                       ; Prender la primera mitad de los LEDs.
+0001BC EC?? F???      00186     call DELAY_20ms                     ; Antirebote.
+0001C0 EF?? F???      00187     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0001C4                00188 CERO
+0001C4 A681           00189     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 0.
+0001C6 EF?? F???      00190     goto CERO                           ; Si aun no se suleta, esperar.
+0001CA 0E00           00191     movlw .0
+0001CC 6E13           00192     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0001CE 6E89           00193     movwf LATA, A                       ; Prender un 0 en binario.
+0001D0 EC?? F???      00194     call DELAY_20ms                     ; Antirebote.
+0001D4 EF?? F???      00195     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0001D8                00196 GATO
+0001D8 A681           00197     btfss PORTB, 3, A                   ; Revisar si sigue presionado el #.
+0001DA EF?? F???      00198     goto GATO                           ; Si aun no se suleta, esperar.
+0001DE 0E0F           00199     movlw b'00001111'
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0001F4 6E13           00203     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
-0001F6 6E89           00204     movwf LATA, A                       ; Prender un 13 en binario.
-0001F8 EC?? F???      00205     call DELAY_20ms                     ; Antirebote.
-0001FC EF?? F???      00206     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
-                      00207     
-                      00208 ; MENU DE BOTONES QUE LLEVAN A UN RETURN.
-000200                00209 UNO_RETURN
-000200 A081           00210     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 1.
-000202 EF?? F???      00211     goto UNO_RETURN                             ; Si aun no se suleta, esperar.
-000206 0E01           00212     movlw .1
-000208 6E89           00213     movwf LATA, A                       ; Prender un 1 en binario.
-00020A EC?? F???      00214     call DELAY_20ms                     ; Antirebote.
-00020E 0012           00215     return
-000210                00216 DOS_RETURN
-000210 A081           00217     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 2.
-000212 EF?? F???      00218     goto DOS_RETURN                             ; Si aun no se suleta, esperar.
-000216 0E02           00219     movlw .2
-000218 6E89           00220     movwf LATA, A                       ; Prender un 2 en binario.
-00021A EC?? F???      00221     call DELAY_20ms                     ; Antirebote.
-00021E 0012           00222     return
-000220                00223 TRES_RETURN
-000220 A081           00224     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 3.
-000222 EF?? F???      00225     goto TRES_RETURN                            ; Si aun no se suleta, esperar.
-000226 0E03           00226     movlw .3
-000228 6E89           00227     movwf LATA, A                       ; Prender un 3 en binario.
-00022A EC?? F???      00228     call DELAY_20ms                     ; Antirebote.
-00022E 0012           00229     return
-000230                00230 _A_RETURN
-000230 A081           00231     btfss PORTB, 0, A                   ; Revisar si sigue presionado el A.
-000232 EF?? F???      00232     goto _A_RETURN                              ; Si aun no se suleta, esperar.
-000236 0E0A           00233     movlw .10
-000238 6E89           00234     movwf LATA, A                       ; Prender un 10 en binario.
-00023A EC?? F???      00235     call DELAY_20ms                     ; Antirebote.
-00023E 0012           00236     return
-000240                00237 CUATRO_RETURN
-000240 A281           00238     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 4.
-000242 EF?? F???      00239     goto CUATRO_RETURN                          ; Si aun no se suleta, esperar.
-000246 0E04           00240     movlw .4
-000248 6E89           00241     movwf LATA, A                       ; Prender un 4 en binario.
-00024A EC?? F???      00242     call DELAY_20ms                     ; Antirebote.
-00024E 0012           00243     return
-000250                00244 CINCO_RETURN
-000250 A281           00245     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 5.
-000252 EF?? F???      00246     goto CINCO_RETURN                           ; Si aun no se suleta, esperar.
-000256 0E05           00247     movlw .5
-000258 6E89           00248     movwf LATA, A                       ; Prender un 5 en binario.
-00025A EC?? F???      00249     call DELAY_20ms                     ; Antirebote.
-00025E 0012           00250     return
-000260                00251 SEIS_RETURN
-000260 A281           00252     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 6.
-000262 EF?? F???      00253     goto SEIS_RETURN                            ; Si aun no se suleta, esperar.
-000266 0E06           00254     movlw .6
-000268 6E89           00255     movwf LATA, A                       ; Prender un 6 en binario.
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  6
+0001E0 6E13           00200     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0001E2 6E89           00201     movwf LATA, A                       ; Prender la segunda mitad de los LEDs.
+0001E4 EC?? F???      00202     call DELAY_20ms                     ; Antirebote.
+0001E8 EF?? F???      00203     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+0001EC                00204 _D
+0001EC A681           00205     btfss PORTB, 3, A                   ; Revisar si sigue presionado el D.
+0001EE EF?? F???      00206     goto _D                             ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+0001F2 0E30           00207     movlw '00010000'                    ; Se enciende bit de division.
+0001F4 6E13           00208     movwf TEMP, A                       ; TEMP sirve para guardar el ultimo valor de WREG.
+0001F6 6E89           00209     movwf LATA, A                       ; Prender un 13 en binario.
+0001F8 EC?? F???      00210     call DELAY_20ms                     ; Antirebote.
+0001FC EF?? F???      00211     goto RECORRIDO                      ; Regresar a ver si se presiona otro boton.
+                      00212     
+                      00213 ; MENU DE BOTONES QUE LLEVAN A UN RETURN.
+000200                00214 UNO_RETURN
+000200 A081           00215     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 1.
+000202 EF?? F???      00216     goto UNO_RETURN                     ; Si aun no se suleta, esperar.
+000206 0E01           00217     movlw .1
+000208 6E89           00218     movwf LATA, A                       ; Prender un 1 en binario.
+00020A EC?? F???      00219     call DELAY_20ms                     ; Antirebote.
+00020E 0012           00220     return
+000210                00221 DOS_RETURN
+000210 A081           00222     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 2.
+000212 EF?? F???      00223     goto DOS_RETURN                     ; Si aun no se suleta, esperar.
+000216 0E02           00224     movlw .2
+000218 6E89           00225     movwf LATA, A                       ; Prender un 2 en binario.
+00021A EC?? F???      00226     call DELAY_20ms                     ; Antirebote.
+00021E 0012           00227     return
+000220                00228 TRES_RETURN
+000220 A081           00229     btfss PORTB, 0, A                   ; Revisar si sigue presionado el 3.
+000222 EF?? F???      00230     goto TRES_RETURN                    ; Si aun no se suleta, esperar.
+000226 0E03           00231     movlw .3
+000228 6E89           00232     movwf LATA, A                       ; Prender un 3 en binario.
+00022A EC?? F???      00233     call DELAY_20ms                     ; Antirebote.
+00022E 0012           00234     return
+000230                00235 _A_RETURN
+000230 A081           00236     btfss PORTB, 0, A                   ; Revisar si sigue presionado el A.
+000232 EF?? F???      00237     goto _A_RETURN                      ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+000236 0E31           00238     movlw '10000000'                    ; Se enciende bit de suma.
+000238 6E89           00239     movwf LATA, A                       ; Prender un 10 en binario.
+00023A EC?? F???      00240     call DELAY_20ms                     ; Antirebote.
+00023E 0012           00241     return
+000240                00242 CUATRO_RETURN
+000240 A281           00243     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 4.
+000242 EF?? F???      00244     goto CUATRO_RETURN                  ; Si aun no se suleta, esperar.
+000246 0E04           00245     movlw .4
+000248 6E89           00246     movwf LATA, A                       ; Prender un 4 en binario.
+00024A EC?? F???      00247     call DELAY_20ms                     ; Antirebote.
+00024E 0012           00248     return
+000250                00249 CINCO_RETURN
+000250 A281           00250     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 5.
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00026A EC?? F???      00256     call DELAY_20ms                     ; Antirebote.
-00026E 0012           00257     return
-000270                00258 _B_RETURN
-000270 A281           00259     btfss PORTB, 1, A                   ; Revisar si sigue presionado el B.
-000272 EF?? F???      00260     goto _B_RETURN                              ; Si aun no se suleta, esperar.
-000276 0E0B           00261     movlw .11
-000278 6E89           00262     movwf LATA, A                       ; Prender un 11 en binario.
-00027A EC?? F???      00263     call DELAY_20ms                     ; Antirebote.
-00027E 0012           00264     return
-000280                00265 SIETE_RETURN
-000280 A481           00266     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 7.
-000282 EF?? F???      00267     goto SIETE_RETURN                           ; Si aun no se suleta, esperar.
-000286 0E07           00268     movlw .7
-000288 6E89           00269     movwf LATA, A                       ; Prender un 7 en binario.
-00028A EC?? F???      00270     call DELAY_20ms                     ; Antirebote.
-00028E 0012           00271     return
-000290                00272 OCHO_RETURN
-000290 A481           00273     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 8.
-000292 EF?? F???      00274     goto OCHO_RETURN                            ; Si aun no se suleta, esperar.
-000296 0E08           00275     movlw .8
-000298 6E89           00276     movwf LATA, A                       ; Prender un 8 en binario.
-00029A EC?? F???      00277     call DELAY_20ms                     ; Antirebote.
-00029E 0012           00278     return
-0002A0                00279 NUEVE_RETURN
-0002A0 A481           00280     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 9.
-0002A2 EF?? F???      00281     goto NUEVE_RETURN                           ; Si aun no se suleta, esperar.
-0002A6 0E09           00282     movlw .9
-0002A8 6E89           00283     movwf LATA, A                       ; Prender un 9 en binario.
-0002AA EC?? F???      00284     call DELAY_20ms                     ; Antirebote.
-0002AE 0012           00285     return
-0002B0                00286 _C_RETURN
-0002B0 A481           00287     btfss PORTB, 2, A                   ; Revisar si sigue presionado el C.
-0002B2 EF?? F???      00288     goto _C_RETURN                              ; Si aun no se suleta, esperar.
-0002B6 0E0C           00289     movlw .12
-0002B8 6E89           00290     movwf LATA, A                       ; Prender un 12 en binario.
-0002BA EC?? F???      00291     call DELAY_20ms                     ; Antirebote.
-0002BE 0012           00292     return
-0002C0                00293 ASTERISCO_RETURN
-0002C0 A681           00294     btfss PORTB, 3, A                   ; Revisar si sigue presionado el *.
-0002C2 EF?? F???      00295     goto ASTERISCO_RETURN                       ; Si aun no se suleta, esperar.
-0002C6 0EF0           00296     movlw b'11110000'
-0002C8 6E89           00297     movwf LATA, A                       ; Prender la primera mitad de los LEDs.
-0002CA EC?? F???      00298     call DELAY_20ms                     ; Antirebote.
-0002CE 0012           00299     return
-0002D0                00300 CERO_RETURN
-0002D0 A681           00301     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 0.
-0002D2 EF?? F???      00302     goto CERO_RETURN                            ; Si aun no se suleta, esperar.
-0002D6 0E00           00303     movlw .0
-0002D8 6E89           00304     movwf LATA, A                       ; Prender un 0 en binario.
-0002DA EC?? F???      00305     call DELAY_20ms                     ; Antirebote.
-0002DE 0012           00306     return
-0002E0                00307 GATO_RETURN
-0002E0 A681           00308     btfss PORTB, 3, A                   ; Revisar si sigue presionado el #.
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  7
+000252 EF?? F???      00251     goto CINCO_RETURN                   ; Si aun no se suleta, esperar.
+000256 0E05           00252     movlw .5
+000258 6E89           00253     movwf LATA, A                       ; Prender un 5 en binario.
+00025A EC?? F???      00254     call DELAY_20ms                     ; Antirebote.
+00025E 0012           00255     return
+000260                00256 SEIS_RETURN
+000260 A281           00257     btfss PORTB, 1, A                   ; Revisar si sigue presionado el 6.
+000262 EF?? F???      00258     goto SEIS_RETURN                    ; Si aun no se suleta, esperar.
+000266 0E06           00259     movlw .6
+000268 6E89           00260     movwf LATA, A                       ; Prender un 6 en binario.
+00026A EC?? F???      00261     call DELAY_20ms                     ; Antirebote.
+00026E 0012           00262     return
+000270                00263 _B_RETURN
+000270 A281           00264     btfss PORTB, 1, A                   ; Revisar si sigue presionado el B.
+000272 EF?? F???      00265     goto _B_RETURN                      ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+000276 0E30           00266     movlw '00010000'                    ; Se enciende bit de resta.
+000278 6E89           00267     movwf LATA, A                       ; Prender un 11 en binario.
+00027A EC?? F???      00268     call DELAY_20ms                     ; Antirebote.
+00027E 0012           00269     return
+000280                00270 SIETE_RETURN
+000280 A481           00271     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 7.
+000282 EF?? F???      00272     goto SIETE_RETURN                   ; Si aun no se suleta, esperar.
+000286 0E07           00273     movlw .7
+000288 6E89           00274     movwf LATA, A                       ; Prender un 7 en binario.
+00028A EC?? F???      00275     call DELAY_20ms                     ; Antirebote.
+00028E 0012           00276     return
+000290                00277 OCHO_RETURN
+000290 A481           00278     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 8.
+000292 EF?? F???      00279     goto OCHO_RETURN                    ; Si aun no se suleta, esperar.
+000296 0E08           00280     movlw .8
+000298 6E89           00281     movwf LATA, A                       ; Prender un 8 en binario.
+00029A EC?? F???      00282     call DELAY_20ms                     ; Antirebote.
+00029E 0012           00283     return
+0002A0                00284 NUEVE_RETURN
+0002A0 A481           00285     btfss PORTB, 2, A                   ; Revisar si sigue presionado el 9.
+0002A2 EF?? F???      00286     goto NUEVE_RETURN                   ; Si aun no se suleta, esperar.
+0002A6 0E09           00287     movlw .9
+0002A8 6E89           00288     movwf LATA, A                       ; Prender un 9 en binario.
+0002AA EC?? F???      00289     call DELAY_20ms                     ; Antirebote.
+0002AE 0012           00290     return
+0002B0                00291 _C_RETURN
+0002B0 A481           00292     btfss PORTB, 2, A                   ; Revisar si sigue presionado el C.
+0002B2 EF?? F???      00293     goto _C_RETURN                      ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+0002B6 0E30           00294     movlw '00100000'                    ; Se enciende bit de multiplicacion.
+0002B8 6E89           00295     movwf LATA, A                       ; Prender un 12 en binario.
+0002BA EC?? F???      00296     call DELAY_20ms                     ; Antirebote.
+0002BE 0012           00297     return
+0002C0                00298 ASTERISCO_RETURN
+0002C0 A681           00299     btfss PORTB, 3, A                   ; Revisar si sigue presionado el *.
+0002C2 EF?? F???      00300     goto ASTERISCO_RETURN               ; Si aun no se suleta, esperar.
+0002C6 0EF0           00301     movlw b'11110000'
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0002E2 EF?? F???      00309     goto GATO_RETURN                            ; Si aun no se suleta, esperar.
-0002E6 0E0F           00310     movlw b'00001111'
-0002E8 6E89           00311     movwf LATA, A                       ; Prender la segunda mitad de los LEDs.
-0002EA EC?? F???      00312     call DELAY_20ms                     ; Antirebote.
-0002EE 0012           00313     return
-0002F0                00314 _D_RETURN
-0002F0 A681           00315     btfss PORTB, 3, A                   ; Revisar si sigue presionado el D.
-0002F2 EF?? F???      00316     goto _D_RETURN                              ; Si aun no se suleta, esperar.
-0002F6 0E0D           00317     movlw .13
-0002F8 6E89           00318     movwf LATA, A                       ; Prender un 13 en binario.
-0002FA EC?? F???      00319     call DELAY_20ms                     ; Antirebote.
-0002FE 0012           00320     return
-                      00321     
-000300                00322 DELAY_20ms
-000300 0E00           00323     movlw   .0                  
-000302 6E20           00324     movwf   _256
-000304 0E1A           00325     movlw   .26
-000306 6E21           00326     movwf   _26 
-000308                00327 LOOP1
-000308 2E20           00328     decfsz  _256
-00030A EF?? F???      00329     goto    LOOP1               ; (3)*256
-00030E 2E21           00330     decfsz  _26
-000310 EF?? F???      00331     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
-                      00332     ; 20046+4 = 20.05ms approx. 
-000314 0012           00333     return
-                      00334   
-                      00335 ;
-                      00336 ; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
-                      00337 ; AFTER RESET. ONCE PROGRAMMED IN THIS PRACTICA THIS IS NOT NECESARY TO INCLUDE IN FUTURE PROGRAMS
-                      00338 ; IF THIS SETTINGS ARE NOT CHANGED. SEE SECTION 26 OF DATA SHEET. 
-                      00339 ;   
-                      00340 
-                      00341 
-                      00342 ; CONFIG1L
-                      00343   CONFIG  PLLSEL = PLL4X        ; PLL Selection (4x clock multiplier)
-                      00344   CONFIG  CFGPLLEN = OFF        ; PLL Enable Configuration bit (PLL Disabled (firmware controlled))
-                      00345   CONFIG  CPUDIV = NOCLKDIV     ; CPU System Clock Postscaler (CPU uses system clock (no divide))
-                      00346   CONFIG  LS48MHZ = SYS24X4     ; Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, U
+0002C8 6E89           00302     movwf LATA, A                       ; Prender la primera mitad de los LEDs.
+0002CA EC?? F???      00303     call DELAY_20ms                     ; Antirebote.
+0002CE 0012           00304     return
+0002D0                00305 CERO_RETURN
+0002D0 A681           00306     btfss PORTB, 3, A                   ; Revisar si sigue presionado el 0.
+0002D2 EF?? F???      00307     goto CERO_RETURN                    ; Si aun no se suleta, esperar.
+0002D6 0E00           00308     movlw .0
+0002D8 6E89           00309     movwf LATA, A                       ; Prender un 0 en binario.
+0002DA EC?? F???      00310     call DELAY_20ms                     ; Antirebote.
+0002DE 0012           00311     return
+0002E0                00312 GATO_RETURN
+0002E0 A681           00313     btfss PORTB, 3, A                   ; Revisar si sigue presionado el #.
+0002E2 EF?? F???      00314     goto GATO_RETURN                    ; Si aun no se suleta, esperar.
+0002E6 0E0F           00315     movlw b'00001111'
+0002E8 6E89           00316     movwf LATA, A                       ; Prender la segunda mitad de los LEDs.
+0002EA EC?? F???      00317     call DELAY_20ms                     ; Antirebote.
+0002EE 0012           00318     return
+0002F0                00319 _D_RETURN
+0002F0 A681           00320     btfss PORTB, 3, A                   ; Revisar si sigue presionado el D.
+0002F2 EF?? F???      00321     goto _D_RETURN                      ; Si aun no se suleta, esperar.
+Error[124]  : Illegal argument (expected single character)
+0002F6 0E30           00322     movlw '00010000'                    ; Se enciende bit de division.
+0002F8 6E89           00323     movwf LATA, A                       ; Prender un 13 en binario.
+0002FA EC?? F???      00324     call DELAY_20ms                     ; Antirebote.
+0002FE 0012           00325     return
+                      00326     
+000300                00327 DELAY_20ms
+000300 0E00           00328     movlw   .0                  
+000302 6E20           00329     movwf   _256
+000304 0E1A           00330     movlw   .26
+000306 6E21           00331     movwf   _26 
+000308                00332 LOOP1
+000308 2E20           00333     decfsz  _256
+00030A EF?? F???      00334     goto    LOOP1               ; (3)*256
+00030E 2E21           00335     decfsz  _26
+000310 EF?? F???      00336     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00337     ; 20046+4 = 20.05ms approx. 
+000314 0012           00338     return
+                      00339   
+                      00340 ;
+                      00341 ; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
+                      00342 ; AFTER RESET. ONCE PROGRAMMED IN THIS PRACTICA THIS IS NOT NECESARY TO INCLUDE IN FUTURE PROGRAMS
+                      00343 ; IF THIS SETTINGS ARE NOT CHANGED. SEE SECTION 26 OF DATA SHEET. 
+                      00344 ;   
+                      00345 
+                      00346 
+                      00347 ; CONFIG1L
+                      00348   CONFIG  PLLSEL = PLL4X        ; PLL Selection (4x clock multiplier)
+                      00349   CONFIG  CFGPLLEN = OFF        ; PLL Enable Configuration bit (PLL Disabled (firmware controlled))
+                      00350   CONFIG  CPUDIV = NOCLKDIV     ; CPU System Clock Postscaler (CPU uses system clock (no divide))
+                      00351   CONFIG  LS48MHZ = SYS24X4     ; Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, U
                             SB clock divider is set to 4)
-                      00347 
-                      00348 ; CONFIG1H
-                      00349   CONFIG  FOSC = INTOSCIO       ; Oscillator Selection (Internal oscillator)
-                      00350   CONFIG  PCLKEN = ON           ; Primary Oscillator Shutdown (Primary oscillator enabled)
-                      00351   CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor (Fail-Safe Clock Monitor disabled)
-                      00352   CONFIG  IESO = OFF            ; Internal/External Oscillator Switchover (Oscillator Switchover mode di
-                            sabled)
-                      00353 
-                      00354 ; CONFIG2L
-                      00355   CONFIG  nPWRTEN = OFF         ; Power-up Timer Enable (Power up timer disabled)
-                      00356   CONFIG  BOREN = SBORDIS       ; Brown-out Reset Enable (BOR enabled in hardware (SBOREN is ignored))
-                      00357   CONFIG  BORV = 190            ; Brown-out Reset Voltage (BOR set to 1.9V nominal)
-                      00358   CONFIG  nLPBOR = OFF          ; Low-Power Brown-out Reset (Low-Power Brown-out Reset disabled)
-                      00359 
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  8
+                      00352 
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00360 ; CONFIG2H
-                      00361   CONFIG  WDTEN = OFF           ; Watchdog Timer Enable bits (WDT disabled in hardware (SWDTEN ignored))
-                      00362   CONFIG  WDTPS = 32768         ; Watchdog Timer Postscaler (1:32768)
-                      00363 
-                      00364 ; CONFIG3H
-                      00365   CONFIG  CCP2MX = RC1          ; CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
-                      00366   CONFIG  PBADEN = ON           ; PORTB A/D Enable bit (PORTB<5:0> pins are configured as analog input c
+                      00353 ; CONFIG1H
+                      00354   CONFIG  FOSC = INTOSCIO       ; Oscillator Selection (Internal oscillator)
+                      00355   CONFIG  PCLKEN = ON           ; Primary Oscillator Shutdown (Primary oscillator enabled)
+                      00356   CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor (Fail-Safe Clock Monitor disabled)
+                      00357   CONFIG  IESO = OFF            ; Internal/External Oscillator Switchover (Oscillator Switchover mode di
+                            sabled)
+                      00358 
+                      00359 ; CONFIG2L
+                      00360   CONFIG  nPWRTEN = OFF         ; Power-up Timer Enable (Power up timer disabled)
+                      00361   CONFIG  BOREN = SBORDIS       ; Brown-out Reset Enable (BOR enabled in hardware (SBOREN is ignored))
+                      00362   CONFIG  BORV = 190            ; Brown-out Reset Voltage (BOR set to 1.9V nominal)
+                      00363   CONFIG  nLPBOR = OFF          ; Low-Power Brown-out Reset (Low-Power Brown-out Reset disabled)
+                      00364 
+                      00365 ; CONFIG2H
+                      00366   CONFIG  WDTEN = OFF           ; Watchdog Timer Enable bits (WDT disabled in hardware (SWDTEN ignored))
+                      00367   CONFIG  WDTPS = 32768         ; Watchdog Timer Postscaler (1:32768)
+                      00368 
+                      00369 ; CONFIG3H
+                      00370   CONFIG  CCP2MX = RC1          ; CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
+                      00371   CONFIG  PBADEN = ON           ; PORTB A/D Enable bit (PORTB<5:0> pins are configured as analog input c
                             hannels on Reset)
-                      00367   CONFIG  T3CMX = RC0           ; Timer3 Clock Input MUX bit (T3CKI function is on RC0)
-                      00368   CONFIG  SDOMX = RB3           ; SDO Output MUX bit (SDO function is on RB3)
-                      00369   CONFIG  MCLRE = ON            ; Master Clear Reset Pin Enable (MCLR pin enabled; RE3 input disabled)
-                      00370 
-                      00371 ; CONFIG4L
-                      00372   CONFIG  STVREN = ON           ; Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
-                      00373   CONFIG  LVP = ON              ; Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is 
+                      00372   CONFIG  T3CMX = RC0           ; Timer3 Clock Input MUX bit (T3CKI function is on RC0)
+                      00373   CONFIG  SDOMX = RB3           ; SDO Output MUX bit (SDO function is on RB3)
+                      00374   CONFIG  MCLRE = ON            ; Master Clear Reset Pin Enable (MCLR pin enabled; RE3 input disabled)
+                      00375 
+                      00376 ; CONFIG4L
+                      00377   CONFIG  STVREN = ON           ; Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
+                      00378   CONFIG  LVP = ON              ; Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is 
                             also 1)
-                      00374   CONFIG  ICPRT = OFF           ; Dedicated In-Circuit Debug/Programming Port Enable (ICPORT disabled)
-                      00375   CONFIG  XINST = OFF           ; Extended Instruction Set Enable bit (Instruction set extension and Ind
+                      00379   CONFIG  ICPRT = OFF           ; Dedicated In-Circuit Debug/Programming Port Enable (ICPORT disabled)
+                      00380   CONFIG  XINST = OFF           ; Extended Instruction Set Enable bit (Instruction set extension and Ind
                             exed Addressing mode disabled)
-                      00376   
-                      00377   end
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE  9
+                      00381   
+                      00382   end
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE  9
 
 
 SYMBOL TABLE
@@ -497,7 +510,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 10
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 10
 
 
 SYMBOL TABLE
@@ -548,20 +561,24 @@ BCLIF                             00000003
 BCLIP                             00000003
 BF                                00000000
 BGVST                             00000006
+BIT_DIV                           00000004
+BIT_MULT                          00000005
+BIT_RESTA                         00000006
+BIT_SUMA                          00000007
 BOEN                              00000004
 BOR                               00000000
 BRG0                              00000000
 BRG1                              00000001
-BRG10                             00000002
-BRG11                             00000003
-BRG12                             00000004
-BRG13                             00000005
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 11
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
 BRG16                             00000003
@@ -611,16 +628,16 @@ C2SP                              00000003
 C2SYNC                            00000000
 C2TSEL                            00000003
 CCH0                              00000000
-CCH1                              00000001
-CCP1                              00000002
-CCP1ASE                           00000007
-CCP1CON                           00000FBD
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 12
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+CCH1                              00000001
+CCP1                              00000002
+CCP1ASE                           00000007
+CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
 CCP1IP                            00000002
@@ -670,16 +687,16 @@ CM2IE                             00000005
 CM2IF                             00000005
 CM2IP                             00000005
 CMP1MD                            00000003
-CMP2MD                            00000004
-COE                               00000005
-CON                               00000007
-CONFIGURA                         00000030
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 13
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+CMP2MD                            00000004
+COE                               00000005
+CON                               00000007
+CONFIGURA                         00000030
 COUT1                             00000006
 COUT2                             00000006
 CPOL                              00000004
@@ -729,16 +746,16 @@ DELAY_20ms                        00000300
 DFN8EE                            00000003
 DFN8EF                            00000003
 DHEN                              00000000
-DIR                               00000002
-DONE                              00000001
-DOS                               000000D4
-DOS_RETURN                        00000210
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 14
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 14
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+DIR                               00000002
+DONE                              00000001
+DOS                               000000D4
+DOS_RETURN                        00000210
 DTRXP                             00000005
 D_NOT_A                           00000005
 ECCP1AS                           00000FB6
@@ -788,16 +805,16 @@ FRM3                              00000003
 FRM4                              00000004
 FRM5                              00000005
 FRM6                              00000006
-FRM7                              00000007
-FRM8                              00000000
-FRM9                              00000001
-FSEN                              00000002
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 15
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 15
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+FRM7                              00000007
+FRM8                              00000000
+FRM9                              00000001
+FSEN                              00000002
 FSR0                              00000000
 FSR0H                             00000FEA
 FSR0L                             00000FE9
@@ -847,16 +864,16 @@ INT0IF                            00000001
 INT1                              00000001
 INT1E                             00000003
 INT1F                             00000000
-INT1IE                            00000003
-INT1IF                            00000000
-INT1IP                            00000006
-INT1P                             00000006
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 16
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 16
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+INT1IE                            00000003
+INT1IF                            00000000
+INT1IP                            00000006
+INT1P                             00000006
 INT2                              00000002
 INT2E                             00000004
 INT2F                             00000001
@@ -906,16 +923,16 @@ ITRIM5                            00000007
 LATA                              00000F89
 LATA0                             00000000
 LATA1                             00000001
-LATA2                             00000002
-LATA3                             00000003
-LATA4                             00000004
-LATA5                             00000005
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 17
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 17
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+LATA2                             00000002
+LATA3                             00000003
+LATA4                             00000004
+LATA5                             00000005
 LATA6                             00000006
 LATA7                             00000007
 LATB                              00000F8A
@@ -965,16 +982,16 @@ NOT_PD                            00000002
 NOT_POR                           00000001
 NOT_RBPU                          00000007
 NOT_RI                            00000004
-NOT_T1DONE                        00000003
-NOT_T1SYNC                        00000002
-NOT_T3DONE                        00000003
-NOT_T3SYNC                        00000002
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 18
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 18
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+NOT_T1DONE                        00000003
+NOT_T1SYNC                        00000002
+NOT_T3DONE                        00000003
+NOT_T3SYNC                        00000002
 NOT_TO                            00000003
 NUEVE                             00000188
 NUEVE_RETURN                      000002A0
@@ -1024,16 +1041,16 @@ PGD                               00000007
 PGM                               00000005
 PIDEE                             00000000
 PIDEF                             00000000
-PIE1                              00000F9D
-PIE2                              00000FA0
-PIE3                              00000FA3
-PIR1                              00000F9E
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 19
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 19
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PIE1                              00000F9D
+PIE2                              00000FA0
+PIE3                              00000FA3
+PIR1                              00000F9E
 PIR2                              00000FA1
 PIR3                              00000FA4
 PKTDIS                            00000004
@@ -1083,16 +1100,16 @@ PVCFG0                            00000002
 PVCFG1                            00000003
 PWM1CON                           00000FB7
 RA0                               00000000
-RA1                               00000001
-RA2                               00000002
-RA3                               00000003
-RA4                               00000004
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 20
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 20
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
 RA5                               00000005
 RA6                               00000006
 RA7                               00000007
@@ -1142,16 +1159,16 @@ RE2                               00000002
 RE3                               00000003
 RECORRIDO                         0000004C
 RESUME                            00000002
-RI                                00000004
-RSEN                              00000001
-RX                                00000007
-RX9                               00000006
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 21
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 21
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RI                                00000004
+RSEN                              00000001
+RX                                00000007
+RX9                               00000006
 RX9D                              00000000
 RXDTP                             00000005
 R_NOT_W                           00000002
@@ -1201,16 +1218,16 @@ SPP3                              00000003
 SPP4                              00000004
 SPP5                              00000005
 SPP6                              00000006
-SPP7                              00000007
-SRCLK0                            00000004
-SRCLK1                            00000005
-SRCLK2                            00000006
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 22
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 22
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SPP7                              00000007
+SRCLK0                            00000004
+SRCLK1                            00000005
+SRCLK2                            00000006
 SRCON0                            00000F58
 SRCON1                            00000F57
 SREN                              00000005
@@ -1260,16 +1277,16 @@ SSPCON                            00000FC6
 SSPCON1                           00000FC6
 SSPCON2                           00000FC5
 SSPCON3                           00000FCB
-SSPEN                             00000005
-SSPIE                             00000003
-SSPIF                             00000003
-SSPIP                             00000003
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 23
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 23
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPIP                             00000003
 SSPM0                             00000000
 SSPM1                             00000001
 SSPM2                             00000002
@@ -1319,16 +1336,16 @@ T0PS0                             00000000
 T0PS1                             00000001
 T0PS2                             00000002
 T0SE                              00000004
-T13CKI                            00000000
-T1CKPS0                           00000004
-T1CKPS1                           00000005
-T1CON                             00000FCD
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 24
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 24
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+T13CKI                            00000000
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000FCD
 T1DONE                            00000003
 T1GCON                            00000FCC
 T1GGO                             00000003
@@ -1378,16 +1395,16 @@ TBLPTRL                           00000FF6
 TBLPTRU                           00000FF8
 TEMP                              00000013
 TGEN                              00000004
-TMR0                              00000FD6
-TMR0H                             00000FD7
-TMR0IE                            00000005
-TMR0IF                            00000002
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 25
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 25
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TMR0                              00000FD6
+TMR0H                             00000FD7
+TMR0IE                            00000005
+TMR0IF                            00000002
 TMR0IP                            00000002
 TMR0L                             00000FD6
 TMR0ON                            00000007
@@ -1437,16 +1454,16 @@ TRIGSEL                           00000007
 TRISA                             00000F92
 TRISA0                            00000000
 TRISA1                            00000001
-TRISA2                            00000002
-TRISA3                            00000003
-TRISA4                            00000004
-TRISA5                            00000005
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 26
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 26
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
 TRISA6                            00000006
 TRISA7                            00000007
 TRISB                             00000F93
@@ -1496,16 +1513,16 @@ TX1IE                             00000004
 TX1IF                             00000004
 TX1IP                             00000004
 TX9                               00000006
-TX9D                              00000000
-TXCKP                             00000004
-TXEN                              00000005
-TXIE                              00000004
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 27
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 27
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TX9D                              00000000
+TXCKP                             00000004
+TXEN                              00000005
+TXIE                              00000004
 TXIF                              00000004
 TXIP                              00000004
 TXREG                             00000FAD
@@ -1555,16 +1572,16 @@ USBIF                             00000002
 USBIP                             00000002
 USBMD                             00000005
 USTAT                             00000F61
-UTEYE                             00000007
-UTRDIS                            00000003
-VDIRMAG                           00000007
-VREFCON0                          00000F7D
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 28
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 28
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+UTEYE                             00000007
+UTRDIS                            00000003
+VDIRMAG                           00000007
+VREFCON0                          00000F7D
 VREFCON1                          00000F7C
 VREFCON2                          00000F7B
 VREFM                             00000002
@@ -1614,16 +1631,16 @@ _CONFIG2H                         00300003
 _CONFIG2L                         00300002
 _CONFIG3H                         00300005
 _CONFIG4L                         00300006
-_CONFIG5H                         00300009
-_CONFIG5L                         00300008
-_CONFIG6H                         0030000B
-_CONFIG6L                         0030000A
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 29
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 29
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_CONFIG5H                         00300009
+_CONFIG5L                         00300008
+_CONFIG6H                         0030000B
+_CONFIG6L                         0030000A
 _CONFIG7H                         0030000D
 _CONFIG7L                         0030000C
 _CP0_OFF_5L                       000000FF
@@ -1673,16 +1690,16 @@ _FOSC_INTOSCCLKO_1H               000000F9
 _FOSC_INTOSCIO_1H                 000000F8
 _FOSC_LP_1H                       000000F0
 _FOSC_RCCLKO_1H                   000000F6
-_FOSC_RCIO_1H                     000000F7
-_FOSC_XT_1H                       000000F1
-_ICPRT_OFF_4L                     000000DF
-_ICPRT_ON_4L                      000000FF
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 30
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 30
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_FOSC_RCIO_1H                     000000F7
+_FOSC_XT_1H                       000000F1
+_ICPRT_OFF_4L                     000000DF
+_ICPRT_ON_4L                      000000FF
 _IDLOC0                           00200000
 _IDLOC1                           00200001
 _IDLOC2                           00200002
@@ -1732,16 +1749,16 @@ _WDTPS_64_2H                      000000DB
 _WDTPS_8192_2H                    000000F7
 _WDTPS_8_2H                       000000CF
 _WRT0_OFF_6L                      000000FF
-_WRT0_ON_6L                       000000FE
-_WRT1_OFF_6L                      000000FF
-_WRT1_ON_6L                       000000FD
-_WRT2_OFF_6L                      000000FF
-MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  2:14:09         PAGE 31
+MPASM 5.87                    EJERCICIO2.ASM   9-28-2021  17:14:11         PAGE 31
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_WRT0_ON_6L                       000000FE
+_WRT1_OFF_6L                      000000FF
+_WRT1_ON_6L                       000000FD
+_WRT2_OFF_6L                      000000FF
 _WRT2_ON_6L                       000000FB
 _WRT3_OFF_6L                      000000FF
 _WRT3_ON_6L                       000000F7
@@ -1754,14 +1771,12 @@ _WRTD_ON_6H                       0000007F
 _XINST_OFF_4L                     000000BF
 _XINST_ON_4L                      000000FF
 __18F45K50                        00000001
-__DEBUG                           
-__MPLAB_DEBUGGER_SIMULATOR        1
 _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
 
-Errors   :     0
+Errors   :     8
 Warnings :     0 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
