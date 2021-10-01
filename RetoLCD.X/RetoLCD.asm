@@ -71,7 +71,6 @@ SEND_DATA
     movwf   dataLCD		; Data transmission.
     nop				; Wait 1us to make sure the instruction was recieved.
     bcf	    E			; Stop Enable.
-    clrf    dataLCD
     call    ESPERA_LCD		; Wait to see if LCD is done.
     return
     
