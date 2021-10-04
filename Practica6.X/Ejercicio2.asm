@@ -13,6 +13,7 @@ NUM2	EQU 0x11
 OP	EQU 0x12
 TEMP	EQU 0x13
 TEMP2	EQU 0x14
+COUNTER	EQU 0x15
 ; Definicion de registros para el delay de 20ms.
 _256	EQU 0x20
 _26	EQU 0x21
@@ -40,20 +41,31 @@ NUMERO1
     call RECORRIDO
     movff TEMP, NUM1			; El ultimo numero presionado sera NUM1.
     movff TEMP2, OP			; El ultimo operando presionado sera OP.
+    movf OP, F, A			; Activar OP en STATUS.
+    btfsc STATUS, Z, A			; Revisa si OP = 0.
+    goto NUMERO1			; Eso significa RESET.
     
 NUMERO2
     call RECORRIDO
     movff TEMP, NUM2			; El ultimo numero presionado sera NUM2.
     movf OP, F, A			; Activar OP en STATUS.
-    btfsc STATUS, 2, A			; Revisa si OP = 0.
+    btfsc STATUS, Z, A			; Revisa si OP = 0.
     goto NUMERO1			; Eso significa RESET.
     
 OPERACIONES
     btfsc BIT_SUMA
-    goto SUMA				; Si esta activo el bit de suma, ir a SUMA.
+    call SUMA				; Si esta activo el bit de suma, ir a SUMA.
+    btfsc BIT_RESTA
+    call RESTA				; Si esta activo el bit de suma, ir a SUMA.
+    btfsc BIT_MULT
+    call MULTIPLICACION			; Si esta activo el bit de suma, ir a SUMA.
+    btfsc BIT_DIV
+    call DIVISION			; Si esta activo el bit de suma, ir a SUMA.
     movf OP, F, A			; Activar OP en STATUS.
-    btfsc STATUS, 2, A			; Revisa si OP = 0.
+    btfsc STATUS, Z, A			; Revisa si OP = 0.
     goto NUMERO1			; Eso significa RESET.
+    movff NUM1, TEMP			; Cargar el mismo numero en TEMP que en NUM1
+    goto NUMERO1			; (para la proxima repeticion en NUMERO1).
 
 ; PROCESO PARA HACER UN RECORRIDO Y DETECTAR ENTRADA DEL TECLADO.
 RECORRIDO
@@ -193,7 +205,7 @@ _A_RETURN				; SUMA.
 _B_RETURN				; RESTA.
     btfss PORTB, 1, A			; Revisar si sigue presionado el B.
     goto _B_RETURN			; Si aun no se suleta, esperar.
-    movlw b'00010000'			; Se enciende bit de resta.
+    movlw b'01000000'			; Se enciende bit de resta.
     movwf TEMP2, A			; TEMP sirve para guardar el operando.
     movwf LATA, A			; Prender bit 6.
     call DELAY_20ms			; Antirebote.
@@ -231,12 +243,53 @@ GATO_RETURN				; RESET.
     clrf LATA
     call DELAY_20ms			; Antirebote.
     return
+
 ; OPERACIONES
 SUMA
     movf NUM1, W, A			; Mover NUM1 a WREG.
     addwf NUM2, W, A			; Sumarle NUM2.
     movwf NUM1, A			; Guardar el resultado en NUM1.
-    goto NUMERO1
+    return
+RESTA
+    movf NUM2, W, A			; Mover NUM2 a WREG.
+    subwf NUM1, W, A			; Restar NUM1-NUM2.
+    movwf WREG, A			; Activar WREG en STATUS.
+    btfsc STATUS, N, A			; Checar si dio un numero negativo.
+    goto NEGATIVO
+    movwf NUM1, A			; Guardar el resultado en NUM1.
+    return
+NEGATIVO
+    movf NUM1, W, A			; Mover NUM1 a WREG.
+    subwf NUM2, W, A			; Restar NUM2-NUM1 (al reves).
+    movwf NUM1				; Guardar en NUM1.
+    bsf NUM1, 7, A			; Activar bit de negativo.
+    return
+MULTIPLICACION
+    movf NUM1, W, A			; Mover NUM1 a WREG.
+    mulwf NUM2, A			; Multiplicar NUM1*NUM2.
+    movff PRODL, NUM1			; Copiar el resultado guardado en PRODL a NUM1.
+    return
+DIVISION
+    movf NUM2, F, A			; Activar NUM2 en STATUS.
+    btfsc STATUS, Z, A
+    goto _ERROR				; Si NUM2 = 0, ir a _ERROR.
+    movlw .0
+    movwf COUNTER, A			; Resetear el contador.
+    movf NUM2, W, A			; Cargar NUM2 en WREG.
+CUENTA
+    subwf NUM1, F, A			; Se resta NUM1-NUM2 y se guarda en NUM1.
+    movf NUM1, F, A			; Activar NUM1 en STATUS.
+    btfsc STATUS, N, A
+    goto CUENTA_FINAL			; Si NUM1 ya es negativo, hacer procedimientos antes de regresar.
+    incf COUNTER			; De lo contrario, aumentar el contador y repetir.
+    goto CUENTA
+CUENTA_FINAL
+    movff COUNTER, NUM1			; NUM1 es igual a la cuenta almacenada.
+    return
+_ERROR
+    movlw 0xFF
+    movwf NUM1				; En caso de error, encender todos los LEDs.
+    return
     
 DELAY_20ms
     movlw   .0			

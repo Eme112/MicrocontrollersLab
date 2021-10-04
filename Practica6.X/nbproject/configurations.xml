@@ -29,7 +29,7 @@
         <targetDevice>PIC18F45K50</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>Simulator</platformTool>
+        <platformTool>pkob4hybrid</platformTool>
         <languageToolchain>MPASMWIN</languageToolchain>
         <languageToolchainVersion>5.87</languageToolchainVersion>
         <platform>3</platform>
@@ -62,6 +62,12 @@
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
       </makeCustomizationType>
       <item path="Ejercicio1.asm" ex="true" overriding="false">
+        <MPASMWIN-AS>
+        </MPASMWIN-AS>
+        <MPASMWIN-LD>
+        </MPASMWIN-LD>
+        <mpasmsuite>
+        </mpasmsuite>
       </item>
       <MPASMWIN-AS>
         <property key="cross.reference.file" value=""/>
@@ -540,6 +546,9 @@
         <property key="extended-mode-mpasm" value="false"/>
         <property key="extended-mode-mplink" value="false"/>
       </mpasmsuite>
+      <pkob4hybrid>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
+      </pkob4hybrid>
     </conf>
   </confs>
 </configurationDescriptor>
