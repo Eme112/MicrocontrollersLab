@@ -1,0 +1,40 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Mon Oct 04 17:39:47 2021
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000002
+                   .org_2       code   0x000018    program   0x000002
+                   .org_3       code   0x000030    program   0x000020
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000005      
+                            0x000008    0x000009      
+                            0x000018    0x000019      
+                            0x000030    0x00004f      
+            42 out of 33048 program addresses used, program memory utilization is 0%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\SubrutinasProyecto.X\Configuracion.asm
+                   PRUEBA   0x000046    program     static C:\MicrochipProjects\SubrutinasProyecto.X\Subrutinas.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\SubrutinasProyecto.X\Configuracion.asm
+                   PRUEBA   0x000046    program     static C:\MicrochipProjects\SubrutinasProyecto.X\Subrutinas.asm
+
+

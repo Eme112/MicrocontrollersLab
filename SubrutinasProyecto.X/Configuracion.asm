@@ -22,3 +22,4 @@ CONFIGURA
     movwf   WPUB				; habilitar 3 pull ups.
     clrf    TRISA				; REGA -> OUTPUT.
     clrf    LATA				; Limpiar la salida A.
+    goto PRUEBA
