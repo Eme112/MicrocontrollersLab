@@ -13,6 +13,8 @@ boton_presionado    EQU 0x20
 boton_esperado	    EQU 0x21
     
 ; DEFINICION DE VARIABLES PARA DELAY.
+var1	EQU 0x11
+var2	EQU 0x12
 _256	EQU 0x25
 _26	EQU 0x26
 
@@ -34,12 +36,18 @@ CONFIGURA
     movlb   .15
     clrf    ANSELA, BANKED			; REGA -> DIGITAL.
     clrf    ANSELB, BANKED			; REGB -> DIGITAL.
+    clrf    ANSELC, BANKED			; REGC -> DIGITAL.
+    clrf    ANSELD, BANKED			; REGD -> DIGITAL.
     bcf	    INTCON2, 7				; ENABLE pull-ups.
     movlw   B'00000011'			
     movwf   TRISB				; 3 salidas, 2 entradas.
     movwf   WPUB				; habilitar 2 pull ups.
     clrf    TRISA				; REGA -> OUTPUT.
+    clrf    TRISC				; REGC-> OUTPUT.
+    clrf    TRISD				; REGD -> OUTPUT.
     clrf    LATA				; Limpiar la salida A.
+    clrf    LATC				; Limpiar la salida C.
+    clrf    LATD				; Limpiar la salida D.
     
 LOOP
     call    RECORRIDO
@@ -49,22 +57,22 @@ RECORRIDO
     movlw   b'11111011'			; ACTIVAR COLUMNA 1 (verde, naranja).
     movwf   LATB, A
     btfss   fila1			; Revisar si se presiona el boton 1.
-    goto    BOTON_1
+    call    BOTON_1
     btfss   fila2			; Revisar si se presiona el boton naranja.
-    goto    BOTON_NARANJA
+    call    BOTON_NARANJA
     movlw   b'11110111'			; ACTIVAR COLUMNA 2 (blanco, azul).
     movwf   LATB, A
     btfss   fila1			; Revisar si se presiona el boton blanco.
-    goto    BOTON_BLANCO
+    call    BOTON_BLANCO
     btfss   fila2			; Revisar si se presiona el boton azul.
-    goto    BOTON_AZUL
+    call    BOTON_AZUL
     movlw   b'11101111'			; ACTIVAR COLUMNA 3 (rojo, amarillo).
     movwf   LATB, A
     btfss   fila1			; Revisar si se presiona el boton 2.
-    goto    BOTON_2
+    call    BOTON_2
     btfss   PORTB, 1, A			; Revisar si se presiona el boton amarillo.
-    goto    BOTON_AMARILLO
-    goto    RECORRIDO			; Si no se presiona nada, seguir en espera.
+    call    BOTON_AMARILLO
+    return
     
 BOTON_1
     btfss   fila1			; Revisar si sigue presionado el boton.
@@ -79,6 +87,7 @@ BOTON_NARANJA
     clrf    boton_presionado		; Limpiar el registro.
     bsf	    bit_led_naranja		; Encender el bit representativo del LED naranja.
     call    DELAY_20ms			; Antirebote.
+    call    REVISAR_BOTON
     return
 BOTON_BLANCO
     bsf	    led_blanco			; Prender el LED.
@@ -88,6 +97,7 @@ BOTON_BLANCO
     clrf    boton_presionado		; Limpiar el registro.
     bsf	    bit_led_blanco		; Encender el bit representativo del LED blanco.
     call    DELAY_20ms			; Antirebote.
+    call    REVISAR_BOTON
     return
 BOTON_AZUL
     bsf	    led_azul			; Prender el LED.
@@ -97,6 +107,7 @@ BOTON_AZUL
     clrf    boton_presionado		; Limpiar el registro.
     bsf	    bit_led_azul		; Encender el bit representativo del LED azul.
     call    DELAY_20ms			; Antirebote.
+    call    REVISAR_BOTON
     return
 BOTON_2
     btfss   fila1			; Revisar si sigue presionado el boton.
@@ -111,20 +122,66 @@ BOTON_AMARILLO
     clrf    boton_presionado		; Limpiar el registro.
     bsf	    bit_led_amarillo		; Encender el bit representativo del LED amarillo.
     call    DELAY_20ms			; Antirebote.
+    call    REVISAR_BOTON
     return
+
+onGreen
+    BSF led_rojo
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    BCF led_rojo
+    return
+ 
+onRed
+    BSF led_verde
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    CALL delay100ms
+    BCF led_verde
+    return
+
     
 REVISAR_BOTON
+    ; clrf  boton_esperado		; Limpiar el registro.
+    ; bsf   boton_esperado, 0, A	; Esperamos que se presione el boton del LED azul.
+    ; Estas dos lineas fueron pruebas para la simulacion.
     movf    boton_esperado, W, A	; Se resta boton_esperado - boton_presionado.
     subwf   boton_presionado, W, A	; Si son iguales, la resta debe dar 0.
     movf    WREG, W, A			; Se activa STATUS para WREG.
     btfsc   STATUS, Z, A		; Se revisa el bit de CERO en STATUS.
     goto    BOTON_INCORRECTO		; Si no da 0, no era el boton correcto.
 BOTON_CORRECTO				; De lo contrario, es el boton correcto.
-    call    PENDIENTE
+    call    onGreen 
     return
 BOTON_INCORRECTO
-    call    PENDIENTE2
+    call    onRed 
     return
+    
+delay100us
+    movlw   .33
+    movwf   var1
+loop1				
+    decfsz  var1 
+    goto    loop1    
+    return ; 100us approx.
+
+delay100ms
+    movlw   .0		
+    movwf   var1
+    movlw   .128
+    movwf   var2
+loop2				
+    decfsz  var1
+    goto    loop2
+    decfsz  var2
+    goto    loop2
+    return      ; 100ms approx.
+    
     
 DELAY_20ms
     movlw   .0			

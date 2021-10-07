@@ -36,6 +36,7 @@ START
     call    INSTRUCTION_WRITE
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
+INFINITE    goto    INFINITE	; Infinite loop.    
 WRITING
     movlw   0x45		; Move cursor to 0x45.
     bsf	    WREG, 7, A		
@@ -45,7 +46,7 @@ WRITING
     movlw   '4'			; Write a '4'.
     call    DATA_WRITE
     
-INFINITE    goto    INFINITE	; Infinite loop.
+
     
 INSTRUCTION_WRITE
     bcf	    RS			; RS -> 0

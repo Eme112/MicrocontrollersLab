@@ -1,0 +1,76 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Thu Oct 07 01:38:38 2021
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000002
+                   .org_2       code   0x000018    program   0x000002
+                   .org_3       code   0x000030    program   0x00014c
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000005      
+                            0x000008    0x000009      
+                            0x000018    0x000019      
+                            0x000030    0x00017b      
+            342 out of 33048 program addresses used, program memory utilization is 1%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                  BOTON_1   0x00007c    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                  BOTON_2   0x0000d0    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+           BOTON_AMARILLO   0x0000dc    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               BOTON_AZUL   0x0000b8    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+             BOTON_BLANCO   0x0000a0    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+           BOTON_CORRECTO   0x000138    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+         BOTON_INCORRECTO   0x00013e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+            BOTON_NARANJA   0x000088    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               DELAY_20ms   0x000166    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                     LOOP   0x000042    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    LOOP1   0x00016e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                RECORRIDO   0x00004a    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+            REVISAR_BOTON   0x000128    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               delay100ms   0x000150    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               delay100us   0x000144    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    loop1   0x000148    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    loop2   0x000158    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                  onGreen   0x0000f4    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    onRed   0x00010e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                CONFIGURA   0x000030    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                     LOOP   0x000042    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                RECORRIDO   0x00004a    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                  BOTON_1   0x00007c    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+            BOTON_NARANJA   0x000088    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+             BOTON_BLANCO   0x0000a0    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               BOTON_AZUL   0x0000b8    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                  BOTON_2   0x0000d0    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+           BOTON_AMARILLO   0x0000dc    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                  onGreen   0x0000f4    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    onRed   0x00010e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+            REVISAR_BOTON   0x000128    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+           BOTON_CORRECTO   0x000138    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+         BOTON_INCORRECTO   0x00013e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               delay100us   0x000144    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    loop1   0x000148    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               delay100ms   0x000150    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    loop2   0x000158    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+               DELAY_20ms   0x000166    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+                    LOOP1   0x00016e    program     static C:\MicrochipProjects\SubrutinasProyecto2.X\EncenderLEDsRojoVerde.asm
+
+

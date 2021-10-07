@@ -1,4 +1,4 @@
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  1
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -52,87 +52,88 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000054 EC?? F???      00036     call    INSTRUCTION_WRITE
 000058 0E01           00037     movlw   b'00000001'         ; Clear display and return to home position.
 00005A EC?? F???      00038     call    INSTRUCTION_WRITE
-00005E                00039 WRITING
-00005E 0E45           00040     movlw   0x45                ; Move cursor to 0x45.
-000060 8EE8           00041     bsf     WREG, 7, A          
-000062 EC?? F???      00042     call    INSTRUCTION_WRITE
-000066 0E63           00043     movlw   'c'                 ; Write a 'c'.
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  2
+00005E EF?? F???      00039 INFINITE    goto    INFINITE    ; Infinite loop.    
+000062                00040 WRITING
+000062 0E45           00041     movlw   0x45                ; Move cursor to 0x45.
+000064 8EE8           00042     bsf     WREG, 7, A          
+000066 EC?? F???      00043     call    INSTRUCTION_WRITE
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000068 EC?? F???      00044     call    DATA_WRITE
-00006C 0E34           00045     movlw   '4'                 ; Write a '4'.
-00006E EC?? F???      00046     call    DATA_WRITE
-                      00047     
-000072 EF?? F???      00048 INFINITE    goto    INFINITE    ; Infinite loop.
-                      00049     
-000076                00050 INSTRUCTION_WRITE
-000076 908A           00051     bcf     RS                  ; RS -> 0
-000078 948A           00052     bcf     RW                  ; RW -> 0
-00007A EF?? F???      00053     goto    SEND_DATA
-00007E                00054 DATA_WRITE
-00007E 808A           00055     bsf     RS                  ; RS -> 1
-000080 948A           00056     bcf     RW                  ; RW -> 0
-000082 EF?? F???      00057     goto    SEND_DATA
-000086                00058 DATA_READ
-000086 808A           00059     bsf     RS                  ; RS -> 1
-000088 848A           00060     bsf     RW                  ; RW -> 1
-00008A EF?? F???      00061     goto    SEND_DATA
-00008E                00062 SEND_DATA
-00008E 828A           00063     bsf     E                   ; Enable.
-000090 6E8C           00064     movwf   dataLCD             ; Data transmission.
-000092 0000           00065     nop                         ; Wait 1us to make sure the instruction was recieved.
-000094 928A           00066     bcf     E                   ; Stop Enable.
-000096 6A8C           00067     clrf    dataLCD
-000098 EC?? F???      00068     call    ESPERA_LCD          ; Wait to see if LCD is done.
-00009C 0012           00069     return
-                      00070     
-00009E                00071 ESPERA_LCD
-00009E 8E95           00072     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
-0000A0 908A           00073     bcf     RS                  ; RS -> 0
-0000A2 848A           00074     bsf     RW                  ; RW -> 1
-0000A4 828A           00075     bsf     E                   ; E -> 1
-0000A6 0000           00076     nop
-0000A8                00077 REGRESA
-0000A8 EC?? F???      00078     call    delay100us          ; Wait 100us.
-0000AC BE83           00079     btfsc   flag                ; Read bussy flag.
-0000AE EF?? F???      00080     goto    REGRESA             ; If set, keep waiting.
-0000B2 928A           00081     bcf     E
-0000B4 9E95           00082     bcf     configFlag          ; RD7 -> OUTPUT again.
-0000B6 0012           00083     return                      ; If not set, return.
-                      00084     
-0000B8                00085 delay100us
-0000B8 0E21           00086     movlw   .33
-0000BA 6E10           00087     movwf   var1
-0000BC                00088 loop1                           
-0000BC 2E10           00089     decfsz  var1
-0000BE EF?? F???      00090     goto    loop1
-                      00091     ; 100us approx.
-0000C2 0012           00092     return
-                      00093 
-0000C4                00094 delay100ms
-0000C4 0E00           00095     movlw   .0                  ; 256
-0000C6 6E10           00096     movwf   var1
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  3
+00006A 0E63           00044     movlw   'c'                 ; Write a 'c'.
+00006C EC?? F???      00045     call    DATA_WRITE
+000070 0E34           00046     movlw   '4'                 ; Write a '4'.
+000072 EC?? F???      00047     call    DATA_WRITE
+                      00048     
+                      00049 
+                      00050     
+000076                00051 INSTRUCTION_WRITE
+000076 908A           00052     bcf     RS                  ; RS -> 0
+000078 948A           00053     bcf     RW                  ; RW -> 0
+00007A EF?? F???      00054     goto    SEND_DATA
+00007E                00055 DATA_WRITE
+00007E 808A           00056     bsf     RS                  ; RS -> 1
+000080 948A           00057     bcf     RW                  ; RW -> 0
+000082 EF?? F???      00058     goto    SEND_DATA
+000086                00059 DATA_READ
+000086 808A           00060     bsf     RS                  ; RS -> 1
+000088 848A           00061     bsf     RW                  ; RW -> 1
+00008A EF?? F???      00062     goto    SEND_DATA
+00008E                00063 SEND_DATA
+00008E 828A           00064     bsf     E                   ; Enable.
+000090 6E8C           00065     movwf   dataLCD             ; Data transmission.
+000092 0000           00066     nop                         ; Wait 1us to make sure the instruction was recieved.
+000094 928A           00067     bcf     E                   ; Stop Enable.
+000096 6A8C           00068     clrf    dataLCD
+000098 EC?? F???      00069     call    ESPERA_LCD          ; Wait to see if LCD is done.
+00009C 0012           00070     return
+                      00071     
+00009E                00072 ESPERA_LCD
+00009E 8E95           00073     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+0000A0 908A           00074     bcf     RS                  ; RS -> 0
+0000A2 848A           00075     bsf     RW                  ; RW -> 1
+0000A4 828A           00076     bsf     E                   ; E -> 1
+0000A6 0000           00077     nop
+0000A8                00078 REGRESA
+0000A8 EC?? F???      00079     call    delay100us          ; Wait 100us.
+0000AC BE83           00080     btfsc   flag                ; Read bussy flag.
+0000AE EF?? F???      00081     goto    REGRESA             ; If set, keep waiting.
+0000B2 928A           00082     bcf     E
+0000B4 9E95           00083     bcf     configFlag          ; RD7 -> OUTPUT again.
+0000B6 0012           00084     return                      ; If not set, return.
+                      00085     
+0000B8                00086 delay100us
+0000B8 0E21           00087     movlw   .33
+0000BA 6E10           00088     movwf   var1
+0000BC                00089 loop1                           
+0000BC 2E10           00090     decfsz  var1
+0000BE EF?? F???      00091     goto    loop1
+                      00092     ; 100us approx.
+0000C2 0012           00093     return
+                      00094 
+0000C4                00095 delay100ms
+0000C4 0E00           00096     movlw   .0                  ; 256
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0000C8 0E80           00097     movlw   .128
-0000CA 6E11           00098     movwf   var2
-0000CC                00099 loop2                           
-0000CC 2E10           00100     decfsz  var1
-0000CE EF?? F???      00101     goto    loop2
-0000D2 2E11           00102     decfsz  var2
-0000D4 EF?? F???      00103     goto    loop2
-                      00104     ; 100ms approx.
-0000D8 0012           00105     return
-                      00106         end
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  4
+0000C6 6E10           00097     movwf   var1
+0000C8 0E80           00098     movlw   .128
+0000CA 6E11           00099     movwf   var2
+0000CC                00100 loop2                           
+0000CC 2E10           00101     decfsz  var1
+0000CE EF?? F???      00102     goto    loop2
+0000D2 2E11           00103     decfsz  var2
+0000D4 EF?? F???      00104     goto    loop2
+                      00105     ; 100ms approx.
+0000D8 0012           00106     return
+                      00107         end
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  4
 
 
 SYMBOL TABLE
@@ -191,7 +192,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  5
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  5
 
 
 SYMBOL TABLE
@@ -250,7 +251,7 @@ BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  6
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  6
 
 
 SYMBOL TABLE
@@ -309,7 +310,7 @@ CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  7
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  7
 
 
 SYMBOL TABLE
@@ -368,7 +369,7 @@ CPOL                              00000004
 CRC16EE                           00000002
 CRC16EF                           00000002
 CRC5EE                            00000001
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  8
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  8
 
 
 SYMBOL TABLE
@@ -427,7 +428,7 @@ ECCP1AS1                          00000005
 ECCP1AS2                          00000006
 ECCP1ASE                          00000007
 ECCP1CON                          00000FBD
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE  9
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE  9
 
 
 SYMBOL TABLE
@@ -486,7 +487,7 @@ FSR1                              00000001
 FSR1H                             00000FE2
 FSR1L                             00000FE1
 FSR2                              00000002
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 10
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 10
 
 
 SYMBOL TABLE
@@ -524,7 +525,7 @@ IDLEN                             00000007
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
-INFINITE                          00000072
+INFINITE                          0000005E
 INSTRUCTION_WRITE                 00000076
 INT0                              00000000
 INT0E                             00000004
@@ -545,7 +546,7 @@ INT2IE                            00000004
 INT2IF                            00000001
 INT2IP                            00000007
 INT2P                             00000007
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 11
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 11
 
 
 SYMBOL TABLE
@@ -604,7 +605,7 @@ LATB0                             00000000
 LATB1                             00000001
 LATB2                             00000002
 LATB3                             00000003
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 12
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 12
 
 
 SYMBOL TABLE
@@ -663,7 +664,7 @@ OESPP                             00000002
 ON                                00000007
 OSC2                              00000006
 OSCCON                            00000FD3
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 13
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 13
 
 
 SYMBOL TABLE
@@ -722,7 +723,7 @@ PORTB                             00000F81
 PORTC                             00000F82
 PORTD                             00000F83
 PORTE                             00000F84
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 14
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 14
 
 
 SYMBOL TABLE
@@ -781,7 +782,7 @@ RBPU                              00000007
 RC0                               00000000
 RC1                               00000001
 RC1IE                             00000005
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 15
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 15
 
 
 SYMBOL TABLE
@@ -840,7 +841,7 @@ SCS1                              00000001
 SDAHT                             00000003
 SE0                               00000005
 SEN                               00000000
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 16
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 16
 
 
 SYMBOL TABLE
@@ -899,7 +900,7 @@ SRSC1E                            00000004
 SRSC2E                            00000005
 SRSCKE                            00000006
 SRSPE                             00000007
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 17
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 17
 
 
 SYMBOL TABLE
@@ -958,7 +959,7 @@ STEN                              00000007
 STIE                              00000007
 STIF                              00000007
 STIP                              00000007
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 18
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 18
 
 
 SYMBOL TABLE
@@ -1017,7 +1018,7 @@ T1OSCEN                           00000003
 T1OSI                             00000001
 T1OSO                             00000000
 T1RD16                            00000001
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 19
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 19
 
 
 SYMBOL TABLE
@@ -1076,7 +1077,7 @@ TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
 TMR1MD                            00000000
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 20
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 20
 
 
 SYMBOL TABLE
@@ -1135,7 +1136,7 @@ TRISC2                            00000002
 TRISC4                            00000004
 TRISC5                            00000005
 TRISC6                            00000006
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 21
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 21
 
 
 SYMBOL TABLE
@@ -1194,7 +1195,7 @@ UEP0                              00000F6A
 UEP1                              00000F6B
 UEP10                             00000F74
 UEP11                             00000F75
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 22
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 22
 
 
 SYMBOL TABLE
@@ -1253,7 +1254,7 @@ WPUB7                             00000007
 WPUE3                             00000007
 WR                                00000001
 WREG                              00000FE8
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 23
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 23
 
 
 SYMBOL TABLE
@@ -1261,7 +1262,7 @@ SYMBOL TABLE
 
 WREN                              00000002
 WRERR                             00000003
-WRITING                           0000005E
+WRITING                           00000062
 WUE                               00000001
 Z                                 00000002
 _BOREN_NOSLP_2L                   000000FD
@@ -1312,7 +1313,7 @@ _EBTR0_OFF_7L                     000000FF
 _EBTR0_ON_7L                      000000FE
 _EBTR1_OFF_7L                     000000FF
 _EBTR1_ON_7L                      000000FD
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 24
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 24
 
 
 SYMBOL TABLE
@@ -1371,7 +1372,7 @@ _STVREN_ON_4L                     000000FF
 _T3CMX_RB5_3H                     000000EF
 _T3CMX_RC0_3H                     000000FF
 _WDTEN_NOSLP_2H                   000000FD
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 25
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 25
 
 
 SYMBOL TABLE
@@ -1428,7 +1429,7 @@ var1                              00000010
 var2                              00000011
 var3                              00000012
 
-MPASM 5.87                           LCD.ASM   9-28-2021  17:14:40         PAGE 26
+MPASM 5.87                           LCD.ASM   10-6-2021  21:02:29         PAGE 26
 
 
 

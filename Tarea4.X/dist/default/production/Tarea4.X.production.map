@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Tue Sep 28 17:14:40 2021
+Linker Map File - Created Wed Oct 06 21:02:30 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -32,13 +32,13 @@ Linker Map File - Created Tue Sep 28 17:14:40 2021
                 DATA_READ   0x000086    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                DATA_WRITE   0x00007e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                ESPERA_LCD   0x00009e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
-                 INFINITE   0x000072    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
+                 INFINITE   0x00005e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
         INSTRUCTION_WRITE   0x000076    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                     PORTS   0x000030    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                   REGRESA   0x0000a8    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                 SEND_DATA   0x00008e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                     START   0x000040    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
-                  WRITING   0x00005e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
+                  WRITING   0x000062    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                delay100ms   0x0000c4    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                delay100us   0x0000b8    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                     loop1   0x0000bc    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
@@ -52,8 +52,8 @@ Linker Map File - Created Tue Sep 28 17:14:40 2021
                 CONFIGURE   0x000030    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                     PORTS   0x000030    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                     START   0x000040    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
-                  WRITING   0x00005e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
-                 INFINITE   0x000072    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
+                 INFINITE   0x00005e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
+                  WRITING   0x000062    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
         INSTRUCTION_WRITE   0x000076    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                DATA_WRITE   0x00007e    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm
                 DATA_READ   0x000086    program     static C:\MicrochipProjects\Tarea4.X\LCD.asm

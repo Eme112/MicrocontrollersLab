@@ -1,4 +1,4 @@
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  1
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -29,148 +29,203 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000021            00013 boton_esperado      EQU 0x21
                       00014     
                       00015 ; DEFINICION DE VARIABLES PARA DELAY.
-  00000025            00016 _256    EQU 0x25
-  00000026            00017 _26     EQU 0x26
-                      00018 
-                      00019 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
-                      00020     #define led_azul            LATA, 0, A
-                      00021     #define led_amarillo        LATA, 1, A
-                      00022     #define led_naranja         LATA, 2, A
-                      00023     #define led_blanco          LATA, 3, A
-                      00024     #define led_rojo            LATA, 4, A
-                      00025     #define led_verde           LATA, 5, A
-                      00026     #define fila1               PORTB, 0, A
-                      00027     #define fila2               PORTB, 1, A
-                      00028     #define bit_led_azul        boton_presionado, 0, A
-                      00029     #define bit_led_amarillo    boton_presionado, 1, A
-                      00030     #define bit_led_naranja     boton_presionado, 2, A
-                      00031     #define bit_led_blanco      boton_presionado, 3, A
-                      00032  
-000030                00033 CONFIGURA
-000030 010F           00034     movlb   .15
-000032 6B5B           00035     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
-000034 6B5C           00036     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
-000036 9EF1           00037     bcf     INTCON2, 7                          ; ENABLE pull-ups.
-000038 0E03           00038     movlw   B'00000011'                 
-00003A 6E93           00039     movwf   TRISB                               ; 3 salidas, 2 entradas.
-00003C 6E85           00040     movwf   WPUB                                ; habilitar 2 pull ups.
-00003E 6A92           00041     clrf    TRISA                               ; REGA -> OUTPUT.
-000040 6A89           00042     clrf    LATA                                ; Limpiar la salida A.
-                      00043     
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  2
+  00000011            00016 var1    EQU 0x11
+  00000012            00017 var2    EQU 0x12
+  00000025            00018 _256    EQU 0x25
+  00000026            00019 _26     EQU 0x26
+                      00020 
+                      00021 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
+                      00022     #define led_azul            LATA, 0, A
+                      00023     #define led_amarillo        LATA, 1, A
+                      00024     #define led_naranja         LATA, 2, A
+                      00025     #define led_blanco          LATA, 3, A
+                      00026     #define led_rojo            LATA, 4, A
+                      00027     #define led_verde           LATA, 5, A
+                      00028     #define fila1               PORTB, 0, A
+                      00029     #define fila2               PORTB, 1, A
+                      00030     #define bit_led_azul        boton_presionado, 0, A
+                      00031     #define bit_led_amarillo    boton_presionado, 1, A
+                      00032     #define bit_led_naranja     boton_presionado, 2, A
+                      00033     #define bit_led_blanco      boton_presionado, 3, A
+                      00034  
+000030                00035 CONFIGURA
+000030 010F           00036     movlb   .15
+000032 6B5B           00037     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
+000034 6B5C           00038     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
+000036 9EF1           00039     bcf     INTCON2, 7                          ; ENABLE pull-ups.
+000038 0E03           00040     movlw   B'00000011'                 
+00003A 6E93           00041     movwf   TRISB                               ; 3 salidas, 2 entradas.
+00003C 6E85           00042     movwf   WPUB                                ; habilitar 2 pull ups.
+00003E 6A92           00043     clrf    TRISA                               ; REGA -> OUTPUT.
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000042                00044 LOOP
-000042 EC?? F???      00045     call    RECORRIDO
-000046 EF?? F???      00046     goto    LOOP
-                      00047     
-00004A                00048 RECORRIDO
-00004A 0EFB           00049     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
-00004C 6E8A           00050     movwf   LATB, A
-00004E A081           00051     btfss   fila1                       ; Revisar si se presiona el boton 1.
-000050 EF?? F???      00052     goto    BOTON_1
-000054 A281           00053     btfss   fila2                       ; Revisar si se presiona el boton naranja.
-000056 EF?? F???      00054     goto    BOTON_NARANJA
-00005A 0EF7           00055     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
-00005C 6E8A           00056     movwf   LATB, A
-00005E A081           00057     btfss   fila1                       ; Revisar si se presiona el boton blanco.
-000060 EF?? F???      00058     goto    BOTON_BLANCO
-000064 A281           00059     btfss   fila2                       ; Revisar si se presiona el boton azul.
-000066 EF?? F???      00060     goto    BOTON_AZUL
-00006A 0EEF           00061     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
-00006C 6E8A           00062     movwf   LATB, A
-00006E A081           00063     btfss   fila1                       ; Revisar si se presiona el boton 2.
-000070 EF?? F???      00064     goto    BOTON_2
-000074 A281           00065     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
-000076 EF?? F???      00066     goto    BOTON_AMARILLO
-00007A EF?? F???      00067     goto    RECORRIDO                   ; Si no se presiona nada, seguir en espera.
-                      00068     
-00007E                00069 BOTON_1
-00007E A081           00070     btfss   fila1                       ; Revisar si sigue presionado el boton.
-000080 EF?? F???      00071     goto    BOTON_1                     ; Si aun no se suleta, esperar.
-000084 EC?? F???      00072     call    DELAY_20ms                  ; Antirebote.
-000088 0012           00073     return
-00008A                00074 BOTON_NARANJA
-00008A 8489           00075     bsf     led_naranja                 ; Prender el LED.
-00008C A281           00076     btfss   fila2                       ; Revisar si sigue presionado el boton.
-00008E EF?? F???      00077     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
-000092 9489           00078     bcf     led_naranja                 ; Apagar el LED.
-000094 6A20           00079     clrf    boton_presionado            ; Limpiar el registro.
-000096 8420           00080     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
-000098 EC?? F???      00081     call    DELAY_20ms                  ; Antirebote.
-00009C 0012           00082     return
-00009E                00083 BOTON_BLANCO
-00009E 8689           00084     bsf     led_blanco                  ; Prender el LED.
-0000A0 A081           00085     btfss   fila1                       ; Revisar si sigue presionado el boton.
-0000A2 EF?? F???      00086     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
-0000A6 9689           00087     bcf     led_blanco                  ; Apagar el LED.
-0000A8 6A20           00088     clrf    boton_presionado            ; Limpiar el registro.
-0000AA 8620           00089     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
-0000AC EC?? F???      00090     call    DELAY_20ms                  ; Antirebote.
-0000B0 0012           00091     return
-0000B2                00092 BOTON_AZUL
-0000B2 8089           00093     bsf     led_azul                    ; Prender el LED.
-0000B4 A281           00094     btfss   fila2                       ; Revisar si sigue presionado el boton.
-0000B6 EF?? F???      00095     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
-0000BA 9089           00096     bcf     led_azul                    ; Apagar el LED.
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  3
+000040 6A89           00044     clrf    LATA                                ; Limpiar la salida A.
+                      00045     
+000042                00046 LOOP
+000042 EC?? F???      00047     call    RECORRIDO
+000046 EF?? F???      00048     goto    LOOP
+                      00049     
+00004A                00050 RECORRIDO
+00004A 0EFB           00051     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+00004C 6E8A           00052     movwf   LATB, A
+00004E A081           00053     btfss   fila1                       ; Revisar si se presiona el boton 1.
+000050 EC?? F???      00054     call    BOTON_1
+000054 A281           00055     btfss   fila2                       ; Revisar si se presiona el boton naranja.
+000056 EC?? F???      00056     call    BOTON_NARANJA
+00005A 0EF7           00057     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
+00005C 6E8A           00058     movwf   LATB, A
+00005E A081           00059     btfss   fila1                       ; Revisar si se presiona el boton blanco.
+000060 EC?? F???      00060     call    BOTON_BLANCO
+000064 A281           00061     btfss   fila2                       ; Revisar si se presiona el boton azul.
+000066 EC?? F???      00062     call    BOTON_AZUL
+00006A 0EEF           00063     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
+00006C 6E8A           00064     movwf   LATB, A
+00006E A081           00065     btfss   fila1                       ; Revisar si se presiona el boton 2.
+000070 EC?? F???      00066     call    BOTON_2
+000074 A281           00067     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
+000076 EC?? F???      00068     call    BOTON_AMARILLO
+00007A 0012           00069     return
+                      00070     
+00007C                00071 BOTON_1
+00007C A081           00072     btfss   fila1                       ; Revisar si sigue presionado el boton.
+00007E EF?? F???      00073     goto    BOTON_1                     ; Si aun no se suleta, esperar.
+000082 EC?? F???      00074     call    DELAY_20ms                  ; Antirebote.
+000086 0012           00075     return
+000088                00076 BOTON_NARANJA
+000088 8489           00077     bsf     led_naranja                 ; Prender el LED.
+00008A A281           00078     btfss   fila2                       ; Revisar si sigue presionado el boton.
+00008C EF?? F???      00079     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
+000090 9489           00080     bcf     led_naranja                 ; Apagar el LED.
+000092 6A20           00081     clrf    boton_presionado            ; Limpiar el registro.
+000094 8420           00082     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
+000096 EC?? F???      00083     call    DELAY_20ms                  ; Antirebote.
+00009A EC?? F???      00084     call    REVISAR_BOTON
+00009E 0012           00085     return
+0000A0                00086 BOTON_BLANCO
+0000A0 8689           00087     bsf     led_blanco                  ; Prender el LED.
+0000A2 A081           00088     btfss   fila1                       ; Revisar si sigue presionado el boton.
+0000A4 EF?? F???      00089     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
+0000A8 9689           00090     bcf     led_blanco                  ; Apagar el LED.
+0000AA 6A20           00091     clrf    boton_presionado            ; Limpiar el registro.
+0000AC 8620           00092     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
+0000AE EC?? F???      00093     call    DELAY_20ms                  ; Antirebote.
+0000B2 EC?? F???      00094     call    REVISAR_BOTON
+0000B6 0012           00095     return
+0000B8                00096 BOTON_AZUL
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0000BC 6A20           00097     clrf    boton_presionado            ; Limpiar el registro.
-0000BE 8020           00098     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
-0000C0 EC?? F???      00099     call    DELAY_20ms                  ; Antirebote.
-0000C4 0012           00100     return
-0000C6                00101 BOTON_2
-0000C6 A081           00102     btfss   fila1                       ; Revisar si sigue presionado el boton.
-0000C8 EF?? F???      00103     goto    BOTON_2                     ; Si aun no se suleta, esperar.
-0000CC EC?? F???      00104     call    DELAY_20ms                  ; Antirebote.
-0000D0 0012           00105     return
-0000D2                00106 BOTON_AMARILLO
-0000D2 8289           00107     bsf     led_amarillo                ; Prender el LED.
-0000D4 A281           00108     btfss   fila2                       ; Revisar si sigue presionado el boton.
-0000D6 EF?? F???      00109     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
-0000DA 9289           00110     bcf     led_amarillo                ; Apagar el LED.
-0000DC 6A20           00111     clrf    boton_presionado            ; Limpiar el registro.
-0000DE 8220           00112     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
-0000E0 EC?? F???      00113     call    DELAY_20ms                  ; Antirebote.
-0000E4 0012           00114     return
-                      00115     
-0000E6                00116 REVISAR_BOTON
-0000E6 5021           00117     movf    boton_esperado, W, A        ; Se resta boton_esperado - boton_presionado.
-0000E8 5C20           00118     subwf   boton_presionado, W, A      ; Si son iguales, la resta debe dar 0.
-0000EA 50E8           00119     movf    WREG, W, A                  ; Se activa STATUS para WREG.
-0000EC B4D8           00120     btfsc   STATUS, Z, A                ; Se revisa el bit de CERO en STATUS.
-0000EE EF?? F???      00121     goto    BOTON_INCORRECTO            ; Si no da 0, no era el boton correcto.
-0000F2                00122 BOTON_CORRECTO                          ; De lo contrario, es el boton correcto.
-Error[113]  : Symbol not previously defined (PENDIENTE)
-0000F2 EC00 F000      00123     call    PENDIENTE
-0000F6 0012           00124     return
-0000F8                00125 BOTON_INCORRECTO
-Error[113]  : Symbol not previously defined (PENDIENTE2)
-0000F8 EC00 F000      00126     call    PENDIENTE2
-0000FC 0012           00127     return
-                      00128     
-0000FE                00129 DELAY_20ms
-0000FE 0E00           00130     movlw   .0                  
-000100 6E25           00131     movwf   _256
-000102 0E1A           00132     movlw   .26
-000104 6E26           00133     movwf   _26 
-000106                00134 LOOP1
-000106 2E25           00135     decfsz  _256
-000108 EF?? F???      00136     goto    LOOP1               ; (3)*256
-00010C 2E26           00137     decfsz  _26
-00010E EF?? F???      00138     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
-                      00139     ; 20046+4 = 20.05ms approx. 
-000112 0012           00140     return
-                      00141   
-                      00142   end
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  4
+0000B8 8089           00097     bsf     led_azul                    ; Prender el LED.
+0000BA A281           00098     btfss   fila2                       ; Revisar si sigue presionado el boton.
+0000BC EF?? F???      00099     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
+0000C0 9089           00100     bcf     led_azul                    ; Apagar el LED.
+0000C2 6A20           00101     clrf    boton_presionado            ; Limpiar el registro.
+0000C4 8020           00102     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
+0000C6 EC?? F???      00103     call    DELAY_20ms                  ; Antirebote.
+0000CA EC?? F???      00104     call    REVISAR_BOTON
+0000CE 0012           00105     return
+0000D0                00106 BOTON_2
+0000D0 A081           00107     btfss   fila1                       ; Revisar si sigue presionado el boton.
+0000D2 EF?? F???      00108     goto    BOTON_2                     ; Si aun no se suleta, esperar.
+0000D6 EC?? F???      00109     call    DELAY_20ms                  ; Antirebote.
+0000DA 0012           00110     return
+0000DC                00111 BOTON_AMARILLO
+0000DC 8289           00112     bsf     led_amarillo                ; Prender el LED.
+0000DE A281           00113     btfss   fila2                       ; Revisar si sigue presionado el boton.
+0000E0 EF?? F???      00114     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
+0000E4 9289           00115     bcf     led_amarillo                ; Apagar el LED.
+0000E6 6A20           00116     clrf    boton_presionado            ; Limpiar el registro.
+0000E8 8220           00117     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
+0000EA EC?? F???      00118     call    DELAY_20ms                  ; Antirebote.
+0000EE EC?? F???      00119     call    REVISAR_BOTON
+0000F2 0012           00120     return
+                      00121 
+0000F4                00122 onGreen
+0000F4 8889           00123     BSF led_rojo
+0000F6 EC?? F???      00124     CALL delay100ms
+0000FA EC?? F???      00125     CALL delay100ms
+0000FE EC?? F???      00126     CALL delay100ms
+000102 EC?? F???      00127     CALL delay100ms
+000106 EC?? F???      00128     CALL delay100ms
+00010A 9889           00129     BCF led_rojo
+00010C 0012           00130     return
+                      00131  
+00010E                00132 onRed
+00010E 8A89           00133     BSF led_verde
+000110 EC?? F???      00134     CALL delay100ms
+000114 EC?? F???      00135     CALL delay100ms
+000118 EC?? F???      00136     CALL delay100ms
+00011C EC?? F???      00137     CALL delay100ms
+000120 EC?? F???      00138     CALL delay100ms
+000124 9A89           00139     BCF led_verde
+000126 0012           00140     return
+                      00141 
+                      00142     
+000128                00143 REVISAR_BOTON
+000128 6A21           00144     clrf    boton_esperado                      ; Limpiar el registro.
+00012A 8021           00145     bsf     boton_esperado, 0, A                ; Esperamos que se presione el boton del LED azul.
+                      00146     ; Estas dos lineas fueron pruebas para la simulacion.
+00012C 5021           00147     movf    boton_esperado, W, A        ; Se resta boton_esperado - boton_presionado.
+00012E 5C20           00148     subwf   boton_presionado, W, A      ; Si son iguales, la resta debe dar 0.
+000130 50E8           00149     movf    WREG, W, A                  ; Se activa STATUS para WREG.
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000132 B4D8           00150     btfsc   STATUS, Z, A                ; Se revisa el bit de CERO en STATUS.
+000134 EF?? F???      00151     goto    BOTON_INCORRECTO            ; Si no da 0, no era el boton correcto.
+000138                00152 BOTON_CORRECTO                          ; De lo contrario, es el boton correcto.
+000138 EC?? F???      00153     call    onGreen 
+00013C 0012           00154     return
+00013E                00155 BOTON_INCORRECTO
+00013E EC?? F???      00156     call    onRed 
+000142 0012           00157     return
+                      00158     
+000144                00159 delay100us
+000144 0E21           00160     movlw   .33
+000146 6E11           00161     movwf   var1
+000148                00162 loop1                           
+000148 2E11           00163     decfsz  var1 
+00014A EF?? F???      00164     goto    loop1    
+00014E 0012           00165     return ; 100us approx.
+                      00166 
+000150                00167 delay100ms
+000150 0E00           00168     movlw   .0          
+000152 6E11           00169     movwf   var1
+000154 0E80           00170     movlw   .128
+000156 6E12           00171     movwf   var2
+000158                00172 loop2                           
+000158 2E11           00173     decfsz  var1
+00015A EF?? F???      00174     goto    loop2
+00015E 2E12           00175     decfsz  var2
+000160 EF?? F???      00176     goto    loop2
+000164 0012           00177     return      ; 100ms approx.
+                      00178     
+                      00179     
+000166                00180 DELAY_20ms
+000166 0E00           00181     movlw   .0                  
+000168 6E25           00182     movwf   _256
+00016A 0E1A           00183     movlw   .26
+00016C 6E26           00184     movwf   _26 
+00016E                00185 LOOP1
+00016E 2E25           00186     decfsz  _256
+000170 EF?? F???      00187     goto    LOOP1               ; (3)*256
+000174 2E26           00188     decfsz  _26
+000176 EF?? F???      00189     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00190     ; 20046+4 = 20.05ms approx. 
+00017A 0012           00191     return
+                      00192   
+                      00193   end
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  5
 
 
 SYMBOL TABLE
@@ -229,7 +284,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  5
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  6
 
 
 SYMBOL TABLE
@@ -280,15 +335,15 @@ BF                                00000000
 BGVST                             00000006
 BOEN                              00000004
 BOR                               00000000
-BOTON_1                           0000007E
-BOTON_2                           000000C6
-BOTON_AMARILLO                    000000D2
-BOTON_AZUL                        000000B2
-BOTON_BLANCO                      0000009E
-BOTON_CORRECTO                    000000F2
-BOTON_INCORRECTO                  000000F8
-BOTON_NARANJA                     0000008A
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  6
+BOTON_1                           0000007C
+BOTON_2                           000000D0
+BOTON_AMARILLO                    000000DC
+BOTON_AZUL                        000000B8
+BOTON_BLANCO                      000000A0
+BOTON_CORRECTO                    00000138
+BOTON_INCORRECTO                  0000013E
+BOTON_NARANJA                     00000088
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  7
 
 
 SYMBOL TABLE
@@ -347,7 +402,7 @@ C2R                               00000002
 C2RSEL                            00000004
 C2SP                              00000003
 C2SYNC                            00000000
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  7
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  8
 
 
 SYMBOL TABLE
@@ -406,7 +461,7 @@ CM2IP                             00000005
 CMP1MD                            00000003
 CMP2MD                            00000004
 COE                               00000005
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  8
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE  9
 
 
 SYMBOL TABLE
@@ -457,7 +512,7 @@ DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
-DELAY_20ms                        000000FE
+DELAY_20ms                        00000166
 DFN8EE                            00000003
 DFN8EF                            00000003
 DHEN                              00000000
@@ -465,7 +520,7 @@ DIR                               00000002
 DONE                              00000001
 DTRXP                             00000005
 D_NOT_A                           00000005
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  9
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 10
 
 
 SYMBOL TABLE
@@ -524,7 +579,7 @@ FRM9                              00000001
 FSEN                              00000002
 FSR0                              00000000
 FSR0H                             00000FEA
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 10
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 11
 
 
 SYMBOL TABLE
@@ -583,7 +638,7 @@ INT2                              00000002
 INT2E                             00000004
 INT2F                             00000001
 INT2IE                            00000004
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 11
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 12
 
 
 SYMBOL TABLE
@@ -642,7 +697,7 @@ LATA6                             00000006
 LATA7                             00000007
 LATB                              00000F8A
 LATB0                             00000000
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 12
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 13
 
 
 SYMBOL TABLE
@@ -678,7 +733,7 @@ LATE1                             00000001
 LATE2                             00000002
 LFIOFS                            00000000
 LOOP                              00000042
-LOOP1                             00000106
+LOOP1                             0000016E
 LVDIE                             00000002
 LVDIF                             00000002
 LVDIN                             00000005
@@ -701,7 +756,7 @@ NOT_T3SYNC                        00000002
 NOT_TO                            00000003
 NVCFG0                            00000000
 NVCFG1                            00000001
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 13
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 14
 
 
 SYMBOL TABLE
@@ -760,7 +815,7 @@ PLUSW2                            00000FDB
 PMD0                              00000F7E
 PMD1                              00000F7F
 POR                               00000001
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 14
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 15
 
 
 SYMBOL TABLE
@@ -819,7 +874,7 @@ RB4                               00000004
 RB5                               00000005
 RB6                               00000006
 RB7                               00000007
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 15
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 16
 
 
 SYMBOL TABLE
@@ -863,7 +918,7 @@ RE2                               00000002
 RE3                               00000003
 RECORRIDO                         0000004A
 RESUME                            00000002
-REVISAR_BOTON                     000000E6
+REVISAR_BOTON                     00000128
 RI                                00000004
 RSEN                              00000001
 RX                                00000007
@@ -878,7 +933,7 @@ SCIE                              00000005
 SCKP                              00000004
 SCS0                              00000000
 SCS1                              00000001
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 16
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 17
 
 
 SYMBOL TABLE
@@ -937,7 +992,7 @@ SRRCKE                            00000002
 SRRPE                             00000003
 SRSC1E                            00000004
 SRSC2E                            00000005
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 17
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 18
 
 
 SYMBOL TABLE
@@ -996,7 +1051,7 @@ STCON                             00000FB5
 STEN                              00000007
 STIE                              00000007
 STIF                              00000007
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 18
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 19
 
 
 SYMBOL TABLE
@@ -1055,7 +1110,7 @@ T1GVAL                            00000002
 T1OSCEN                           00000003
 T1OSI                             00000001
 T1OSO                             00000000
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 19
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 20
 
 
 SYMBOL TABLE
@@ -1114,7 +1169,7 @@ TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 20
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 21
 
 
 SYMBOL TABLE
@@ -1173,7 +1228,7 @@ TRISC1                            00000001
 TRISC2                            00000002
 TRISC4                            00000004
 TRISC5                            00000005
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 21
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 22
 
 
 SYMBOL TABLE
@@ -1232,7 +1287,7 @@ UEIR                              00000F67
 UEP0                              00000F6A
 UEP1                              00000F6B
 UEP10                             00000F74
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 22
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 23
 
 
 SYMBOL TABLE
@@ -1291,7 +1346,7 @@ WPUB6                             00000006
 WPUB7                             00000007
 WPUE3                             00000007
 WR                                00000001
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 23
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 24
 
 
 SYMBOL TABLE
@@ -1350,7 +1405,7 @@ _DEVID1                           003FFFFE
 _DEVID2                           003FFFFF
 _EBTR0_OFF_7L                     000000FF
 _EBTR0_ON_7L                      000000FE
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 24
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 25
 
 
 SYMBOL TABLE
@@ -1409,7 +1464,7 @@ _SDOMX_RC7_3H                     000000BF
 _STVREN_OFF_4L                    000000FE
 _STVREN_ON_4L                     000000FF
 _T3CMX_RB5_3H                     000000EF
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 25
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 26
 
 
 SYMBOL TABLE
@@ -1463,22 +1518,30 @@ bit_led_blanco                    boton_presionado, 3, A
 bit_led_naranja                   boton_presionado, 2, A
 boton_esperado                    00000021
 boton_presionado                  00000020
+delay100ms                        00000150
+delay100us                        00000144
 fila1                             PORTB, 0, A
 fila2                             PORTB, 1, A
 led_amarillo                      LATA, 1, A
-led_azul                          LATA, 0, A
-led_blanco                        LATA, 3, A
-MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 26
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-7-2021  1:38:37         PAGE 27
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+led_azul                          LATA, 0, A
+led_blanco                        LATA, 3, A
 led_naranja                       LATA, 2, A
 led_rojo                          LATA, 4, A
 led_verde                         LATA, 5, A
+loop1                             00000148
+loop2                             00000158
+onGreen                           000000F4
+onRed                             0000010E
+var1                              00000011
+var2                              00000012
 
-Errors   :     2
+Errors   :     0
 Warnings :     0 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
