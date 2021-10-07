@@ -10,6 +10,7 @@
 
 ; DEFINICION DE REGISTROS VARIABLES.
 boton_presionado    EQU 0x20
+boton_esperado	    EQU 0x21
     
 ; DEFINICION DE VARIABLES PARA DELAY.
 _256	EQU 0x25
@@ -47,30 +48,27 @@ LOOP
 RECORRIDO
     movlw   b'11111011'			; ACTIVAR COLUMNA 1 (verde, naranja).
     movwf   LATB, A
-    btfss   fila1			; Revisar si se presiona el led verde.
-    goto    BOTON_VERDE
-    btfss   fila2			; Revisar si se presiona el led naranja.
+    btfss   fila1			; Revisar si se presiona el boton 1.
+    goto    BOTON_1
+    btfss   fila2			; Revisar si se presiona el boton naranja.
     goto    BOTON_NARANJA
     movlw   b'11110111'			; ACTIVAR COLUMNA 2 (blanco, azul).
     movwf   LATB, A
-    btfss   fila1			; Revisar si se presiona el led blanco.
+    btfss   fila1			; Revisar si se presiona el boton blanco.
     goto    BOTON_BLANCO
-    btfss   fila2			; Revisar si se presiona el led azul.
+    btfss   fila2			; Revisar si se presiona el boton azul.
     goto    BOTON_AZUL
     movlw   b'11101111'			; ACTIVAR COLUMNA 3 (rojo, amarillo).
     movwf   LATB, A
-    btfss   fila1			; Revisar si se presiona el led rojo.
-    goto    BOTON_ROJO
-    btfss   fila2			; Revisar si se presiona el led amarillo.
+    btfss   fila1			; Revisar si se presiona el boton 2.
+    goto    BOTON_2
+    btfss   PORTB, 1, A			; Revisar si se presiona el boton amarillo.
     goto    BOTON_AMARILLO
     goto    RECORRIDO			; Si no se presiona nada, seguir en espera.
     
-BOTON_VERDE
-    bsf	    led_verde			; Prender el LED.
+BOTON_1
     btfss   fila1			; Revisar si sigue presionado el boton.
-    goto    BOTON_VERDE			; Si aun no se suleta, esperar.
-    bcf	    led_verde			; Apagar el LED.
-    clrf    boton_presionado		; Limpiar el registro.
+    goto    BOTON_1			; Si aun no se suleta, esperar.
     call    DELAY_20ms			; Antirebote.
     return
 BOTON_NARANJA
@@ -100,12 +98,9 @@ BOTON_AZUL
     bsf	    bit_led_azul		; Encender el bit representativo del LED azul.
     call    DELAY_20ms			; Antirebote.
     return
-BOTON_ROJO
-    bsf	    led_rojo			; Prender el LED.
+BOTON_2
     btfss   fila1			; Revisar si sigue presionado el boton.
-    goto    BOTON_ROJO			; Si aun no se suleta, esperar.
-    bcf	    led_rojo			; Apagar el LED.
-    clrf    boton_presionado		; Limpiar el registro.
+    goto    BOTON_2			; Si aun no se suleta, esperar.
     call    DELAY_20ms			; Antirebote.
     return
 BOTON_AMARILLO
@@ -119,6 +114,17 @@ BOTON_AMARILLO
     return
     
 REVISAR_BOTON
+    movf    boton_esperado, W, A	; Se resta boton_esperado - boton_presionado.
+    subwf   boton_presionado, W, A	; Si son iguales, la resta debe dar 0.
+    movf    WREG, W, A			; Se activa STATUS para WREG.
+    btfsc   STATUS, Z, A		; Se revisa el bit de CERO en STATUS.
+    goto    BOTON_INCORRECTO		; Si no da 0, no era el boton correcto.
+BOTON_CORRECTO				; De lo contrario, es el boton correcto.
+    call    PENDIENTE
+    return
+BOTON_INCORRECTO
+    call    PENDIENTE2
+    return
     
 DELAY_20ms
     movlw   .0			

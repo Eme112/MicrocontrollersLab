@@ -1,10 +1,9 @@
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  1
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00001 #include "Configuracion.asm"
                       00001 #include "p18f45k50.inc"
                       00001         LIST
                       00002 
@@ -25,30 +24,153 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000018 0010           00008     retfie
                       00009     org 0x30            ; Origen real (opcional pero recomendado).
                       00010 
-                      00011 ; DEFINICIÓN DE REGISTROS VARIABLES.
-  00000000            00012 _255 EQU 0x00
-                      00013 
-                      00014  
-000030                00015 CONFIGURA
-000030 010F           00016     movlb   .15
-000032 6B5B           00017     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
-000034 6B5C           00018     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
-000036 9EF1           00019     bcf     INTCON2, 7                          ; ENABLE pull-ups.
-000038 0E38           00020     movlw   B'00111000'                 
-00003A 6E93           00021     movwf   TRISB                               ; 3 salidas, 3 entradas (una extra por si acaso).
-00003C 6E85           00022     movwf   WPUB                                ; habilitar 3 pull ups.
-00003E 6A92           00023     clrf    TRISA                               ; REGA -> OUTPUT.
-000040 6A89           00024     clrf    LATA                                ; Limpiar la salida A.
-000042 EF?? F???      00025     goto PRUEBA
-                      00002  
-000046                00003 PRUEBA
-000046 0000           00004     nop
-000048 0000           00005     nop
-00004A 0000           00006     nop
-00004C EF?? F???      00007     goto CONFIGURA
-                      00008 
-                      00009   end
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  2
+                      00011 ; DEFINICION DE REGISTROS VARIABLES.
+  00000020            00012 boton_presionado    EQU 0x20
+  00000021            00013 boton_esperado      EQU 0x21
+                      00014     
+                      00015 ; DEFINICION DE VARIABLES PARA DELAY.
+  00000025            00016 _256    EQU 0x25
+  00000026            00017 _26     EQU 0x26
+                      00018 
+                      00019 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
+                      00020     #define led_azul            LATA, 0, A
+                      00021     #define led_amarillo        LATA, 1, A
+                      00022     #define led_naranja         LATA, 2, A
+                      00023     #define led_blanco          LATA, 3, A
+                      00024     #define led_rojo            LATA, 4, A
+                      00025     #define led_verde           LATA, 5, A
+                      00026     #define fila1               PORTB, 0, A
+                      00027     #define fila2               PORTB, 1, A
+                      00028     #define bit_led_azul        boton_presionado, 0, A
+                      00029     #define bit_led_amarillo    boton_presionado, 1, A
+                      00030     #define bit_led_naranja     boton_presionado, 2, A
+                      00031     #define bit_led_blanco      boton_presionado, 3, A
+                      00032  
+000030                00033 CONFIGURA
+000030 010F           00034     movlb   .15
+000032 6B5B           00035     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
+000034 6B5C           00036     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
+000036 9EF1           00037     bcf     INTCON2, 7                          ; ENABLE pull-ups.
+000038 0E03           00038     movlw   B'00000011'                 
+00003A 6E93           00039     movwf   TRISB                               ; 3 salidas, 2 entradas.
+00003C 6E85           00040     movwf   WPUB                                ; habilitar 2 pull ups.
+00003E 6A92           00041     clrf    TRISA                               ; REGA -> OUTPUT.
+000040 6A89           00042     clrf    LATA                                ; Limpiar la salida A.
+                      00043     
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000042                00044 LOOP
+000042 EC?? F???      00045     call    RECORRIDO
+000046 EF?? F???      00046     goto    LOOP
+                      00047     
+00004A                00048 RECORRIDO
+00004A 0EFB           00049     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+00004C 6E8A           00050     movwf   LATB, A
+00004E A081           00051     btfss   fila1                       ; Revisar si se presiona el boton 1.
+000050 EF?? F???      00052     goto    BOTON_1
+000054 A281           00053     btfss   fila2                       ; Revisar si se presiona el boton naranja.
+000056 EF?? F???      00054     goto    BOTON_NARANJA
+00005A 0EF7           00055     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
+00005C 6E8A           00056     movwf   LATB, A
+00005E A081           00057     btfss   fila1                       ; Revisar si se presiona el boton blanco.
+000060 EF?? F???      00058     goto    BOTON_BLANCO
+000064 A281           00059     btfss   fila2                       ; Revisar si se presiona el boton azul.
+000066 EF?? F???      00060     goto    BOTON_AZUL
+00006A 0EEF           00061     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
+00006C 6E8A           00062     movwf   LATB, A
+00006E A081           00063     btfss   fila1                       ; Revisar si se presiona el boton 2.
+000070 EF?? F???      00064     goto    BOTON_2
+000074 A281           00065     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
+000076 EF?? F???      00066     goto    BOTON_AMARILLO
+00007A EF?? F???      00067     goto    RECORRIDO                   ; Si no se presiona nada, seguir en espera.
+                      00068     
+00007E                00069 BOTON_1
+00007E A081           00070     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000080 EF?? F???      00071     goto    BOTON_1                     ; Si aun no se suleta, esperar.
+000084 EC?? F???      00072     call    DELAY_20ms                  ; Antirebote.
+000088 0012           00073     return
+00008A                00074 BOTON_NARANJA
+00008A 8489           00075     bsf     led_naranja                 ; Prender el LED.
+00008C A281           00076     btfss   fila2                       ; Revisar si sigue presionado el boton.
+00008E EF?? F???      00077     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
+000092 9489           00078     bcf     led_naranja                 ; Apagar el LED.
+000094 6A20           00079     clrf    boton_presionado            ; Limpiar el registro.
+000096 8420           00080     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
+000098 EC?? F???      00081     call    DELAY_20ms                  ; Antirebote.
+00009C 0012           00082     return
+00009E                00083 BOTON_BLANCO
+00009E 8689           00084     bsf     led_blanco                  ; Prender el LED.
+0000A0 A081           00085     btfss   fila1                       ; Revisar si sigue presionado el boton.
+0000A2 EF?? F???      00086     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
+0000A6 9689           00087     bcf     led_blanco                  ; Apagar el LED.
+0000A8 6A20           00088     clrf    boton_presionado            ; Limpiar el registro.
+0000AA 8620           00089     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
+0000AC EC?? F???      00090     call    DELAY_20ms                  ; Antirebote.
+0000B0 0012           00091     return
+0000B2                00092 BOTON_AZUL
+0000B2 8089           00093     bsf     led_azul                    ; Prender el LED.
+0000B4 A281           00094     btfss   fila2                       ; Revisar si sigue presionado el boton.
+0000B6 EF?? F???      00095     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
+0000BA 9089           00096     bcf     led_azul                    ; Apagar el LED.
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000BC 6A20           00097     clrf    boton_presionado            ; Limpiar el registro.
+0000BE 8020           00098     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
+0000C0 EC?? F???      00099     call    DELAY_20ms                  ; Antirebote.
+0000C4 0012           00100     return
+0000C6                00101 BOTON_2
+0000C6 A081           00102     btfss   fila1                       ; Revisar si sigue presionado el boton.
+0000C8 EF?? F???      00103     goto    BOTON_2                     ; Si aun no se suleta, esperar.
+0000CC EC?? F???      00104     call    DELAY_20ms                  ; Antirebote.
+0000D0 0012           00105     return
+0000D2                00106 BOTON_AMARILLO
+0000D2 8289           00107     bsf     led_amarillo                ; Prender el LED.
+0000D4 A281           00108     btfss   fila2                       ; Revisar si sigue presionado el boton.
+0000D6 EF?? F???      00109     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
+0000DA 9289           00110     bcf     led_amarillo                ; Apagar el LED.
+0000DC 6A20           00111     clrf    boton_presionado            ; Limpiar el registro.
+0000DE 8220           00112     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
+0000E0 EC?? F???      00113     call    DELAY_20ms                  ; Antirebote.
+0000E4 0012           00114     return
+                      00115     
+0000E6                00116 REVISAR_BOTON
+0000E6 5021           00117     movf    boton_esperado, W, A        ; Se resta boton_esperado - boton_presionado.
+0000E8 5C20           00118     subwf   boton_presionado, W, A      ; Si son iguales, la resta debe dar 0.
+0000EA 50E8           00119     movf    WREG, W, A                  ; Se activa STATUS para WREG.
+0000EC B4D8           00120     btfsc   STATUS, Z, A                ; Se revisa el bit de CERO en STATUS.
+0000EE EF?? F???      00121     goto    BOTON_INCORRECTO            ; Si no da 0, no era el boton correcto.
+0000F2                00122 BOTON_CORRECTO                          ; De lo contrario, es el boton correcto.
+Error[113]  : Symbol not previously defined (PENDIENTE)
+0000F2 EC00 F000      00123     call    PENDIENTE
+0000F6 0012           00124     return
+0000F8                00125 BOTON_INCORRECTO
+Error[113]  : Symbol not previously defined (PENDIENTE2)
+0000F8 EC00 F000      00126     call    PENDIENTE2
+0000FC 0012           00127     return
+                      00128     
+0000FE                00129 DELAY_20ms
+0000FE 0E00           00130     movlw   .0                  
+000100 6E25           00131     movwf   _256
+000102 0E1A           00132     movlw   .26
+000104 6E26           00133     movwf   _26 
+000106                00134 LOOP1
+000106 2E25           00135     decfsz  _256
+000108 EF?? F???      00136     goto    LOOP1               ; (3)*256
+00010C 2E26           00137     decfsz  _26
+00010E EF?? F???      00138     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00139     ; 20046+4 = 20.05ms approx. 
+000112 0012           00140     return
+                      00141   
+                      00142   end
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  4
 
 
 SYMBOL TABLE
@@ -107,7 +229,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  3
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  5
 
 
 SYMBOL TABLE
@@ -158,6 +280,20 @@ BF                                00000000
 BGVST                             00000006
 BOEN                              00000004
 BOR                               00000000
+BOTON_1                           0000007E
+BOTON_2                           000000C6
+BOTON_AMARILLO                    000000D2
+BOTON_AZUL                        000000B2
+BOTON_BLANCO                      0000009E
+BOTON_CORRECTO                    000000F2
+BOTON_INCORRECTO                  000000F8
+BOTON_NARANJA                     0000008A
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 BRG0                              00000000
 BRG1                              00000001
 BRG10                             00000002
@@ -166,12 +302,6 @@ BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  4
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 BRG16                             00000003
 BRG2                              00000002
 BRG3                              00000003
@@ -217,6 +347,12 @@ C2R                               00000002
 C2RSEL                            00000004
 C2SP                              00000003
 C2SYNC                            00000000
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 C2TSEL                            00000003
 CCH0                              00000000
 CCH1                              00000001
@@ -225,12 +361,6 @@ CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  5
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 CCP1IP                            00000002
 CCP1M0                            00000000
 CCP1M1                            00000001
@@ -276,6 +406,12 @@ CM2IP                             00000005
 CMP1MD                            00000003
 CMP2MD                            00000004
 COE                               00000005
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 CON                               00000007
 CONFIGURA                         00000030
 COUT1                             00000006
@@ -284,12 +420,6 @@ CPOL                              00000004
 CRC16EE                           00000002
 CRC16EF                           00000002
 CRC5EE                            00000001
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  6
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 CRC5EF                            00000001
 CREF                              00000002
 CREN                              00000004
@@ -327,6 +457,7 @@ DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
+DELAY_20ms                        000000FE
 DFN8EE                            00000003
 DFN8EF                            00000003
 DHEN                              00000000
@@ -334,6 +465,12 @@ DIR                               00000002
 DONE                              00000001
 DTRXP                             00000005
 D_NOT_A                           00000005
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 ECCP1AS                           00000FB6
 ECCP1AS0                          00000004
 ECCP1AS1                          00000005
@@ -343,12 +480,6 @@ ECCP1CON                          00000FBD
 ECCP1DEL                          00000FB7
 ECCP2CON                          00000F97
 EDG1POL                           00000004
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  7
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 EDG1SEL0                          00000002
 EDG1SEL1                          00000003
 EDG1STAT                          00000000
@@ -393,6 +524,12 @@ FRM9                              00000001
 FSEN                              00000002
 FSR0                              00000000
 FSR0H                             00000FEA
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 FSR0L                             00000FE9
 FSR1                              00000001
 FSR1H                             00000FE2
@@ -402,12 +539,6 @@ FSR2H                             00000FDA
 FSR2L                             00000FD9
 FVREN                             00000007
 FVRS0                             00000004
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  8
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 FVRS1                             00000005
 FVRST                             00000006
 GCEN                              00000007
@@ -452,6 +583,12 @@ INT2                              00000002
 INT2E                             00000004
 INT2F                             00000001
 INT2IE                            00000004
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 INT2IF                            00000001
 INT2IP                            00000007
 INT2P                             00000007
@@ -461,12 +598,6 @@ INTCON3                           00000FF0
 INTEDG0                           00000006
 INTEDG1                           00000005
 INTEDG2                           00000004
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE  9
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 INTSRC                            00000005
 IOCB                              00000F86
 IOCB4                             00000004
@@ -511,6 +642,12 @@ LATA6                             00000006
 LATA7                             00000007
 LATB                              00000F8A
 LATB0                             00000000
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 LATB1                             00000001
 LATB2                             00000002
 LATB3                             00000003
@@ -520,12 +657,6 @@ LATB6                             00000006
 LATB7                             00000007
 LATC                              00000F8B
 LATC0                             00000000
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 10
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 LATC1                             00000001
 LATC2                             00000002
 LATC4                             00000004
@@ -546,6 +677,8 @@ LATE0                             00000000
 LATE1                             00000001
 LATE2                             00000002
 LFIOFS                            00000000
+LOOP                              00000042
+LOOP1                             00000106
 LVDIE                             00000002
 LVDIF                             00000002
 LVDIN                             00000005
@@ -568,6 +701,12 @@ NOT_T3SYNC                        00000002
 NOT_TO                            00000003
 NVCFG0                            00000000
 NVCFG1                            00000001
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 OERR                              00000001
 OESPP                             00000002
 ON                                00000007
@@ -579,12 +718,6 @@ OSCFIF                            00000007
 OSCFIP                            00000007
 OSCTUNE                           00000F9B
 OSTS                              00000003
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 11
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 OV                                00000003
 P                                 00000004
 P1A                               00000002
@@ -627,6 +760,12 @@ PLUSW2                            00000FDB
 PMD0                              00000F7E
 PMD1                              00000F7F
 POR                               00000001
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 PORTA                             00000F80
 PORTB                             00000F81
 PORTC                             00000F82
@@ -638,12 +777,6 @@ POSTDEC2                          00000FDD
 POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 12
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 PPB0                              00000000
 PPB1                              00000001
 PPBI                              00000001
@@ -657,7 +790,6 @@ PRISD                             00000002
 PROD                              00000FF3
 PRODH                             00000FF4
 PRODL                             00000FF3
-PRUEBA                            00000046
 PSA                               00000003
 PSS1AC0                           00000002
 PSS1AC1                           00000003
@@ -687,6 +819,12 @@ RB4                               00000004
 RB5                               00000005
 RB6                               00000006
 RB7                               00000007
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 RBPU                              00000007
 RC0                               00000000
 RC1                               00000001
@@ -697,12 +835,6 @@ RC2                               00000002
 RC4                               00000004
 RC5                               00000005
 RC6                               00000006
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 13
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 RC7                               00000007
 RCEN                              00000003
 RCIDL                             00000006
@@ -729,7 +861,9 @@ RE0                               00000000
 RE1                               00000001
 RE2                               00000002
 RE3                               00000003
+RECORRIDO                         0000004A
 RESUME                            00000002
+REVISAR_BOTON                     000000E6
 RI                                00000004
 RSEN                              00000001
 RX                                00000007
@@ -744,6 +878,12 @@ SCIE                              00000005
 SCKP                              00000004
 SCS0                              00000000
 SCS1                              00000001
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 SDAHT                             00000003
 SE0                               00000005
 SEN                               00000000
@@ -756,12 +896,6 @@ SLRCON                            00000F7A
 SLRD                              00000003
 SLRE                              00000004
 SMP                               00000007
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 14
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 SOFIE                             00000006
 SOFIF                             00000006
 SOSCEN                            00000003
@@ -803,6 +937,12 @@ SRRCKE                            00000002
 SRRPE                             00000003
 SRSC1E                            00000004
 SRSC2E                            00000005
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 SRSCKE                            00000006
 SRSPE                             00000007
 SSP1ADD                           00000FC8
@@ -815,12 +955,6 @@ SSP1ADD5                          00000005
 SSP1ADD6                          00000006
 SSP1ADD7                          00000007
 SSP1BUF                           00000FC9
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 15
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 SSP1CON1                          00000FC6
 SSP1CON2                          00000FC5
 SSP1CON3                          00000FCB
@@ -862,6 +996,12 @@ STCON                             00000FB5
 STEN                              00000007
 STIE                              00000007
 STIF                              00000007
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 STIP                              00000007
 STKFUL                            00000007
 STKOVF                            00000007
@@ -874,12 +1014,6 @@ STR1A                             00000000
 STR1B                             00000001
 STR1C                             00000002
 STR1D                             00000003
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 16
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 STR1SYNC                          00000004
 STRA                              00000000
 STRB                              00000001
@@ -921,6 +1055,12 @@ T1GVAL                            00000002
 T1OSCEN                           00000003
 T1OSI                             00000001
 T1OSO                             00000000
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 T1RD16                            00000001
 T1SOSCEN                          00000003
 T1SYNC                            00000002
@@ -933,12 +1073,6 @@ T2OUTPS2                          00000005
 T2OUTPS3                          00000006
 T3CKPS0                           00000004
 T3CKPS1                           00000005
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 17
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 T3CON                             00000FB1
 T3DONE                            00000003
 T3GCON                            00000FB4
@@ -980,6 +1114,12 @@ TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
 TMR1L                             00000FCE
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 TMR1MD                            00000000
 TMR1ON                            00000000
 TMR2                              00000FBC
@@ -992,12 +1132,6 @@ TMR3                              00000FB2
 TMR3CS0                           00000006
 TMR3CS1                           00000007
 TMR3GE                            00000007
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 18
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 TMR3GIE                           00000001
 TMR3GIF                           00000001
 TMR3GIP                           00000001
@@ -1039,6 +1173,12 @@ TRISC1                            00000001
 TRISC2                            00000002
 TRISC4                            00000004
 TRISC5                            00000005
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 TRISC6                            00000006
 TRISC7                            00000007
 TRISD                             00000F95
@@ -1051,12 +1191,6 @@ TRISD5                            00000005
 TRISD6                            00000006
 TRISD7                            00000007
 TRISE                             00000F96
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 19
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 TRISE0                            00000000
 TRISE1                            00000001
 TRISE2                            00000002
@@ -1098,6 +1232,12 @@ UEIR                              00000F67
 UEP0                              00000F6A
 UEP1                              00000F6B
 UEP10                             00000F74
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 UEP11                             00000F75
 UEP12                             00000F76
 UEP13                             00000F77
@@ -1110,12 +1250,6 @@ UEP5                              00000F6F
 UEP6                              00000F70
 UEP7                              00000F71
 UEP8                              00000F72
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 20
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 UEP9                              00000F73
 UERRIE                            00000001
 UERRIF                            00000001
@@ -1157,24 +1291,25 @@ WPUB6                             00000006
 WPUB7                             00000007
 WPUE3                             00000007
 WR                                00000001
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 WREG                              00000FE8
 WREN                              00000002
 WRERR                             00000003
 WUE                               00000001
 Z                                 00000002
-_255                              00000000
+_256                              00000025
+_26                               00000026
 _BOREN_NOSLP_2L                   000000FD
 _BOREN_OFF_2L                     000000F9
 _BOREN_ON_2L                      000000FB
 _BOREN_SBORDIS_2L                 000000FF
 _BORV_190_2L                      000000FF
 _BORV_220_2L                      000000F7
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 21
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _BORV_250_2L                      000000EF
 _BORV_285_2L                      000000E7
 _CCP2MX_RB3_3H                    000000FE
@@ -1215,6 +1350,12 @@ _DEVID1                           003FFFFE
 _DEVID2                           003FFFFF
 _EBTR0_OFF_7L                     000000FF
 _EBTR0_ON_7L                      000000FE
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _EBTR1_OFF_7L                     000000FF
 _EBTR1_ON_7L                      000000FD
 _EBTR2_OFF_7L                     000000FF
@@ -1228,12 +1369,6 @@ _FCMEN_ON_1H                      000000FF
 _FOSC_ECHCLKO_1H                  000000F4
 _FOSC_ECHIO_1H                    000000F5
 _FOSC_ECLCLKO_1H                  000000FC
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 22
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _FOSC_ECLIO_1H                    000000FD
 _FOSC_ECMCLKO_1H                  000000FA
 _FOSC_ECMIO_1H                    000000FB
@@ -1274,6 +1409,12 @@ _SDOMX_RC7_3H                     000000BF
 _STVREN_OFF_4L                    000000FE
 _STVREN_ON_4L                     000000FF
 _T3CMX_RB5_3H                     000000EF
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _T3CMX_RC0_3H                     000000FF
 _WDTEN_NOSLP_2H                   000000FD
 _WDTEN_OFF_2H                     000000FC
@@ -1287,12 +1428,6 @@ _WDTPS_1_2H                       000000C3
 _WDTPS_2048_2H                    000000EF
 _WDTPS_256_2H                     000000E3
 _WDTPS_2_2H                       000000C7
-MPASM 5.87                    SUBRUTINAS.ASM   10-4-2021  17:39:47         PAGE 23
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _WDTPS_32768_2H                   000000FF
 _WDTPS_32_2H                      000000D7
 _WDTPS_4096_2H                    000000F3
@@ -1318,14 +1453,32 @@ _WRTD_ON_6H                       0000007F
 _XINST_OFF_4L                     000000BF
 _XINST_ON_4L                      000000FF
 __18F45K50                        00000001
-__DEBUG                           
-__MPLAB_DEBUGGER_SIMULATOR        1
 _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
+bit_led_amarillo                  boton_presionado, 1, A
+bit_led_azul                      boton_presionado, 0, A
+bit_led_blanco                    boton_presionado, 3, A
+bit_led_naranja                   boton_presionado, 2, A
+boton_esperado                    00000021
+boton_presionado                  00000020
+fila1                             PORTB, 0, A
+fila2                             PORTB, 1, A
+led_amarillo                      LATA, 1, A
+led_azul                          LATA, 0, A
+led_blanco                        LATA, 3, A
+MPASM 5.87         ENCENDERLEDSROJOVERDE.ASM   10-6-2021  1:31:00         PAGE 26
 
-Errors   :     0
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+led_naranja                       LATA, 2, A
+led_rojo                          LATA, 4, A
+led_verde                         LATA, 5, A
+
+Errors   :     2
 Warnings :     0 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
