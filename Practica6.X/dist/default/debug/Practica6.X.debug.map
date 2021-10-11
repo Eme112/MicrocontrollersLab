@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Mon Oct 04 20:23:53 2021
+Linker Map File - Created Thu Oct 07 22:28:54 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -8,7 +8,7 @@ Linker Map File - Created Mon Oct 04 20:23:53 2021
                    .cinit    romdata   0x000004    program   0x000002
                    .org_1       code   0x000008    program   0x000002
                    .org_2       code   0x000018    program   0x000002
-                   .org_3       code   0x000030    program   0x0002a8
+                   .org_3       code   0x000030    program   0x0002b6
 .config_300000_BUILD/DEFAULT/DEBUG/EJERCICIO3.O    romdata   0x300000    program   0x000001
 .config_300001_BUILD/DEFAULT/DEBUG/EJERCICIO3.O    romdata   0x300001    program   0x000001
 .config_300002_BUILD/DEFAULT/DEBUG/EJERCICIO3.O    romdata   0x300002    program   0x000001
@@ -24,50 +24,51 @@ Linker Map File - Created Mon Oct 04 20:23:53 2021
                             0x000000    0x000005      
                             0x000008    0x000009      
                             0x000018    0x000019      
-                            0x000030    0x0002d7      
+                            0x000030    0x0002e5      
                             0x300000    0x300003      
                             0x300005    0x300006      
-            696 out of 33048 program addresses used, program memory utilization is 2%
+            710 out of 33048 program addresses used, program memory utilization is 2%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-         ASTERISCO_RETURN   0x000218    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     CERO   0x0001bc    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    CINCO   0x000158    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+         ASTERISCO_RETURN   0x00021a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     CERO   0x0001be    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    CINCO   0x00015a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
                 CONFIGURA   0x000030    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-               CONVERSION   0x000292    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   CUATRO   0x000144    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   CUENTA   0x000276    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-           CUENTA_DECENAS   0x00029a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-     CUENTA_DECENAS_FINAL   0x0002ae    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-             CUENTA_FINAL   0x000286    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-               DELAY_20ms   0x0002c2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                 DIVISION   0x00026a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                      DOS   0x00011c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-              GATO_RETURN   0x000224    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    LOOP1   0x0002ca    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-           MULTIPLICACION   0x000260    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                 NEGATIVO   0x000256    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    NUEVE   0x0001a8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                  NUMERO1   0x000044    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                  NUMERO2   0x00005c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     OCHO   0x000194    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-              OPERACIONES   0x00006c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                RECORRIDO   0x000094    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    RESTA   0x000246    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     SEIS   0x00016c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    SIETE   0x000180    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     SUMA   0x00023e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     TRES   0x000130    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                      UNO   0x000108    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _A_RETURN   0x0001d0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _B_RETURN   0x0001e2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _C_RETURN   0x0001f4    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _D_RETURN   0x000206    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   _ERROR   0x00028c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+               CONVERSION   0x0002a0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   CUATRO   0x000146    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   CUENTA   0x00027a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+           CUENTA_DECENAS   0x0002a8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+     CUENTA_DECENAS_FINAL   0x0002bc    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+             CUENTA_FINAL   0x00028a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+               DELAY_20ms   0x0002d0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                 DIVISION   0x00026e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                      DOS   0x00011e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+              GATO_RETURN   0x000226    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    LOOP1   0x0002d8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+           MULTIPLICACION   0x000264    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                 NEGATIVO   0x00025a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    NUEVE   0x0001aa    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                  NUMERO1   0x000046    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                  NUMERO2   0x00005e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     OCHO   0x000196    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+              OPERACIONES   0x00006e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                RECORRIDO   0x000096    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    RESTA   0x00024a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     SEIS   0x00016e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    SIETE   0x000182    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     SUMA   0x000242    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     TRES   0x000132    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                      UNO   0x00010a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _A_RETURN   0x0001d2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _B_RETURN   0x0001e4    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _C_RETURN   0x0001f6    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _D_RETURN   0x000208    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   _ERROR   0x000290    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     loop   0x000296    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
 
 
 
@@ -75,38 +76,39 @@ Linker Map File - Created Mon Oct 04 20:23:53 2021
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
                 CONFIGURA   0x000030    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                  NUMERO1   0x000044    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                  NUMERO2   0x00005c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-              OPERACIONES   0x00006c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                RECORRIDO   0x000094    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                      UNO   0x000108    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                      DOS   0x00011c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     TRES   0x000130    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   CUATRO   0x000144    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    CINCO   0x000158    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     SEIS   0x00016c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    SIETE   0x000180    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     OCHO   0x000194    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    NUEVE   0x0001a8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     CERO   0x0001bc    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _A_RETURN   0x0001d0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _B_RETURN   0x0001e2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _C_RETURN   0x0001f4    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                _D_RETURN   0x000206    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-         ASTERISCO_RETURN   0x000218    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-              GATO_RETURN   0x000224    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                     SUMA   0x00023e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    RESTA   0x000246    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                 NEGATIVO   0x000256    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-           MULTIPLICACION   0x000260    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                 DIVISION   0x00026a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   CUENTA   0x000276    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-             CUENTA_FINAL   0x000286    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                   _ERROR   0x00028c    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-               CONVERSION   0x000292    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-           CUENTA_DECENAS   0x00029a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-     CUENTA_DECENAS_FINAL   0x0002ae    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-               DELAY_20ms   0x0002c2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
-                    LOOP1   0x0002ca    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                  NUMERO1   0x000046    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                  NUMERO2   0x00005e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+              OPERACIONES   0x00006e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                RECORRIDO   0x000096    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                      UNO   0x00010a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                      DOS   0x00011e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     TRES   0x000132    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   CUATRO   0x000146    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    CINCO   0x00015a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     SEIS   0x00016e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    SIETE   0x000182    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     OCHO   0x000196    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    NUEVE   0x0001aa    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     CERO   0x0001be    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _A_RETURN   0x0001d2    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _B_RETURN   0x0001e4    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _C_RETURN   0x0001f6    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                _D_RETURN   0x000208    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+         ASTERISCO_RETURN   0x00021a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+              GATO_RETURN   0x000226    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     SUMA   0x000242    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    RESTA   0x00024a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                 NEGATIVO   0x00025a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+           MULTIPLICACION   0x000264    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                 DIVISION   0x00026e    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   CUENTA   0x00027a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+             CUENTA_FINAL   0x00028a    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                   _ERROR   0x000290    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                     loop   0x000296    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+               CONVERSION   0x0002a0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+           CUENTA_DECENAS   0x0002a8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+     CUENTA_DECENAS_FINAL   0x0002bc    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+               DELAY_20ms   0x0002d0    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
+                    LOOP1   0x0002d8    program     static C:\MicrochipProjects\Practica6.X\Ejercicio3.asm
 
 
