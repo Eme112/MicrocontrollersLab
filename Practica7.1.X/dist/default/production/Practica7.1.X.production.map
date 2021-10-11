@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Sun Oct 10 23:06:05 2021
+Linker Map File - Created Sun Oct 10 23:23:16 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -8,7 +8,7 @@ Linker Map File - Created Sun Oct 10 23:06:05 2021
                    .cinit    romdata   0x000004    program   0x000002
                    .org_1       code   0x000008    program   0x000002
                    .org_2       code   0x000018    program   0x000002
-                   .org_3       code   0x000040    program   0x0003bc
+                   .org_3       code   0x000040    program   0x0003e0
 .config_300000_BUILD/DEFAULT/PRODUCTION/EJERCIC    romdata   0x300000    program   0x000001
 .config_300001_BUILD/DEFAULT/PRODUCTION/EJERCIC    romdata   0x300001    program   0x000001
 .config_300002_BUILD/DEFAULT/PRODUCTION/EJERCIC    romdata   0x300002    program   0x000001
@@ -24,10 +24,10 @@ Linker Map File - Created Sun Oct 10 23:06:05 2021
                             0x000000    0x000005      
                             0x000008    0x000009      
                             0x000018    0x000019      
-                            0x000040    0x0003fb      
+                            0x000040    0x00041f      
                             0x300000    0x300003      
                             0x300005    0x300006      
-            972 out of 33048 program addresses used, program memory utilization is 2%
+            1008 out of 33048 program addresses used, program memory utilization is 3%
 
 
 
@@ -38,22 +38,22 @@ Linker Map File - Created Sun Oct 10 23:06:05 2021
                      CERO   0x00023c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                     CINCO   0x0001d8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 CONFIGURE   0x00001a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               CONVERSION   0x000356    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               CONVERSION   0x00037a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                    CUATRO   0x0001c4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                    CUENTA   0x000330    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-           CUENTA_DECENAS   0x00035c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-     CUENTA_DECENAS_FINAL   0x000370    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+           CUENTA_DECENAS   0x000380    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+     CUENTA_DECENAS_FINAL   0x000394    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
              CUENTA_FINAL   0x000340    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                DATA_READ   0x000398    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               DATA_WRITE   0x000390    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               DELAY_20ms   0x0003d0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                DATA_READ   0x0003bc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               DATA_WRITE   0x0003b4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               DELAY_20ms   0x0003f4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                  DIVISION   0x000324    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                       DOS   0x00019c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               ESPERA_LCD   0x0003ae    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               ESPERA_LCD   0x0003d2    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
               GATO_RETURN   0x0002d2    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-        INSTRUCTION_WRITE   0x000388    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+        INSTRUCTION_WRITE   0x0003ac    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
         LCD_CONFIGURATION   0x00005c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    LOOP1   0x0003d8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    LOOP1   0x0003fc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
            MULTIPLICACION   0x00031a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                  NEGATIVO   0x000310    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                NEW_NUMBER   0x000250    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
@@ -63,25 +63,25 @@ Linker Map File - Created Sun Oct 10 23:06:05 2021
                      OCHO   0x000214    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
               OPERACIONES   0x0000da    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 RECORRIDO   0x000114    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                  REGRESA   0x0003b8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                  REGRESA   0x0003dc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                     RESTA   0x000300    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                      SEIS   0x0001ec    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                SEND_DATA   0x0003a0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                SEND_DATA   0x0003c4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                     SIETE   0x000200    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                      SUMA   0x0002f8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                      TRES   0x0001b0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                       UNO   0x000188    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-             WRITE_NUMBER   0x00037c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+             WRITE_NUMBER   0x0003a0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 _A_RETURN   0x00026e    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 _B_RETURN   0x000284    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 _C_RETURN   0x00029a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                 _D_RETURN   0x0002b0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                    _ERROR   0x000346    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               delay100ms   0x0003e6    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               delay100us   0x0003c4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                     loop   0x00034c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    loop1   0x0003c8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    loop2   0x0003ee    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               delay100ms   0x00040a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               delay100us   0x0003e8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                     loop   0x000370    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    loop1   0x0003ec    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    loop2   0x000412    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
 
 
 
@@ -119,22 +119,22 @@ Linker Map File - Created Sun Oct 10 23:06:05 2021
                    CUENTA   0x000330    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
              CUENTA_FINAL   0x000340    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
                    _ERROR   0x000346    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                     loop   0x00034c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               CONVERSION   0x000356    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-           CUENTA_DECENAS   0x00035c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-     CUENTA_DECENAS_FINAL   0x000370    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-             WRITE_NUMBER   0x00037c    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-        INSTRUCTION_WRITE   0x000388    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               DATA_WRITE   0x000390    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                DATA_READ   0x000398    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                SEND_DATA   0x0003a0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               ESPERA_LCD   0x0003ae    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                  REGRESA   0x0003b8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               delay100us   0x0003c4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    loop1   0x0003c8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               DELAY_20ms   0x0003d0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    LOOP1   0x0003d8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-               delay100ms   0x0003e6    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
-                    loop2   0x0003ee    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                     loop   0x000370    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               CONVERSION   0x00037a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+           CUENTA_DECENAS   0x000380    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+     CUENTA_DECENAS_FINAL   0x000394    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+             WRITE_NUMBER   0x0003a0    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+        INSTRUCTION_WRITE   0x0003ac    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               DATA_WRITE   0x0003b4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                DATA_READ   0x0003bc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                SEND_DATA   0x0003c4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               ESPERA_LCD   0x0003d2    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                  REGRESA   0x0003dc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               delay100us   0x0003e8    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    loop1   0x0003ec    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               DELAY_20ms   0x0003f4    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    LOOP1   0x0003fc    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+               delay100ms   0x00040a    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
+                    loop2   0x000412    program     static C:\MicrochipProjects\Practica7.1.X\Ejercicio2.asm
 
 

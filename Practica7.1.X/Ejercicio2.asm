@@ -377,9 +377,21 @@ CUENTA_FINAL
     return
     
 _ERROR
-    movlw   0xFF
-    movwf   LATA			; En caso de error, encender todos los LEDs.
+    movlw   0x40			; Mover cursor al segundo renglon para el resultado.
+    bsf	    WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    movlw   'E'				; Escribir mensaje de error.
+    call    DATA_WRITE
+    movlw   'R'
+    call    DATA_WRITE
+    movlw   'R'
+    call    DATA_WRITE
+    movlw   'O'
+    call    DATA_WRITE
+    movlw   'R'
+    call    DATA_WRITE
     movlw   b'10111111'			; ACTIVAR COLUMNA 3 (3, 6, 9, #).
+    movwf   LATB, A
 loop 
     btfss   PORTB, 3, A			; Revisar si se presiona el #.
     goto    GATO_RETURN
