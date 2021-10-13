@@ -32,7 +32,7 @@ DECENAS		    EQU 0X17
 UNIDADES	    EQU 0X18
 OPERACION	    EQU 0X19
 POSICION	    EQU 0x1A
-NEGATIVO	    EQU 0X1B
+NEG		    EQU 0X1B
 ; DEFINICION DE REGISTROS PARA DELAYS.
 var1		    EQU 0x20
 var2		    EQU 0x21
@@ -124,13 +124,13 @@ OPERACIONES
     movff   NUM1, TEMP			; Cargar el mismo numero en TEMP que en NUM1
     movf    NUM1, W, A			; Convertir el resultado almacenado en NUM1 a decenas y unidades.
     call    CONVERSION			; Convertir a decenas y unidades antes de la proxima repeticion.
-    btfsc   NEGATIVO, 0
+    btfsc   NEG, 0
     call    IMPRIMIR_SIGNO		; Si el numero es negativo, cargar el signo a la LCD.
     movf    DECENAS, W, A		; Cargar decenas y enviar a la LCD.
     call    WRITE_NUMBER
     movf    UNIDADES, W, A		; Cargar unidades y enviar a la LCD.
     call    WRITE_NUMBER
-    clrf    NEGATIVO
+    clrf    NEG
     
     goto    NUMERO1
 
@@ -359,7 +359,7 @@ NEGATIVO
     movf    NUM1, W, A			; Mover NUM1 a WREG.
     subwf   NUM2, W, A			; Restar NUM2-NUM1 (al reves).
     movwf   NUM1			; Guardar en NUM1.
-    setf    NEGATIVO			; Encender el registro para representar num negativo.
+    setf    NEG			; Encender el registro para representar num negativo.
     return
     
 MULTIPLICACION
