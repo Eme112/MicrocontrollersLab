@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=E10.asm
+SOURCEFILES_QUOTED_IF_SPACED=ExamenParcial2.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/E10.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/E10.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/ExamenParcial2.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/ExamenParcial2.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/E10.o
+OBJECTFILES=${OBJECTDIR}/ExamenParcial2.o
 
 # Source Files
-SOURCEFILES=E10.asm
+SOURCEFILES=ExamenParcial2.asm
 
 
 
@@ -95,22 +95,22 @@ MP_LINKER_DEBUG_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/E10.o: E10.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/ExamenParcial2.o: ExamenParcial2.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/E10.o.d 
-	@${RM} ${OBJECTDIR}/E10.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/E10.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_SIMULATOR=1 -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/E10.lst\" -e\"${OBJECTDIR}/E10.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/E10.o\" \"E10.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/E10.o"
-	@${FIXDEPS} "${OBJECTDIR}/E10.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/ExamenParcial2.o.d 
+	@${RM} ${OBJECTDIR}/ExamenParcial2.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ExamenParcial2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_SIMULATOR=1 -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/ExamenParcial2.lst\" -e\"${OBJECTDIR}/ExamenParcial2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/ExamenParcial2.o\" \"ExamenParcial2.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/ExamenParcial2.o"
+	@${FIXDEPS} "${OBJECTDIR}/ExamenParcial2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/E10.o: E10.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/ExamenParcial2.o: ExamenParcial2.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/E10.o.d 
-	@${RM} ${OBJECTDIR}/E10.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/E10.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/E10.lst\" -e\"${OBJECTDIR}/E10.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/E10.o\" \"E10.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/E10.o"
-	@${FIXDEPS} "${OBJECTDIR}/E10.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/ExamenParcial2.o.d 
+	@${RM} ${OBJECTDIR}/ExamenParcial2.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ExamenParcial2.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/ExamenParcial2.lst\" -e\"${OBJECTDIR}/ExamenParcial2.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/ExamenParcial2.o\" \"ExamenParcial2.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/ExamenParcial2.o"
+	@${FIXDEPS} "${OBJECTDIR}/ExamenParcial2.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 
