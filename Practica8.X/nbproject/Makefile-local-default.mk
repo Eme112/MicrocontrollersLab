@@ -35,3 +35,4 @@ MP_AS_DIR="D:\Program Files (x86)\Microchip\MPLABX\v5.35\mpasmx"
 MP_LD_DIR="D:\Program Files (x86)\Microchip\MPLABX\v5.35\mpasmx"
 MP_AR_DIR="D:\Program Files (x86)\Microchip\MPLABX\v5.35\mpasmx"
 # MP_BC_DIR is not defined
+DFP_DIR="D:/Program Files (x86)/Microchip/MPLABX/v5.35/packs/Microchip/PIC18F-K_DFP/1.3.84"

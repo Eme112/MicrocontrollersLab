@@ -1,0 +1,60 @@
+MPLINK 5.09, LINKER
+Linker Map File - Created Wed Oct 20 02:42:29 2021
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000004
+                   .cinit    romdata   0x000004    program   0x000002
+                   .org_1       code   0x000008    program   0x000002
+                   .org_2       code   0x000018    program   0x000002
+                   .org_3       code   0x000030    program   0x000102
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000005      
+                            0x000008    0x000009      
+                            0x000018    0x000019      
+                            0x000030    0x000131      
+            268 out of 33048 program addresses used, program memory utilization is 0%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+               DELAY_20ms   0x00011c    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                    LOOP1   0x000124    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+               MENU_START   0x00003c    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                 MENU_SUB   0x00005e    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+             PORTS_CONFIG   0x00001a    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                    TIMER   0x000092    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+             TIMER_1000ms   0x0000ec    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+              TIMER_250ms   0x0000be    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+              TIMER_500ms   0x0000d4    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+               TIMER_50ms   0x0000a8    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+             TIMER_CONFIG   0x00007e    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                TIMER_MAX   0x000104    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+             PORTS_CONFIG   0x00001a    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+               MENU_START   0x00003c    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                 MENU_SUB   0x00005e    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+             TIMER_CONFIG   0x00007e    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                    TIMER   0x000092    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+               TIMER_50ms   0x0000a8    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+              TIMER_250ms   0x0000be    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+              TIMER_500ms   0x0000d4    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+             TIMER_1000ms   0x0000ec    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                TIMER_MAX   0x000104    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+               DELAY_20ms   0x00011c    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+                    LOOP1   0x000124    program     static C:\MicrochipProjects\Practica8.X\Ejercicio1.asm
+
+
