@@ -1,4 +1,4 @@
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  1
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -35,41 +35,41 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00019     org 0x30
 000030 010F           00020     movlb   .15
 000032 6B5B           00021     clrf    ANSELA, BANKED
-000034 6B5E           00022     clrf    ANSELD, BANKED
+000034 6B5C           00022     clrf    ANSELB, BANKED
 000036 6A92           00023     clrf    TRISA                       ; REGA --> LEDs, salidas.
-000038 6895           00024     setf    TRISD                       ; REGD --> Botones, entradas.
+000038 6893           00024     setf    TRISB                       ; REGB --> Botones, entradas.
 00003A 6A89           00025     clrf    LATA  
                       00026     
                       00027 ; Menu principal.
 00003C                00028 MENU_START
-00003C A083           00029     btfss   PORTD, 0                    ; Boton 0.
+00003C A081           00029     btfss   PORTB, 0                    ; Boton 0.
 00003E EF?? F???      00030     goto    TIMER_50ms                  ; Timer de 50 ms.
-000042 A283           00031     btfss   PORTD, 1                    ; Boton 1.
+000042 A281           00031     btfss   PORTB, 1                    ; Boton 1.
 000044 EF?? F???      00032     goto    TIMER_250ms                 ; Timer de 250 ms.
-000048 A483           00033     btfss   PORTD, 2                    ; Boton 2.
+000048 A481           00033     btfss   PORTB, 2                    ; Boton 2.
 00004A EF?? F???      00034     goto    TIMER_500ms                 ; Timer de 500 ms.
-00004E A683           00035     btfss   PORTD, 3                    ; Boton 3.
+00004E A681           00035     btfss   PORTB, 3                    ; Boton 3.
 000050 EF?? F???      00036     goto    TIMER_1000ms                ; Timer de 1 seg.
-000054 A883           00037     btfss   PORTD, 4                    ; Boton 4.
+000054 A881           00037     btfss   PORTB, 4                    ; Boton 4.
 000056 EF?? F???      00038     goto    TIMER_MAX                   ; Máximo delay con TMR0.
 00005A EF?? F???      00039     goto    MENU_START
                       00040     
 00005E                00041 MENU_SUB
-00005E A083           00042     btfss   PORTD, 0                    ; Boton 0.
+00005E A081           00042     btfss   PORTB, 0                    ; Boton 0.
 000060 EF?? F???      00043     goto    TIMER_50ms                  ; Timer de 50 ms.
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  2
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000064 A283           00044     btfss   PORTD, 1                    ; Boton 1.
+000064 A281           00044     btfss   PORTB, 1                    ; Boton 1.
 000066 EF?? F???      00045     goto    TIMER_250ms                 ; Timer de 250 ms.
-00006A A483           00046     btfss   PORTD, 2                    ; Boton 2.
+00006A A481           00046     btfss   PORTB, 2                    ; Boton 2.
 00006C EF?? F???      00047     goto    TIMER_500ms                 ; Timer de 500 ms.
-000070 A683           00048     btfss   PORTD, 3                    ; Boton 3.
+000070 A681           00048     btfss   PORTB, 3                    ; Boton 3.
 000072 EF?? F???      00049     goto    TIMER_1000ms                ; Timer de 1 seg.
-000076 A883           00050     btfss   PORTD, 4                    ; Boton 4.
+000076 A881           00050     btfss   PORTB, 4                    ; Boton 4.
 000078 EF?? F???      00051     goto    TIMER_MAX                   ; Máximo delay con TMR0.
 00007C 0012           00052     return
                       00053     
@@ -92,7 +92,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000A6 D???           00070     bra     TIMER
                       00071     
 0000A8                00072 TIMER_50ms
-0000A8 A083           00073     btfss   PORTD, 0, A                 ; Revisa si boton sigue presionado.
+0000A8 A081           00073     btfss   PORTB, 0, A                 ; Revisa si boton sigue presionado.
 0000AA D???           00074     bra     TIMER_50ms
 0000AC 0E45           00075     movlw   b'01000101'                 ; 1:64
 0000AE 6E00           00076     movwf   CONFIG0     
@@ -103,7 +103,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000BA EF?? F???      00081     goto    TIMER_CONFIG
                       00082         
 0000BE                00083 TIMER_250ms
-0000BE A283           00084     btfss   PORTD, 1, A                 ; Revisa si boton sigue presionado.
+0000BE A281           00084     btfss   PORTB, 1, A                 ; Revisa si boton sigue presionado.
 0000C0 D???           00085     bra     TIMER_250ms
 0000C2 0E47           00086     movlw   b'01000111'                 ;1:256
 0000C4 6E00           00087     movwf   CONFIG0     
@@ -114,9 +114,9 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000D0 EF?? F???      00092     goto    TIMER_CONFIG
                       00093     
 0000D4                00094 TIMER_500ms
-0000D4 A483           00095     btfss   PORTD, 2, A                 ; Revisa si boton sigue presionado.
+0000D4 A481           00095     btfss   PORTB, 2, A                 ; Revisa si boton sigue presionado.
 0000D6 D???           00096     bra     TIMER_500ms
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  3
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -132,7 +132,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000E8 EF?? F???      00104     goto    TIMER_CONFIG
                       00105     
 0000EC                00106 TIMER_1000ms
-0000EC A683           00107     btfss   PORTD, 3, A                 ; Revisa si boton sigue presionado.
+0000EC A681           00107     btfss   PORTB, 3, A                 ; Revisa si boton sigue presionado.
 0000EE D???           00108     bra     TIMER_1000ms
 0000F0 0E01           00109     movlw   b'00000001'                 ; 1:4
 0000F2 6E00           00110     movwf   CONFIG0     
@@ -144,7 +144,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000100 EF?? F???      00116     goto    TIMER_CONFIG
                       00117     
 000104                00118 TIMER_MAX   
-000104 A883           00119     btfss   PORTD, 4, A                 ; Revisa si boton sigue presionado.
+000104 A881           00119     btfss   PORTB, 4, A                 ; Revisa si boton sigue presionado.
 000106 D???           00120     bra     TIMER_MAX
 000108 0E07           00121     movlw   b'00000111'                 ; 1:256
 00010A 6E00           00122     movwf   CONFIG0     
@@ -168,8 +168,61 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00140     ; 20046+4 = 20.05ms approx. 
 000130 0012           00141     return
                       00142     
-                      00143   end
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  4
+                      00143 ;
+                      00144 ; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
+                      00145 ; AFTER RESET. ONCE PROGRAMMED IN THIS PRACTICA THIS IS NOT NECESARY TO INCLUDE IN FUTURE PROGRAMS
+                      00146 ; IF THIS SETTINGS ARE NOT CHANGED. SEE SECTION 26 OF DATA SHEET. 
+                      00147 ;   
+                      00148 
+                      00149 
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00150 ; CONFIG1L
+                      00151   CONFIG  PLLSEL = PLL4X        ; PLL Selection (4x clock multiplier)
+                      00152   CONFIG  CFGPLLEN = OFF        ; PLL Enable Configuration bit (PLL Disabled (firmware controlled))
+                      00153   CONFIG  CPUDIV = NOCLKDIV     ; CPU System Clock Postscaler (CPU uses system clock (no divide))
+                      00154   CONFIG  LS48MHZ = SYS24X4     ; Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, U
+                            SB clock divider is set to 4)
+                      00155 
+                      00156 ; CONFIG1H
+                      00157   CONFIG  FOSC = INTOSCIO       ; Oscillator Selection (Internal oscillator)
+                      00158   CONFIG  PCLKEN = ON           ; Primary Oscillator Shutdown (Primary oscillator enabled)
+                      00159   CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor (Fail-Safe Clock Monitor disabled)
+                      00160   CONFIG  IESO = OFF            ; Internal/External Oscillator Switchover (Oscillator Switchover mode di
+                            sabled)
+                      00161 
+                      00162 ; CONFIG2L
+                      00163   CONFIG  nPWRTEN = OFF         ; Power-up Timer Enable (Power up timer disabled)
+                      00164   CONFIG  BOREN = SBORDIS       ; Brown-out Reset Enable (BOR enabled in hardware (SBOREN is ignored))
+                      00165   CONFIG  BORV = 190            ; Brown-out Reset Voltage (BOR set to 1.9V nominal)
+                      00166   CONFIG  nLPBOR = OFF          ; Low-Power Brown-out Reset (Low-Power Brown-out Reset disabled)
+                      00167 
+                      00168 ; CONFIG2H
+                      00169   CONFIG  WDTEN = OFF           ; Watchdog Timer Enable bits (WDT disabled in hardware (SWDTEN ignored))
+                      00170   CONFIG  WDTPS = 32768         ; Watchdog Timer Postscaler (1:32768)
+                      00171 
+                      00172 ; CONFIG3H
+                      00173   CONFIG  CCP2MX = RC1          ; CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
+                      00174   CONFIG  PBADEN = ON           ; PORTB A/D Enable bit (PORTB<5:0> pins are configured as analog input c
+                            hannels on Reset)
+                      00175   CONFIG  T3CMX = RC0           ; Timer3 Clock Input MUX bit (T3CKI function is on RC0)
+                      00176   CONFIG  SDOMX = RB3           ; SDO Output MUX bit (SDO function is on RB3)
+                      00177   CONFIG  MCLRE = ON            ; Master Clear Reset Pin Enable (MCLR pin enabled; RE3 input disabled)
+                      00178 
+                      00179 ; CONFIG4L
+                      00180   CONFIG  STVREN = ON           ; Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
+                      00181   CONFIG  LVP = ON              ; Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is 
+                            also 1)
+                      00182   CONFIG  ICPRT = OFF           ; Dedicated In-Circuit Debug/Programming Port Enable (ICPORT disabled)
+                      00183   CONFIG  XINST = OFF           ; Extended Instruction Set Enable bit (Instruction set extension and Ind
+                            exed Addressing mode disabled)
+                      00184     
+                      00185   end
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  5
 
 
 SYMBOL TABLE
@@ -228,7 +281,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  5
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  6
 
 
 SYMBOL TABLE
@@ -287,7 +340,7 @@ BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  6
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  7
 
 
 SYMBOL TABLE
@@ -346,7 +399,7 @@ CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  7
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  8
 
 
 SYMBOL TABLE
@@ -405,7 +458,7 @@ CPOL                              00000004
 CRC16EE                           00000002
 CRC16EF                           00000002
 CRC5EE                            00000001
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  8
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE  9
 
 
 SYMBOL TABLE
@@ -464,7 +517,7 @@ ECCP1ASE                          00000007
 ECCP1CON                          00000FBD
 ECCP1DEL                          00000FB7
 ECCP2CON                          00000F97
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE  9
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 10
 
 
 SYMBOL TABLE
@@ -523,7 +576,7 @@ FSR2                              00000002
 FSR2H                             00000FDA
 FSR2L                             00000FD9
 FVREN                             00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 10
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 11
 
 
 SYMBOL TABLE
@@ -582,7 +635,7 @@ INTCON2                           00000FF1
 INTCON3                           00000FF0
 INTEDG0                           00000006
 INTEDG1                           00000005
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 11
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 12
 
 
 SYMBOL TABLE
@@ -641,7 +694,7 @@ LATB5                             00000005
 LATB6                             00000006
 LATB7                             00000007
 LATC                              00000F8B
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 12
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 13
 
 
 SYMBOL TABLE
@@ -700,7 +753,7 @@ OSC2                              00000006
 OSCCON                            00000FD3
 OSCCON2                           00000FD2
 OSCFIE                            00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 13
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 14
 
 
 SYMBOL TABLE
@@ -759,7 +812,7 @@ PORTD                             00000F83
 PORTE                             00000F84
 PORTS_CONFIG                      0000001A
 POSTDEC0                          00000FED
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 14
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 15
 
 
 SYMBOL TABLE
@@ -818,7 +871,7 @@ RC1                               00000001
 RC1IE                             00000005
 RC1IF                             00000005
 RC1IP                             00000005
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 15
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 16
 
 
 SYMBOL TABLE
@@ -877,7 +930,7 @@ SIDL                              00000005
 SLRA                              00000000
 SLRB                              00000001
 SLRC                              00000002
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 16
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 17
 
 
 SYMBOL TABLE
@@ -936,7 +989,7 @@ SSP1ADD1                          00000001
 SSP1ADD2                          00000002
 SSP1ADD3                          00000003
 SSP1ADD4                          00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 17
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 18
 
 
 SYMBOL TABLE
@@ -995,7 +1048,7 @@ STKUNF                            00000006
 STLOCK                            00000003
 STMD                              00000004
 STOR                              00000001
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 18
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 19
 
 
 SYMBOL TABLE
@@ -1054,7 +1107,7 @@ T2CKPS1                           00000001
 T2CON                             00000FBA
 T2OUTPS0                          00000003
 T2OUTPS1                          00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 19
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 20
 
 
 SYMBOL TABLE
@@ -1113,7 +1166,7 @@ TMR1H                             00000FCF
 TMR1IE                            00000000
 TMR1IF                            00000000
 TMR1IP                            00000000
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 20
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 21
 
 
 SYMBOL TABLE
@@ -1172,7 +1225,7 @@ TRISC0                            00000000
 TRISC1                            00000001
 TRISC2                            00000002
 TRISC4                            00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 21
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 22
 
 
 SYMBOL TABLE
@@ -1231,7 +1284,7 @@ UEIE                              00000F66
 UEIR                              00000F67
 UEP0                              00000F6A
 UEP1                              00000F6B
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 22
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 23
 
 
 SYMBOL TABLE
@@ -1290,7 +1343,7 @@ WPUB5                             00000005
 WPUB6                             00000006
 WPUB7                             00000007
 WPUE3                             00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 23
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 24
 
 
 SYMBOL TABLE
@@ -1349,7 +1402,7 @@ _DEBUG_ON_4L                      0000007F
 _DEVID1                           003FFFFE
 _DEVID2                           003FFFFF
 _EBTR0_OFF_7L                     000000FF
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 24
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 25
 
 
 SYMBOL TABLE
@@ -1408,7 +1461,7 @@ _SDOMX_RB3_3H                     000000FF
 _SDOMX_RC7_3H                     000000BF
 _STVREN_OFF_4L                    000000FE
 _STVREN_ON_4L                     000000FF
-MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:42:28         PAGE 25
+MPASM 5.87                    EJERCICIO1.ASM   10-20-2021  2:56:30         PAGE 26
 
 
 SYMBOL TABLE
@@ -1454,7 +1507,6 @@ _XINST_OFF_4L                     000000BF
 _XINST_ON_4L                      000000FF
 __18F45K50                        00000001
 __DEBUG                           
-__MPLAB_DEBUGGER_SIMULATOR        1
 _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
