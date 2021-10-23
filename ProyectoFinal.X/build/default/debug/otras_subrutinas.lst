@@ -1,0 +1,1703 @@
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "teclado_subrutinas.asm"
+                      00001 #include "lcd_caracteres.asm"
+                      00001 #include "lcd_subrutinas.asm"
+                      00001 #include "delays.asm"
+                      00001 #include "inicializacion.asm"
+Error[138]  : Include files nested too deep
+                      00001 #include "p18f45k50.inc"
+                      00002     processor 18f45k50  ; (opcional).
+                      00003     org 0x00
+000000 EF?? F???      00004     goto CONFIGURA
+                      00005     org 0x08            ; posición para interrupciones.
+000008 0010           00006     retfie
+                      00007     org 0x18            ; posición para interrupciones.
+000018 0010           00008     retfie
+                      00009     org 0x30            ; Origen real (opcional pero recomendado).
+                      00010 
+                      00011 ; DEFINICION DE EQUIVALENCIAS.
+  00000000            00012 var1                EQU 0x00
+  00000001            00013 var2                EQU 0x01
+  00000002            00014 var3                EQU 0x02
+  00000003            00015 _256                EQU 0x03
+  00000004            00016 _26                 EQU 0x04
+  00000005            00017 puntaje             EQU 0x05
+  00000006            00018 boton_presionado    EQU 0x06
+  00000007            00019 boton_esperado      EQU 0x07
+  00000008            00020 register_loser      EQU 0x08
+  00000009            00021 shifter             EQU 0x09
+  00000011            00022 sec1                EQU 0x11
+  00000012            00023 sec2                EQU 0x12
+  00000013            00024 sec3                EQU 0x13
+  00000014            00025 sec4                EQU 0x14
+  00000015            00026 sec5                EQU 0x15
+  00000016            00027 sec6                EQU 0x16
+  00000017            00028 sec7                EQU 0x17
+  00000018            00029 sec8                EQU 0x18
+  00000019            00030 sec9                EQU 0x19
+  0000001A            00031 sec10               EQU 0x1A
+                      00032 
+                      00033 
+                      00034 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
+                      00035     #define led_azul            LATA, 0, A
+                      00036     #define led_amarillo        LATA, 1, A
+                      00037     #define led_naranja         LATA, 2, A
+                      00038     #define led_blanco          LATA, 3, A
+                      00039     #define led_rojo            LATA, 4, A
+                      00040     #define led_verde           LATA, 5, A
+                      00041     #define fila1               PORTB, 0, A
+                      00042     #define fila2               PORTB, 1, A
+                      00043     #define bit_led_azul        boton_presionado, 0, A
+                      00044     #define bit_led_amarillo    boton_presionado, 1, A
+                      00045     #define bit_led_naranja     boton_presionado, 2, A
+                      00046     #define bit_led_blanco      boton_presionado, 3, A
+                      00047     #define RS                  LATC, 0, A              ; RB0 -> Register Select.
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00048     #define E                   LATC, 1, A              ; RB1 -> Enable.
+                      00049     #define RW                  LATC, 2, A              ; RB2 -> Read/Write.
+                      00050     #define flag                PORTD, 7, A             ; RD7 -> Busy flag.
+                      00051     #define configFlag          TRISD, 7, A             ; Switch flag from INPUT to OUTPUT and viceversa
+                            .
+                      00052     #define dataLCD             LATD, A
+                      00053     #define perdio              0x10, 0, A              ; Se activa este bit cuando el usuario pierde.
+                      00054     #define correcto            0x10, 1, A              ; Se activa cuando se presiona el boton correcto
+                            .
+                      00055     #define para                0x10, 2, A              ; Se activa este bit cuando el usuario presiona 
+                            el boton de paro.
+                      00056     
+000030                00057 CONFIGURA
+000030 010F           00058     movlb   .15
+Error[113]  : Symbol not previously defined (ANSELA)
+Error[113]  : Symbol not previously defined (BANKED)
+000032 6A00           00059     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
+Error[113]  : Symbol not previously defined (ANSELB)
+Error[113]  : Symbol not previously defined (BANKED)
+000034 6A00           00060     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
+Error[113]  : Symbol not previously defined (ANSELC)
+Error[113]  : Symbol not previously defined (BANKED)
+000036 6A00           00061     clrf    ANSELC, BANKED                      ; REGC -> DIGITAL.
+Error[113]  : Symbol not previously defined (ANSELD)
+Error[113]  : Symbol not previously defined (BANKED)
+000038 6A00           00062     clrf    ANSELD, BANKED                      ; REGD -> DIGITAL.
+Error[113]  : Symbol not previously defined (INTCON2)
+00003A 9E00           00063     bcf     INTCON2, 7                          ; ENABLE pull-ups.
+00003C 0E03           00064     movlw   B'00000011'                 
+Error[113]  : Symbol not previously defined (TRISB)
+00003E 6E00           00065     movwf   TRISB                               ; 3 salidas, 2 entradas.
+Error[113]  : Symbol not previously defined (WPUB)
+000040 6E00           00066     movwf   WPUB                                ; habilitar 2 pull ups.
+Error[113]  : Symbol not previously defined (TRISA)
+000042 6A00           00067     clrf    TRISA                               ; REGA -> OUTPUT.
+Error[113]  : Symbol not previously defined (TRISC)
+000044 6A00           00068     clrf    TRISC                               ; REGC-> OUTPUT.
+Error[113]  : Symbol not previously defined (TRISD)
+000046 6A00           00069     clrf    TRISD                               ; REGD -> OUTPUT.
+Error[113]  : Symbol not previously defined (LATA)
+000048 6A00           00070     clrf    LATA                                ; Limpiar la salida A.
+Error[113]  : Symbol not previously defined (LATC)
+00004A 6A00           00071     clrf    LATC                                ; Limpiar la salida C.
+Error[113]  : Symbol not previously defined (LATD)
+00004C 6A00           00072     clrf    LATD                                ; Limpiar la salida D.
+Error[113]  : Symbol not previously defined (PR2)
+Error[113]  : Symbol not previously defined (A)
+00004E 6A00           00073     clrf    PR2, A                              ; CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
+000050 0E04           00074     movlw   b'00000100'                         ; TMR2 ON, 1:1 , NO POST
+Error[113]  : Symbol not previously defined (T2CON)
+000052 6E00           00075     movwf   T2CON
+000054 0E30           00076     movlw   '0'
+Error[113]  : Symbol not previously defined (A)
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000056 6E05           00077     movwf   puntaje, A
+Error[113]  : Symbol not previously defined (A)
+000058 9010           00078     bcf     perdio                              ; Asegura que empieza desactivada la opcion de perder.
+Error[113]  : Symbol not previously defined (A)
+00005A 9210           00079     bcf     correcto                            ; Asegura que empieza desactivada el bit de boton correc
+                            to.
+Error[113]  : Symbol not previously defined (A)
+00005C 9410           00080     bcf     para                                ; Asegura que empieza desactivada la opcion de STOP.
+Error[113]  : Symbol not previously defined (LOOP)
+00005E EF00 F000      00081     goto    LOOP
+                      00002     
+000062                00003 DELAY_100us
+000062 0E21           00004     movlw   .33
+000064 6E00           00005     movwf   var1
+000066                00006 loop1                           
+000066 2E00           00007     decfsz  var1 
+000068 EF?? F???      00008     goto    loop1    
+00006C 0012           00009     return ; 100us approx.
+                      00010 
+00006E                00011 DELAY_100ms
+00006E 0E00           00012     movlw   .0          
+000070 6E00           00013     movwf   var1
+000072 0E80           00014     movlw   .128
+000074 6E01           00015     movwf   var2
+000076                00016 loop2                           
+000076 2E00           00017     decfsz  var1
+000078 EF?? F???      00018     goto    loop2
+00007C 2E01           00019     decfsz  var2
+00007E EF?? F???      00020     goto    loop2
+000082 0012           00021     return      ; 100ms approx.
+                      00022     
+000084                00023 DELAY_20ms
+000084 0E00           00024     movlw   .0                  
+000086 6E03           00025     movwf   _256
+000088 0E1A           00026     movlw   .26
+00008A 6E04           00027     movwf   _26 
+00008C                00028 LOOP1
+00008C 2E03           00029     decfsz  _256
+00008E EF?? F???      00030     goto    LOOP1               ; (3)*256
+000092 2E04           00031     decfsz  _26
+000094 EF?? F???      00032     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00033     ; 20046+4 = 20.05ms approx. 
+000098 0012           00034     return
+                      00035     
+00009A                00036 TIMER_5s
+00009A 0E07           00037     movlw   b'00000111'         ; Configuración T0CON
+Error[113]  : Symbol not previously defined (T0CON)
+Error[113]  : Symbol not previously defined (A)
+00009C 6E00           00038     movwf   T0CON, A
+00009E 0EB3           00039     movlw   b'10110011'
+Error[113]  : Symbol not previously defined (TMR0H)
+Error[113]  : Symbol not previously defined (A)
+0000A0 6E00           00040     movwf   TMR0H,A
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000A2 0EB4           00041     movlw   b'10110100'
+Error[113]  : Symbol not previously defined (INTCON)
+Error[113]  : Symbol not previously defined (A)
+0000A4 9400           00042     bcf     INTCON,2,A
+Error[113]  : Symbol not previously defined (TMR0L)
+Error[113]  : Symbol not previously defined (A)
+0000A6 6E00           00043     movwf   TMR0L,A   
+Error[113]  : Symbol not previously defined (T0CON)
+Error[113]  : Symbol not previously defined (A)
+0000A8 8E00           00044     bsf     T0CON,7,A           ; Activa conteo
+0000AA                00045 espera  
+Error[113]  : Symbol not previously defined (INTCON)
+Error[113]  : Symbol not previously defined (A)
+0000AA B400           00046     btfsc   INTCON,2,A          ; Si se activa la bandera del TIMER, ir a TIME_OUT.
+0000AC EF?? F???      00047     goto    TIME_OUT
+0000B0 EC?? F???      00048     call    RECORRIDO_JUEGO     ; Checar que boton se presiona.
+Error[113]  : Symbol not previously defined (A)
+0000B4 B410           00049     btfsc   para                ; Si se presiono el boton de paro, ir a STOP.
+0000B6 EF?? F???      00050     goto    STOP
+Error[113]  : Symbol not previously defined (A)
+0000BA B210           00051     btfsc   correcto            ; Si se presiono el boton correcto, continuar.
+0000BC 0012           00052     return
+0000BE EF?? F???      00053     goto    espera
+0000C2                00054 TIME_OUT
+0000C2 EC?? F???      00055     call    _SAD_PIXELS
+0000C6 EC?? F???      00056     call    SHOW_TIMES_OVER
+0000CA                00057 GAME_OVER
+0000CA EC?? F???      00058     call    ON_RED
+0000CE                00059 STOP
+0000CE EC?? F???      00060     call    _LOADING_CHARS_PERDER
+0000D2 EC?? F???      00061     call    _WRITING_LOSER_ANIM
+                      00062     ; TODO: Imprimir puntaje obtenido.
+0000D6 EC?? F???      00063     call    SHOW_HIGHSCORE
+                      00064     ; TODO: Guardar en la EEPROM si fue highscore.
+Error[113]  : Symbol not previously defined (A)
+0000DA 8010           00065     bsf     perdio
+0000DC 0012           00066     return
+0000DE                00067 NIVEL_SUPERADO
+0000DE EC?? F???      00068     call    ON_GREEN
+0000E2 EC?? F???      00069     call    _LOADING_CHARS_GANAR
+0000E6 EC?? F???      00070     call    _WRITING_WINNER_ANIM
+                      00071     ; TODO: Mostrar puntaje obtenido.
+0000EA 0012           00072     return
+                      00073     
+                      00002     
+0000EC                00003 INSTRUCTION_WRITE
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000EC 9000           00004     bcf     RS                  ; RS -> 0
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000EE 9400           00005     bcf     RW                  ; RW -> 0
+0000F0 EF?? F???      00006     goto    SEND_DATA
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000F4                00007 DATA_WRITE
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000F4 8000           00008     bsf     RS                  ; RS -> 1
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000F6 9400           00009     bcf     RW                  ; RW -> 0
+0000F8 EF?? F???      00010     goto    SEND_DATA
+0000FC                00011 DATA_READ
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000FC 8000           00012     bsf     RS                  ; RS -> 1
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+0000FE 8400           00013     bsf     RW                  ; RW -> 1
+000100 EF?? F???      00014     goto    SEND_DATA
+                      00015     
+000104                00016 SEND_DATA
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+000104 8200           00017     bsf     E                   ; Enable.
+Error[113]  : Symbol not previously defined (LATD)
+Error[113]  : Symbol not previously defined (A)
+000106 6E00           00018     movwf   dataLCD             ; Data transmission.
+000108 0000           00019     nop                         ; Wait 1us to make sure the instruction was received.
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+00010A 9200           00020     bcf     E                   ; Stop Enable.
+00010C EC?? F???      00021     call    ESPERA_LCD          ; Wait to see if LCD is done.
+000110 0012           00022     return
+                      00023     
+000112                00024 ESPERA_LCD
+Error[113]  : Symbol not previously defined (TRISD)
+Error[113]  : Symbol not previously defined (A)
+000112 8E00           00025     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+000114 9000           00026     bcf     RS                  ; RS -> 0
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+000116 8400           00027     bsf     RW                  ; RW -> 1
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+000118 8200           00028     bsf     E                   ; E -> 1
+00011A 0000           00029     nop
+00011C                00030 REGRESA
+00011C EC?? F???      00031     call    DELAY_100us         ; Wait 100us.
+Error[113]  : Symbol not previously defined (PORTD)
+Error[113]  : Symbol not previously defined (A)
+000120 BE00           00032     btfsc   flag                ; Read bussy flag.
+000122 EF?? F???      00033     goto    REGRESA             ; If set, keep waiting.
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000126 9200           00034     bcf     E
+Error[113]  : Symbol not previously defined (TRISD)
+Error[113]  : Symbol not previously defined (A)
+000128 9E00           00035     bcf     configFlag          ; RD7 -> OUTPUT again.
+00012A 0012           00036     return                      ; If not set, return.
+                      00037 
+00012C                00038 CONFIGURE_LCD   
+Error[113]  : Symbol not previously defined (LATC)
+Error[113]  : Symbol not previously defined (A)
+00012C 9200           00039     bcf     E
+00012E EC?? F???      00040     call    DELAY_100ms
+000132 0E38           00041     movlw   b'00111000'         ; 8-bit, 2 lines, 5x7.
+000134 EC?? F???      00042     call    INSTRUCTION_WRITE
+000138 0E0F           00043     movlw   b'00001111'         ; Display on, cursor on, blynk on.
+00013A EC?? F???      00044     call    INSTRUCTION_WRITE
+00013E 0E07           00045     movlw   b'00000111'         ; Increment cursor position, display shift.
+000140 EC?? F???      00046     call    INSTRUCTION_WRITE
+000144 0E01           00047     movlw   b'00000001'         ; Clear display and return to home position.
+000146 EC?? F???      00048     call    INSTRUCTION_WRITE
+00014A 0012           00049     return
+                      00050 
+00014C                00051 SHOW_MAIN_MENU
+00014C 0E41           00052     movlw   'A'                 
+00014E EC?? F???      00053     call    DATA_WRITE    
+000152 0E2D           00054     movlw   '-'                 
+000154 EC?? F???      00055     call    DATA_WRITE
+000158 0E2D           00056     movlw   '-'                 
+00015A EC?? F???      00057     call    DATA_WRITE
+00015E 0E3E           00058     movlw   '>'                 
+000160 EC?? F???      00059     call    DATA_WRITE
+                      00060     
+                      00061     ;SPACE
+000164 0E05           00062     movlw   0x05        
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000166 8E00           00063     bsf     WREG, 7, A          
+000168 EC?? F???      00064     call    INSTRUCTION_WRITE
+                      00065     
+00016C 0E4E           00066     movlw   'N'                 
+00016E EC?? F???      00067     call    DATA_WRITE
+000172 0E45           00068     movlw   'E'                 
+000174 EC?? F???      00069     call    DATA_WRITE
+000178 0E57           00070     movlw   'W'                 
+00017A EC?? F???      00071     call    DATA_WRITE
+                      00072     
+                      00073     ;SPACE
+00017E 0E09           00074     movlw   0x09
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000180 8E00           00075     bsf WREG, 7, A              
+000182 EC?? F???      00076     call    INSTRUCTION_WRITE
+                      00077     
+000186 0E47           00078     movlw   'G'                 
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000188 EC?? F???      00079     call    DATA_WRITE
+00018C 0E41           00080     movlw   'A'                 
+00018E EC?? F???      00081     call    DATA_WRITE
+000192 0E4D           00082     movlw   'M'                 
+000194 EC?? F???      00083     call    DATA_WRITE
+000198 0E45           00084     movlw   'E'                 
+00019A EC?? F???      00085     call    DATA_WRITE
+                      00086     
+                      00087     ;SECOND LINE
+00019E 0E40           00088     movlw   0x40
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0001A0 8E00           00089     bsf WREG, 7, A              
+0001A2 EC?? F???      00090     call    INSTRUCTION_WRITE
+                      00091     
+0001A6 0E42           00092     movlw   'B'                 
+0001A8 EC?? F???      00093     call    DATA_WRITE    
+0001AC 0E2D           00094     movlw   '-'                 
+0001AE EC?? F???      00095     call    DATA_WRITE
+0001B2 0E2D           00096     movlw   '-'                 
+0001B4 EC?? F???      00097     call    DATA_WRITE
+0001B8 0E3E           00098     movlw   '>'                 
+0001BA EC?? F???      00099     call    DATA_WRITE
+                      00100     
+                      00101     ;SPACE
+0001BE 0E45           00102     movlw   0x45        
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0001C0 8E00           00103     bsf WREG, 7, A              
+0001C2 EC?? F???      00104     call    INSTRUCTION_WRITE
+                      00105     
+0001C6 0E48           00106     movlw   'H'                 
+0001C8 EC?? F???      00107     call    DATA_WRITE
+0001CC 0E49           00108     movlw   'I'                 
+0001CE EC?? F???      00109     call    DATA_WRITE
+0001D2 0E47           00110     movlw   'G'                 
+0001D4 EC?? F???      00111     call    DATA_WRITE
+0001D8 0E48           00112     movlw   'H'                 
+0001DA EC?? F???      00113     call    DATA_WRITE
+                      00114     
+                      00115     ;SPACE
+0001DE 0E4A           00116     movlw   0x4A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0001E0 8E00           00117     bsf WREG, 7, A              
+0001E2 EC?? F???      00118     call    INSTRUCTION_WRITE
+                      00119     
+0001E6 0E53           00120     movlw   'S'                 
+0001E8 EC?? F???      00121     call    DATA_WRITE
+0001EC 0E43           00122     movlw   'C'                 
+0001EE EC?? F???      00123     call    DATA_WRITE
+0001F2 0E4F           00124     movlw   'O'                 
+0001F4 EC?? F???      00125     call    DATA_WRITE
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0001F8 0E52           00126     movlw   'R'                 
+0001FA EC?? F???      00127     call    DATA_WRITE
+0001FE 0E45           00128     movlw   'E'                 
+000200 EC?? F???      00129     call    DATA_WRITE
+000204 0E53           00130     movlw   'S'                 
+000206 EC?? F???      00131     call    DATA_WRITE
+00020A 0012           00132     return
+                      00002     
+00020C                00003 _LOADING_CHARS_TIEMPO
+                      00004     ; write custom characters
+00020C 0E00           00005     movlw .0
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00020E 8C00           00006     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+000210 EC?? F???      00007     call INSTRUCTION_WRITE
+000214 EC?? F???      00008     call _SAD_PIXELS
+000218 0012           00009     return
+                      00010  
+                      00011  
+00021A                00012 _SAD_PIXELS
+                      00013     ; first square .0 char
+00021A 0E00           00014     movlw b'00000'
+00021C EC?? F???      00015     call DATA_WRITE
+000220 0E06           00016     movlw b'00110'
+000222 EC?? F???      00017     call DATA_WRITE
+000226 0E06           00018     movlw b'00110'
+000228 EC?? F???      00019     call DATA_WRITE
+00022C 0E00           00020     movlw b'00000'
+00022E EC?? F???      00021     call DATA_WRITE
+000232 0E01           00022     movlw b'00001'
+000234 EC?? F???      00023     call DATA_WRITE
+000238 0E06           00024     movlw b'00110'
+00023A EC?? F???      00025     call DATA_WRITE
+00023E 0E08           00026     movlw b'01000'
+000240 EC?? F???      00027     call DATA_WRITE
+000244 0E00           00028     movlw b'00000'
+000246 EC?? F???      00029     call DATA_WRITE
+                      00030     ; second square .8 char
+00024A 0E00           00031     movlw b'00000'
+00024C EC?? F???      00032     call DATA_WRITE
+000250 0E0C           00033     movlw b'01100'
+000252 EC?? F???      00034     call DATA_WRITE
+000256 0E0C           00035     movlw b'01100'
+000258 EC?? F???      00036     call DATA_WRITE
+00025C 0E00           00037     movlw b'00000'
+00025E EC?? F???      00038     call DATA_WRITE
+000262 0E10           00039     movlw b'10000'
+000264 EC?? F???      00040     call DATA_WRITE
+000268 0E0C           00041     movlw b'01100'
+00026A EC?? F???      00042     call DATA_WRITE
+00026E 0E02           00043     movlw b'00010'
+000270 EC?? F???      00044     call DATA_WRITE
+000274 0E00           00045     movlw b'00000'
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000276 EC?? F???      00046     call DATA_WRITE
+00027A 0012           00047     return
+                      00048     
+00027C                00049 _LOADING_CHARS_GANAR
+                      00050     ; write custom characters
+00027C 0E00           00051     movlw .0
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00027E 8C00           00052     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+000280 EC?? F???      00053     call INSTRUCTION_WRITE
+000284 EC?? F???      00054     call _WINNER_PIXELS
+000288 0012           00055     return
+                      00056  
+                      00057  
+00028A                00058 _WINNER_PIXELS
+                      00059     ; first square .0 char
+00028A 0E00           00060     movlw b'00000'
+00028C EC?? F???      00061     call DATA_WRITE
+000290 0E00           00062     movlw b'00000'
+000292 EC?? F???      00063     call DATA_WRITE
+000296 0E00           00064     movlw b'00000'
+000298 EC?? F???      00065     call DATA_WRITE
+00029C 0E00           00066     movlw b'00000'
+00029E EC?? F???      00067     call DATA_WRITE
+0002A2 0E00           00068     movlw b'00000'
+0002A4 EC?? F???      00069     call DATA_WRITE
+0002A8 0E00           00070     movlw b'00000'
+0002AA EC?? F???      00071     call DATA_WRITE
+0002AE 0E04           00072     movlw b'00100'
+0002B0 EC?? F???      00073     call DATA_WRITE
+0002B4 0E0E           00074     movlw b'01110'
+0002B6 EC?? F???      00075     call DATA_WRITE
+                      00076     ; second square .8 char
+0002BA 0E00           00077     movlw b'00000'
+0002BC EC?? F???      00078     call DATA_WRITE
+0002C0 0E00           00079     movlw b'00000'
+0002C2 EC?? F???      00080     call DATA_WRITE
+0002C6 0E00           00081     movlw b'00000'
+0002C8 EC?? F???      00082     call DATA_WRITE
+0002CC 0E00           00083     movlw b'00000'
+0002CE EC?? F???      00084     call DATA_WRITE
+0002D2 0E04           00085     movlw b'00100'
+0002D4 EC?? F???      00086     call DATA_WRITE
+0002D8 0E0E           00087     movlw b'01110'
+0002DA EC?? F???      00088     call DATA_WRITE
+0002DE 0E15           00089     movlw b'10101'
+0002E0 EC?? F???      00090     call DATA_WRITE
+0002E4 0E04           00091     movlw b'00100'
+0002E6 EC?? F???      00092     call DATA_WRITE
+                      00093     ; third square .16 char
+0002EA 0E00           00094     movlw b'00000'
+0002EC EC?? F???      00095     call DATA_WRITE
+0002F0 0E00           00096     movlw b'00000'
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0002F2 EC?? F???      00097     call DATA_WRITE
+0002F6 0E04           00098     movlw b'00100'
+0002F8 EC?? F???      00099     call DATA_WRITE
+0002FC 0E0E           00100     movlw b'01110'
+0002FE EC?? F???      00101     call DATA_WRITE
+000302 0E15           00102     movlw b'10101'
+000304 EC?? F???      00103     call DATA_WRITE
+000308 0E04           00104     movlw b'00100'
+00030A EC?? F???      00105     call DATA_WRITE
+00030E 0E04           00106     movlw b'00100'
+000310 EC?? F???      00107     call DATA_WRITE
+000314 0E04           00108     movlw b'00100'
+000316 EC?? F???      00109     call DATA_WRITE
+                      00110     ; fourth square .24 char
+00031A 0E04           00111     movlw b'00100'
+00031C EC?? F???      00112     call DATA_WRITE
+000320 0E0E           00113     movlw b'01110'
+000322 EC?? F???      00114     call DATA_WRITE
+000326 0E15           00115     movlw b'10101'
+000328 EC?? F???      00116     call DATA_WRITE
+00032C 0E04           00117     movlw b'00100'
+00032E EC?? F???      00118     call DATA_WRITE
+000332 0E04           00119     movlw b'00100'
+000334 EC?? F???      00120     call DATA_WRITE
+000338 0E04           00121     movlw b'00100'
+00033A EC?? F???      00122     call DATA_WRITE
+00033E 0E04           00123     movlw b'00100'
+000340 EC?? F???      00124     call DATA_WRITE
+000344 0E00           00125     movlw b'00000'
+000346 EC?? F???      00126     call DATA_WRITE
+                      00127     ; fifth square .32 char
+00034A 0E15           00128     movlw b'10101'
+00034C EC?? F???      00129     call DATA_WRITE
+000350 0E04           00130     movlw b'00100'
+000352 EC?? F???      00131     call DATA_WRITE
+000356 0E04           00132     movlw b'00100'
+000358 EC?? F???      00133     call DATA_WRITE
+00035C 0E04           00134     movlw b'00100'
+00035E EC?? F???      00135     call DATA_WRITE
+000362 0E04           00136     movlw b'00100'
+000364 EC?? F???      00137     call DATA_WRITE
+000368 0E00           00138     movlw b'00000'
+00036A EC?? F???      00139     call DATA_WRITE
+00036E 0E00           00140     movlw b'00000'
+000370 EC?? F???      00141     call DATA_WRITE
+000374 0E00           00142     movlw b'00000'
+000376 EC?? F???      00143     call DATA_WRITE
+                      00144     ; sixth square .40 char
+00037A 0E04           00145     movlw b'00100'
+00037C EC?? F???      00146     call DATA_WRITE
+000380 0E04           00147     movlw b'00100'
+000382 EC?? F???      00148     call DATA_WRITE
+000386 0E04           00149     movlw b'00100'
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000388 EC?? F???      00150     call DATA_WRITE
+00038C 0E00           00151     movlw b'00000'
+00038E EC?? F???      00152     call DATA_WRITE
+000392 0E00           00153     movlw b'00000'
+000394 EC?? F???      00154     call DATA_WRITE
+000398 0E00           00155     movlw b'00000'
+00039A EC?? F???      00156     call DATA_WRITE
+00039E 0E00           00157     movlw b'00000'
+0003A0 EC?? F???      00158     call DATA_WRITE
+0003A4 0E00           00159     movlw b'00000'
+0003A6 EC?? F???      00160     call DATA_WRITE
+0003AA 0012           00161     return
+                      00162 
+0003AC                00163 _LOADING_CHARS_PERDER
+                      00164     ; write custom characters
+0003AC 0E00           00165     movlw .0
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0003AE 8C00           00166     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+0003B0 EC?? F???      00167     call INSTRUCTION_WRITE
+0003B4 EC?? F???      00168     call _LOSING_PIXELS
+0003B8 0012           00169     return
+                      00170     
+0003BA                00171 _LOSING_PIXELS
+                      00172     ; first square .0 char
+0003BA 0E03           00173     movlw b'00011'
+0003BC EC?? F???      00174     call DATA_WRITE
+0003C0 0E0F           00175     movlw b'01111'
+0003C2 EC?? F???      00176     call DATA_WRITE
+0003C6 0E0F           00177     movlw b'01111'
+0003C8 EC?? F???      00178     call DATA_WRITE
+0003CC 0E1F           00179     movlw b'11111'
+0003CE EC?? F???      00180     call DATA_WRITE
+0003D2 0E1F           00181     movlw b'11111'
+0003D4 EC?? F???      00182     call DATA_WRITE
+0003D8 0E1D           00183     movlw b'11101'
+0003DA EC?? F???      00184     call DATA_WRITE
+0003DE 0E19           00185     movlw b'11001'
+0003E0 EC?? F???      00186     call DATA_WRITE
+0003E4 0E1B           00187     movlw b'11011'
+0003E6 EC?? F???      00188     call DATA_WRITE
+                      00189     ; second square .8 char
+0003EA 0E10           00190     movlw b'10000'
+0003EC EC?? F???      00191     call DATA_WRITE
+0003F0 0E1C           00192     movlw b'11100'
+0003F2 EC?? F???      00193     call DATA_WRITE
+0003F6 0E1C           00194     movlw b'11100'
+0003F8 EC?? F???      00195     call DATA_WRITE
+0003FC 0E1E           00196     movlw b'11110'
+0003FE EC?? F???      00197     call DATA_WRITE
+000402 0E1E           00198     movlw b'11110'
+000404 EC?? F???      00199     call DATA_WRITE
+000408 0E0E           00200     movlw b'01110'
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00040A EC?? F???      00201     call DATA_WRITE
+00040E 0E06           00202     movlw b'00110'
+000410 EC?? F???      00203     call DATA_WRITE
+000414 0E16           00204     movlw b'10110'
+000416 EC?? F???      00205     call DATA_WRITE
+                      00206     ; third square .16 char
+00041A 0E0F           00207     movlw b'01111'
+00041C EC?? F???      00208     call DATA_WRITE
+000420 0E0E           00209     movlw b'01110'
+000422 EC?? F???      00210     call DATA_WRITE
+000426 0E07           00211     movlw b'00111'
+000428 EC?? F???      00212     call DATA_WRITE
+00042C 0E04           00213     movlw b'00100'
+00042E EC?? F???      00214     call DATA_WRITE
+000432 0E05           00215     movlw b'00101'
+000434 EC?? F???      00216     call DATA_WRITE
+000438 0E05           00217     movlw b'00101'
+00043A EC?? F???      00218     call DATA_WRITE
+00043E 0E07           00219     movlw b'00111'
+000440 EC?? F???      00220     call DATA_WRITE
+000444 0E03           00221     movlw b'00011'
+000446 EC?? F???      00222     call DATA_WRITE
+                      00223     ; fourth square .24 char
+00044A 0E1C           00224     movlw b'11100'
+00044C EC?? F???      00225     call DATA_WRITE
+000450 0E1C           00226     movlw b'11100'
+000452 EC?? F???      00227     call DATA_WRITE
+000456 0E18           00228     movlw b'11000'
+000458 EC?? F???      00229     call DATA_WRITE
+00045C 0E08           00230     movlw b'01000'
+00045E EC?? F???      00231     call DATA_WRITE
+000462 0E08           00232     movlw b'01000'
+000464 EC?? F???      00233     call DATA_WRITE
+000468 0E08           00234     movlw b'01000'
+00046A EC?? F???      00235     call DATA_WRITE
+00046E 0E18           00236     movlw b'11000'
+000470 EC?? F???      00237     call DATA_WRITE
+000474 0E10           00238     movlw b'10000'
+000476 EC?? F???      00239     call DATA_WRITE
+                      00240     
+                      00241     ; fifth square .32 char
+00047A 0E1C           00242     movlw b'11100'
+00047C EC?? F???      00243     call DATA_WRITE
+000480 0E10           00244     movlw b'10000'
+000482 EC?? F???      00245     call DATA_WRITE
+000486 0E10           00246     movlw b'10000'
+000488 EC?? F???      00247     call DATA_WRITE
+00048C 0E00           00248     movlw b'00000'
+00048E EC?? F???      00249     call DATA_WRITE
+000492 0E00           00250     movlw b'00000'
+000494 EC?? F???      00251     call DATA_WRITE
+000498 0E02           00252     movlw b'00010'
+00049A EC?? F???      00253     call DATA_WRITE
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00049E 0E06           00254     movlw b'00110'
+0004A0 EC?? F???      00255     call DATA_WRITE
+0004A4 0E04           00256     movlw b'00100'
+0004A6 EC?? F???      00257     call DATA_WRITE
+                      00258     ; sixth square .40 char
+0004AA 0E0F           00259     movlw b'01111'
+0004AC EC?? F???      00260     call DATA_WRITE
+0004B0 0E03           00261     movlw b'00011'
+0004B2 EC?? F???      00262     call DATA_WRITE
+0004B6 0E03           00263     movlw b'00011'
+0004B8 EC?? F???      00264     call DATA_WRITE
+0004BC 0E01           00265     movlw b'00001'
+0004BE EC?? F???      00266     call DATA_WRITE
+0004C2 0E01           00267     movlw b'00001'
+0004C4 EC?? F???      00268     call DATA_WRITE
+0004C8 0E11           00269     movlw b'10001'
+0004CA EC?? F???      00270     call DATA_WRITE
+0004CE 0E19           00271     movlw b'11001'
+0004D0 EC?? F???      00272     call DATA_WRITE
+0004D4 0E09           00273     movlw b'01001'
+0004D6 EC?? F???      00274     call DATA_WRITE
+                      00275     ; seventh square .48 char
+0004DA 0E10           00276     movlw b'10000'
+0004DC EC?? F???      00277     call DATA_WRITE
+0004E0 0E11           00278     movlw b'10001'
+0004E2 EC?? F???      00279     call DATA_WRITE
+0004E6 0E18           00280     movlw b'11000'
+0004E8 EC?? F???      00281     call DATA_WRITE
+0004EC 0E1B           00282     movlw b'11011'
+0004EE EC?? F???      00283     call DATA_WRITE
+0004F2 0E1A           00284     movlw b'11010'
+0004F4 EC?? F???      00285     call DATA_WRITE
+0004F8 0E1A           00286     movlw b'11010'
+0004FA EC?? F???      00287     call DATA_WRITE
+0004FE 0E18           00288     movlw b'11000'
+000500 EC?? F???      00289     call DATA_WRITE
+000504 0E1C           00290     movlw b'11100'
+000506 EC?? F???      00291     call DATA_WRITE
+                      00292     ; eight square .56 char
+00050A 0E03           00293     movlw b'00011'
+00050C EC?? F???      00294     call DATA_WRITE
+000510 0E03           00295     movlw b'00011'
+000512 EC?? F???      00296     call DATA_WRITE
+000516 0E07           00297     movlw b'00111'
+000518 EC?? F???      00298     call DATA_WRITE
+00051C 0E17           00299     movlw b'10111'
+00051E EC?? F???      00300     call DATA_WRITE
+000522 0E17           00301     movlw b'10111'
+000524 EC?? F???      00302     call DATA_WRITE
+000528 0E17           00303     movlw b'10111'
+00052A EC?? F???      00304     call DATA_WRITE
+00052E 0E07           00305     movlw b'00111'
+000530 EC?? F???      00306     call DATA_WRITE
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000534 0E0F           00307     movlw b'01111'
+000536 EC?? F???      00308     call DATA_WRITE
+                      00309    
+00053A 0012           00310     return
+                      00311 
+00053C                00312 _WRITING_LOSER_ANIM ; writing the chars into the lcd display 
+                      00313     ; first line of lcd
+00053C 0E01           00314     movlw   0x01 ; Move cursor to 0x00.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00053E 8E00           00315     bsf    WREG, 7, A 
+000540 EC?? F???      00316     call    INSTRUCTION_WRITE
+                      00317    
+000544 0E00           00318     movlw   .0 ; Write first square.
+000546 EC?? F???      00319     call    DATA_WRITE
+00054A 0E01           00320     movlw   .1 ; Write second square.
+00054C EC?? F???      00321     call    DATA_WRITE
+                      00322     
+000550 0E04           00323     movlw   .4 ; Write fifth square.
+000552 EC?? F???      00324     call    DATA_WRITE
+000556 0E05           00325     movlw   .5 ; Write sixth square.
+000558 EC?? F???      00326     call    DATA_WRITE
+                      00327     ; one space
+00055C 0E06           00328     movlw   0x06 ; Move cursor to 0x05.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00055E 8E00           00329     bsf    WREG, 7, A 
+000560 EC?? F???      00330     call    INSTRUCTION_WRITE
+                      00331     
+000564 0E47           00332     movlw   'G' ; Write a 'G'.
+000566 EC?? F???      00333     call    DATA_WRITE
+00056A 0E41           00334     movlw   'A' ; Write a 'A'.
+00056C EC?? F???      00335     call    DATA_WRITE
+000570 0E4D           00336     movlw   'M' ; Write a 'M'.
+000572 EC?? F???      00337     call    DATA_WRITE
+000576 0E45           00338     movlw   'E' ; Write a 'E'.
+000578 EC?? F???      00339     call    DATA_WRITE
+                      00340     
+                      00341     ; one space
+00057C 0E0B           00342     movlw   0x0B ; Move cursor to 0x0A.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00057E 8E00           00343     bsf    WREG, 7, A 
+000580 EC?? F???      00344     call    INSTRUCTION_WRITE
+                      00345     
+000584 0E00           00346     movlw   .0 ; Write firt square.
+000586 EC?? F???      00347     call    DATA_WRITE
+00058A 0E01           00348     movlw   .1 ; Write second square.
+00058C EC?? F???      00349     call    DATA_WRITE
+                      00350     
+000590 0E04           00351     movlw   .4 ; Write fifth square.
+000592 EC?? F???      00352     call    DATA_WRITE
+000596 0E05           00353     movlw   .5 ; Write sixth square.
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000598 EC?? F???      00354     call    DATA_WRITE
+                      00355     ; one space
+00059C 0E10           00356     movlw   0x10 ; Move cursor to 0x0E.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00059E 8E00           00357     bsf    WREG, 7, A 
+0005A0 EC?? F???      00358     call    INSTRUCTION_WRITE
+                      00359     
+0005A4 0E47           00360     movlw   'G' ; Write a 'G'.
+0005A6 EC?? F???      00361     call    DATA_WRITE
+0005AA 0E41           00362     movlw   'A' ; Write a 'A'.
+0005AC EC?? F???      00363     call    DATA_WRITE
+0005B0 0E4D           00364     movlw   'M' ; Write a 'M'.
+0005B2 EC?? F???      00365     call    DATA_WRITE
+0005B6 0E45           00366     movlw   'E' ; Write a 'E'.
+0005B8 EC?? F???      00367     call    DATA_WRITE
+                      00368     ; one space
+0005BC 0E15           00369     movlw   0x15 ; Move cursor to 0x14.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0005BE 8E00           00370     bsf    WREG, 7, A 
+0005C0 EC?? F???      00371     call    INSTRUCTION_WRITE
+                      00372    
+                      00373     
+0005C4 0E00           00374     movlw   .0 ; Write first square.
+0005C6 EC?? F???      00375     call    DATA_WRITE
+0005CA 0E01           00376     movlw   .1 ; Write second square.
+0005CC EC?? F???      00377     call    DATA_WRITE
+                      00378     
+0005D0 0E04           00379     movlw   .4 ; Write fifth square.
+0005D2 EC?? F???      00380     call    DATA_WRITE
+0005D6 0E05           00381     movlw   .5 ; Write sixth square.
+0005D8 EC?? F???      00382     call    DATA_WRITE
+                      00383     
+                      00384     ; second line of lcd
+0005DC 0E41           00385     movlw   0x41 ; Move cursor to 0x40.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0005DE 8E00           00386     bsf    WREG, 7, A 
+0005E0 EC?? F???      00387     call    INSTRUCTION_WRITE
+                      00388     
+0005E4 0E02           00389     movlw   .2 ; Write firt square.
+0005E6 EC?? F???      00390     call    DATA_WRITE
+0005EA 0E03           00391     movlw   .3 ; Write second square.
+0005EC EC?? F???      00392     call    DATA_WRITE
+                      00393     
+0005F0 0E06           00394     movlw   .6 ; Write fifth square.
+0005F2 EC?? F???      00395     call    DATA_WRITE
+0005F6 0E07           00396     movlw   .7 ; Write sixth square.
+0005F8 EC?? F???      00397     call    DATA_WRITE
+                      00398     ; one space
+0005FC 0E46           00399     movlw   0x46 ; Move cursor to 0x05.
+Error[113]  : Symbol not previously defined (WREG)
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[113]  : Symbol not previously defined (A)
+0005FE 8E00           00400     bsf    WREG, 7, A 
+000600 EC?? F???      00401     call    INSTRUCTION_WRITE
+                      00402     
+000604 0E4F           00403     movlw   'O' ; Write a 'O'.
+000606 EC?? F???      00404     call    DATA_WRITE
+00060A 0E56           00405     movlw   'V' ; Write a 'V'.
+00060C EC?? F???      00406     call    DATA_WRITE
+000610 0E45           00407     movlw   'E' ; Write a 'E'.
+000612 EC?? F???      00408     call    DATA_WRITE
+000616 0E52           00409     movlw   'R' ; Write a 'R'.
+000618 EC?? F???      00410     call    DATA_WRITE
+                      00411     ; one space
+00061C 0E4B           00412     movlw   0x4B ; Move cursor to 0x10.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00061E 8E00           00413     bsf    WREG, 7, A 
+000620 EC?? F???      00414     call    INSTRUCTION_WRITE
+                      00415     
+000624 0E02           00416     movlw   .2 ; Write firt square.
+000626 EC?? F???      00417     call    DATA_WRITE
+00062A 0E03           00418     movlw   .3 ; Write second square.
+00062C EC?? F???      00419     call    DATA_WRITE
+                      00420     
+000630 0E06           00421     movlw   .6 ; Write fifth square.
+000632 EC?? F???      00422     call    DATA_WRITE
+000636 0E07           00423     movlw   .7 ; Write sixth square.
+000638 EC?? F???      00424     call    DATA_WRITE
+                      00425      ; one space
+00063C 0E50           00426     movlw   0x50 ; Move cursor to 0x05.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00063E 8E00           00427     bsf    WREG, 7, A 
+000640 EC?? F???      00428     call    INSTRUCTION_WRITE
+                      00429     
+000644 0E4F           00430     movlw   'O' ; Write a 'O'.
+000646 EC?? F???      00431     call    DATA_WRITE
+00064A 0E56           00432     movlw   'V' ; Write a 'V'.
+00064C EC?? F???      00433     call    DATA_WRITE
+000650 0E45           00434     movlw   'E' ; Write a 'E'.
+000652 EC?? F???      00435     call    DATA_WRITE
+000656 0E52           00436     movlw   'R' ; Write a 'R'.
+000658 EC?? F???      00437     call    DATA_WRITE
+                      00438     ; six spaces
+00065C 0E55           00439     movlw   0x55 ; Move cursor to 0x20.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00065E 8E00           00440     bsf    WREG, 7, A 
+000660 EC?? F???      00441     call    INSTRUCTION_WRITE
+                      00442     
+000664 0E02           00443     movlw   .2 ; Write first square.
+000666 EC?? F???      00444     call    DATA_WRITE
+00066A 0E03           00445     movlw   .3 ; Write second square.
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00066C EC?? F???      00446     call    DATA_WRITE
+                      00447     
+000670 0E06           00448     movlw   .6 ; Write fifth square.
+000672 EC?? F???      00449     call    DATA_WRITE
+000676 0E07           00450     movlw   .7 ; Write sixth square.
+000678 EC?? F???      00451     call    DATA_WRITE
+                      00452     
+                      00453     ; display shift for animation
+00067C 0EF0           00454     movlw .240
+Error[113]  : Symbol not previously defined (A)
+00067E 6E08           00455     movwf register_loser, A
+                      00456  
+000680                00457 LOOP_LOSER_LEFT
+Error[113]  : Symbol not previously defined (delay100us)
+000680 EC00 F000      00458     call delay100us
+Error[113]  : Symbol not previously defined (delay100us)
+000684 EC00 F000      00459     call delay100us
+000688 0E18           00460     movlw b'00011000' ; set move display to the left
+00068A EC?? F???      00461     call INSTRUCTION_WRITE
+Error[113]  : Symbol not previously defined (A)
+00068E 3E08           00462     incfsz register_loser, 1, A
+000690 EF?? F???      00463     goto LOOP_LOSER_LEFT
+000694 0EF0           00464     movlw .240
+Error[113]  : Symbol not previously defined (A)
+000696 6E08           00465     movwf register_loser, A
+                      00466  
+000698                00467 LOOP_LOSER_RIGHT
+Error[113]  : Symbol not previously defined (delay100us)
+000698 EC00 F000      00468     call delay100us
+Error[113]  : Symbol not previously defined (delay100us)
+00069C EC00 F000      00469     call delay100us
+0006A0 0E1C           00470     movlw b'00011100' ; set move display to the left
+0006A2 EC?? F???      00471     call INSTRUCTION_WRITE
+Error[113]  : Symbol not previously defined (A)
+0006A6 3E08           00472     incfsz register_loser, 1, A
+0006A8 EF?? F???      00473     goto LOOP_LOSER_RIGHT
+0006AC 0012           00474     return
+                      00475 
+0006AE                00476 _WRITING_WINNER_ANIM
+                      00477     ;SECOND LINE
+0006AE 0E44           00478     movlw   0x44
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0006B0 8E00           00479     bsf     WREG, 7, A          
+0006B2 EC?? F???      00480     call    INSTRUCTION_WRITE
+                      00481     
+0006B6 0E4C           00482     movlw   'L'                 
+0006B8 EC?? F???      00483     call    DATA_WRITE    
+0006BC 0E45           00484     movlw   'E'                 
+0006BE EC?? F???      00485     call    DATA_WRITE    
+0006C2 0E56           00486     movlw   'V'                 
+0006C4 EC?? F???      00487     call    DATA_WRITE    
+0006C8 0E45           00488     movlw   'E'                 
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0006CA EC?? F???      00489     call    DATA_WRITE    
+0006CE 0E4C           00490     movlw   'L'                 
+0006D0 EC?? F???      00491     call    DATA_WRITE    
+                      00492     
+                      00493     ;SPACE
+0006D4 0E4A           00494     movlw   0x4A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0006D6 8E00           00495     bsf     WREG, 7, A          
+0006D8 EC?? F???      00496     call    INSTRUCTION_WRITE
+                      00497     
+0006DC 0E55           00498     movlw   'U'                 
+0006DE EC?? F???      00499     call    DATA_WRITE    
+0006E2 0E50           00500     movlw   'P'                 
+0006E4 EC?? F???      00501     call    DATA_WRITE    
+                      00502     
+0006E8 0E05           00503     movlw .5 ;Repeat animation 5 times
+0006EA 6E02           00504     movwf var3
+0006EC                00505 WIN_ANIMATION_LOOP
+                      00506    ;0  
+0006EC 0E02           00507     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0006EE 8E00           00508     bsf     WREG, 7, A          
+0006F0 EC?? F???      00509     call    INSTRUCTION_WRITE
+                      00510     
+0006F4 0E00           00511     movlw   .0                  
+0006F6 EC?? F???      00512     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0006FA EC00 F000      00513     call    delay100us
+                      00514     
+                      00515     
+0006FE 0E0D           00516     movlw   0x0D
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000700 8E00           00517     bsf     WREG, 7, A          
+000702 EC?? F???      00518     call    INSTRUCTION_WRITE
+                      00519     
+000706 0E00           00520     movlw   .0                  
+000708 EC?? F???      00521     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+00070C EC00 F000      00522     call    delay100us
+                      00523     
+                      00524     
+                      00525     ;1   
+000710 0E02           00526     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000712 8E00           00527     bsf     WREG, 7, A          
+000714 EC?? F???      00528     call    INSTRUCTION_WRITE
+                      00529     
+000718 0E01           00530     movlw   .1          
+00071A EC?? F???      00531     call    DATA_WRITE
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[113]  : Symbol not previously defined (delay100us)
+00071E EC00 F000      00532     call    delay100us
+                      00533     
+                      00534     
+000722 0E0D           00535     movlw   0x0D
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000724 8E00           00536     bsf     WREG, 7, A          
+000726 EC?? F???      00537     call    INSTRUCTION_WRITE
+                      00538     
+00072A 0E01           00539     movlw   .1          
+00072C EC?? F???      00540     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000730 EC00 F000      00541     call    delay100us
+                      00542     
+                      00543     ;2   
+000734 0E02           00544     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000736 8E00           00545     bsf     WREG, 7, A          
+000738 EC?? F???      00546     call    INSTRUCTION_WRITE
+                      00547     
+00073C 0E02           00548     movlw   .2          
+00073E EC?? F???      00549     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000742 EC00 F000      00550     call    delay100us
+                      00551     
+                      00552     
+000746 0E0D           00553     movlw   0x0D
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000748 8E00           00554     bsf     WREG, 7, A          
+00074A EC?? F???      00555     call    INSTRUCTION_WRITE
+                      00556     
+00074E 0E02           00557     movlw   .2          
+000750 EC?? F???      00558     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000754 EC00 F000      00559     call    delay100us
+                      00560     
+                      00561     ;3
+000758 0E02           00562     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00075A 8E00           00563     bsf     WREG, 7, A          
+00075C EC?? F???      00564     call    INSTRUCTION_WRITE
+                      00565     
+000760 0E03           00566     movlw   .3          
+000762 EC?? F???      00567     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000766 EC00 F000      00568     call    delay100us
+                      00569     
+                      00570     
+00076A 0E0D           00571     movlw   0x0D
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00076C 8E00           00572     bsf     WREG, 7, A          
+00076E EC?? F???      00573     call    INSTRUCTION_WRITE
+                      00574     
+000772 0E03           00575     movlw   .3          
+000774 EC?? F???      00576     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000778 EC00 F000      00577     call    delay100us
+                      00578     
+                      00579     ;4
+00077C 0E02           00580     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00077E 8E00           00581     bsf     WREG, 7, A          
+000780 EC?? F???      00582     call    INSTRUCTION_WRITE
+                      00583     
+000784 0E04           00584     movlw   .4          
+000786 EC?? F???      00585     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+00078A EC00 F000      00586     call    delay100us
+                      00587     
+                      00588     
+00078E 0E0D           00589     movlw   0x0D
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000790 8E00           00590     bsf     WREG, 7, A          
+000792 EC?? F???      00591     call    INSTRUCTION_WRITE
+                      00592     
+000796 0E04           00593     movlw   .4          
+000798 EC?? F???      00594     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+00079C EC00 F000      00595     call    delay100us
+                      00596     
+                      00597     ;5
+0007A0 0E02           00598     movlw   0x02
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0007A2 8E00           00599     bsf     WREG, 7, A          
+0007A4 EC?? F???      00600     call    INSTRUCTION_WRITE
+                      00601     
+0007A8 0E05           00602     movlw   .5          
+0007AA EC?? F???      00603     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0007AE EC00 F000      00604     call    delay100us
+                      00605     
+                      00606     
+0007B2 0E0D           00607     movlw   0x0D
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0007B4 8E00           00608     bsf     WREG, 7, A          
+0007B6 EC?? F???      00609     call    INSTRUCTION_WRITE
+                      00610     
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0007BA 0E05           00611     movlw   .5  
+0007BC EC?? F???      00612     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0007C0 EC00 F000      00613     call    delay100us
+                      00614     
+0007C4 2E02           00615     DECFSZ var3
+0007C6 EF?? F???      00616     goto WIN_ANIMATION_LOOP
+0007CA 0012           00617     return
+                      00618 
+0007CC                00619 SHOW_HIGHSCORE
+0007CC 0E21           00620     movlw   '!'                 
+0007CE EC?? F???      00621     call    DATA_WRITE   
+0007D2 0E4E           00622     movlw   'N'                 
+0007D4 EC?? F???      00623     call    DATA_WRITE    
+0007D8 0E45           00624     movlw   'E'                 
+0007DA EC?? F???      00625     call    DATA_WRITE
+0007DE 0E57           00626     movlw   'W'                 
+0007E0 EC?? F???      00627     call    DATA_WRITE
+                      00628     
+                      00629     ;SPACE
+0007E4 0E05           00630     movlw   0x05        
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0007E6 8E00           00631     bsf     WREG, 7, A          
+0007E8 EC?? F???      00632     call    INSTRUCTION_WRITE
+                      00633     
+0007EC 0E48           00634     movlw   'H'                 
+0007EE EC?? F???      00635     call    DATA_WRITE
+0007F2 0E49           00636     movlw   'I'                 
+0007F4 EC?? F???      00637     call    DATA_WRITE
+0007F8 0E47           00638     movlw   'G'                 
+0007FA EC?? F???      00639     call    DATA_WRITE
+0007FE 0E48           00640     movlw   'H'                 
+000800 EC?? F???      00641     call    DATA_WRITE
+                      00642  
+                      00643     ;SPACE
+000804 0E0A           00644     movlw   0x0A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000806 8E00           00645     bsf     WREG, 7, A          
+000808 EC?? F???      00646     call    INSTRUCTION_WRITE
+                      00647     
+00080C 0E53           00648     movlw   'S'                 
+00080E EC?? F???      00649     call    DATA_WRITE
+000812 0E43           00650     movlw   'C'                 
+000814 EC?? F???      00651     call    DATA_WRITE
+000818 0E4F           00652     movlw   'O'                 
+00081A EC?? F???      00653     call    DATA_WRITE
+00081E 0E52           00654     movlw   'R'                 
+000820 EC?? F???      00655     call    DATA_WRITE
+000824 0E45           00656     movlw   'E'                 
+000826 EC?? F???      00657     call    DATA_WRITE
+00082A 0E21           00658     movlw   '!'                 
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00082C EC?? F???      00659     call    DATA_WRITE   
+                      00660     
+                      00661     
+                      00662     ;SECOND LINE
+000830 0E40           00663     movlw   0x40
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+000832 8E00           00664     bsf     WREG, 7, A          
+000834 EC?? F???      00665     call    INSTRUCTION_WRITE
+                      00666     
+000838 0E2D           00667     movlw   '-'                 
+00083A EC?? F???      00668     call    DATA_WRITE    
+00083E 0E2D           00669     movlw   '-'                 
+000840 EC?? F???      00670     call    DATA_WRITE    
+000844 0E2D           00671     movlw   '-'                 
+000846 EC?? F???      00672     call    DATA_WRITE    
+00084A 0E2D           00673     movlw   '-'                 
+00084C EC?? F???      00674     call    DATA_WRITE    
+000850 0E2D           00675     movlw   '-'                 
+000852 EC?? F???      00676     call    DATA_WRITE    
+000856 0E2D           00677     movlw   '-'                 
+000858 EC?? F???      00678     call    DATA_WRITE    
+00085C 0E3E           00679     movlw   '>'                 
+00085E EC?? F???      00680     call    DATA_WRITE    
+000862 0E30           00681     movlw   '0'                 
+000864 EC?? F???      00682     call    DATA_WRITE      
+Error[113]  : Symbol not previously defined (A)
+000868 5005           00683     movf    puntaje, W, A
+00086A EC?? F???      00684     call    DATA_WRITE     
+00086E 0E3C           00685     movlw   '<'                 
+000870 EC?? F???      00686     call    DATA_WRITE    
+000874 0E2D           00687     movlw   '-'                 
+000876 EC?? F???      00688     call    DATA_WRITE    
+00087A 0E2D           00689     movlw   '-'                 
+00087C EC?? F???      00690     call    DATA_WRITE    
+000880 0E2D           00691     movlw   '-'                 
+000882 EC?? F???      00692     call    DATA_WRITE    
+000886 0E2D           00693     movlw   '-'                 
+000888 EC?? F???      00694     call    DATA_WRITE    
+00088C 0E2D           00695     movlw   '-'                 
+00088E EC?? F???      00696     call    DATA_WRITE    
+000892 0E2D           00697     movlw   '-'                 
+000894 EC?? F???      00698     call    DATA_WRITE    
+000898 0012           00699     return
+                      00700 
+00089A                00701 SHOW_TIMES_OVER
+00089A 0E04           00702     movlw   0x04        
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00089C 8E00           00703     bsf     WREG, 7, A          
+00089E EC?? F???      00704     call    INSTRUCTION_WRITE
+                      00705     
+0008A2 0E54           00706     movlw   'T'                 
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0008A4 EC?? F???      00707     call    DATA_WRITE    
+0008A8 0E49           00708     movlw   'I'                 
+0008AA EC?? F???      00709     call    DATA_WRITE
+0008AE 0E4D           00710     movlw   'M'                 
+0008B0 EC?? F???      00711     call    DATA_WRITE
+0008B4 0E45           00712     movlw   'E'                 
+0008B6 EC?? F???      00713     call    DATA_WRITE
+0008BA 0E53           00714     movlw   'S'                 
+0008BC EC?? F???      00715     call    DATA_WRITE
+                      00716     
+                      00717     ;SPACE
+0008C0 0E0A           00718     movlw   0x0A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0008C2 8E00           00719     bsf     WREG, 7, A          
+0008C4 EC?? F???      00720     call    INSTRUCTION_WRITE
+                      00721     
+0008C8 0E55           00722     movlw   'U'                 
+0008CA EC?? F???      00723     call    DATA_WRITE
+0008CE 0E50           00724     movlw   'P'                 
+0008D0 EC?? F???      00725     call    DATA_WRITE    
+                      00726     
+                      00727     ;SECOND LINE
+0008D4 0E47           00728     movlw   0x47
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0008D6 8E00           00729     bsf     WREG, 7, A          
+0008D8 EC?? F???      00730     call    INSTRUCTION_WRITE
+                      00731  
+0008DC 0E00           00732     movlw   .0                  ; Write first square.
+0008DE EC?? F???      00733     call    DATA_WRITE
+0008E2 0E01           00734     movlw   .1                  ; Write a second square.
+0008E4 EC?? F???      00735     call    DATA_WRITE
+                      00736  
+0008E8 0012           00737     return
+                      00002     
+0008EA                00003 RECORRIDO_JUEGO
+0008EA 0EFB           00004     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+Error[113]  : Symbol not previously defined (LATB)
+Error[113]  : Symbol not previously defined (A)
+0008EC 6E00           00005     movwf   LATB, A
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+0008EE A000           00006     btfss   fila1                       ; Revisar si se presiona el boton de START/STOP.
+0008F0 EC?? F???      00007     call    BOTON_START_STOP
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+0008F4 A200           00008     btfss   fila2                       ; Revisar si se presiona el boton naranja.
+0008F6 EC?? F???      00009     call    BOTON_NARANJA
+0008FA 0EF7           00010     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
+Error[113]  : Symbol not previously defined (LATB)
+Error[113]  : Symbol not previously defined (A)
+0008FC 6E00           00011     movwf   LATB, A
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+0008FE A000           00012     btfss   fila1                       ; Revisar si se presiona el boton blanco.
+000900 EC?? F???      00013     call    BOTON_BLANCO
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+000904 A200           00014     btfss   fila2                       ; Revisar si se presiona el boton azul.
+000906 EC?? F???      00015     call    BOTON_AZUL
+00090A 0EEF           00016     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
+Error[113]  : Symbol not previously defined (LATB)
+Error[113]  : Symbol not previously defined (A)
+00090C 6E00           00017     movwf   LATB, A
+                      00018     ;btfss   fila1                      ; Revisar si se presiona el boton de HIGHSCORE.
+                      00019     ;call    BOTON_HIGHSCORE
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+00090E A200           00020     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
+000910 EC?? F???      00021     call    BOTON_AMARILLO
+000914 0012           00022     return
+                      00023     
+000916                00024 BOTON_START_STOP
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+000916 A000           00025     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000918 EF?? F???      00026     goto    BOTON_START_STOP            ; Si aun no se suleta, esperar.
+00091C 0E30           00027     movlw   '0'
+00091E 6E05           00028     movwf   puntaje
+000920 EC?? F???      00029     call    DELAY_20ms                  ; Antirebote.
+Error[113]  : Symbol not previously defined (A)
+000924 8410           00030     bsf     para                        ; Encender bit de que se presiono STOP.
+000926 0012           00031     return
+000928                00032 BOTON_NARANJA
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000928 8400           00033     bsf     led_naranja                 ; Prender el LED.
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+00092A A200           00034     btfss   fila2                       ; Revisar si sigue presionado el boton.
+00092C EF?? F???      00035     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000930 9400           00036     bcf     led_naranja                 ; Apagar el LED.
+000932 6A06           00037     clrf    boton_presionado            ; Limpiar el registro.
+Error[113]  : Symbol not previously defined (A)
+000934 8406           00038     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
+000936 EC?? F???      00039     call    DELAY_20ms                  ; Antirebote.
+00093A EC?? F???      00040     call    REVISAR_BOTON
+00093E 0012           00041     return
+000940                00042 BOTON_BLANCO
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000940 8600           00043     bsf     led_blanco                  ; Prender el LED.
+Error[113]  : Symbol not previously defined (PORTB)
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[113]  : Symbol not previously defined (A)
+000942 A000           00044     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000944 EF?? F???      00045     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000948 9600           00046     bcf     led_blanco                  ; Apagar el LED.
+00094A 6A06           00047     clrf    boton_presionado            ; Limpiar el registro.
+Error[113]  : Symbol not previously defined (A)
+00094C 8606           00048     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
+00094E EC?? F???      00049     call    DELAY_20ms                  ; Antirebote.
+000952 EC?? F???      00050     call    REVISAR_BOTON
+000956 0012           00051     return
+000958                00052 BOTON_AZUL
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000958 8000           00053     bsf     led_azul                    ; Prender el LED.
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+00095A A200           00054     btfss   fila2                       ; Revisar si sigue presionado el boton.
+00095C EF?? F???      00055     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000960 9000           00056     bcf     led_azul                    ; Apagar el LED.
+000962 6A06           00057     clrf    boton_presionado            ; Limpiar el registro.
+Error[113]  : Symbol not previously defined (A)
+000964 8006           00058     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
+000966 EC?? F???      00059     call    DELAY_20ms                  ; Antirebote.
+00096A EC?? F???      00060     call    REVISAR_BOTON
+00096E 0012           00061     return
+                      00062 ;BOTON_HIGHSCORE
+                      00063     ;btfss   fila1                      ; Revisar si sigue presionado el boton.
+                      00064     ;goto    BOTON_HIGHSCORE            ; Si aun no se suleta, esperar.
+                      00065     ;call    DELAY_20ms                 ; Antirebote.
+                      00066     ;return
+000970                00067 BOTON_AMARILLO
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000970 8200           00068     bsf     led_amarillo                ; Prender el LED.
+Error[113]  : Symbol not previously defined (PORTB)
+Error[113]  : Symbol not previously defined (A)
+000972 A200           00069     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000974 EF?? F???      00070     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000978 9200           00071     bcf     led_amarillo                ; Apagar el LED.
+00097A 6A06           00072     clrf    boton_presionado            ; Limpiar el registro.
+Error[113]  : Symbol not previously defined (A)
+00097C 8206           00073     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
+00097E EC?? F???      00074     call    DELAY_20ms                  ; Antirebote.
+000982 EC?? F???      00075     call    REVISAR_BOTON
+000986 0012           00076     return
+                      00077     
+000988                00078 REVISAR_BOTON
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00079     ; clrf  boton_esperado                      ; Limpiar el registro.
+                      00080     ; bsf   boton_esperado, 0, A                ; Esperamos que se presione el boton del LED azul.
+                      00081     ; Estas dos lineas fueron pruebas para la simulacion.
+Error[113]  : Symbol not previously defined (A)
+000988 5007           00082     movf    boton_esperado, W, A                ; Se resta boton_esperado - boton_presionado.
+Error[113]  : Symbol not previously defined (A)
+00098A 5C06           00083     subwf   boton_presionado, W, A              ; Si son iguales, la resta debe dar 0.
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+00098C 5000           00084     movf    WREG, W, A                          ; Se activa STATUS para WREG.
+Error[113]  : Symbol not previously defined (Z)
+Error[113]  : Symbol not previously defined (STATUS)
+Error[113]  : Symbol not previously defined (A)
+00098E B000           00085     btfsc   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+Error[113]  : Symbol not previously defined (A)
+000990 8010           00086     bsf     perdio                              ; Si no da 0, no era el boton correcto, pierde.
+Error[113]  : Symbol not previously defined (Z)
+Error[113]  : Symbol not previously defined (STATUS)
+Error[113]  : Symbol not previously defined (A)
+000992 A000           00087     btfss   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+Error[113]  : Symbol not previously defined (A)
+000994 8210           00088     bsf     correcto                            ; Si era 0, activa el bit de correcto.
+000996 0012           00089     return
+                      00002     
+000998                00003 ON_GREEN
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+000998 8800           00004     bsf led_rojo
+00099A EC?? F???      00005     call DELAY_100ms
+00099E EC?? F???      00006     call DELAY_100ms
+0009A2 EC?? F???      00007     call DELAY_100ms
+0009A6 EC?? F???      00008     call DELAY_100ms
+0009AA EC?? F???      00009     call DELAY_100ms
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+0009AE 9800           00010     bcf led_rojo
+0009B0 0012           00011     return
+                      00012  
+0009B2                00013 ON_RED
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+0009B2 8A00           00014     bsf led_verde
+0009B4 EC?? F???      00015     call DELAY_100ms
+0009B8 EC?? F???      00016     call DELAY_100ms
+0009BC EC?? F???      00017     call DELAY_100ms
+0009C0 EC?? F???      00018     call DELAY_100ms
+0009C4 EC?? F???      00019     call DELAY_100ms
+Error[113]  : Symbol not previously defined (LATA)
+Error[113]  : Symbol not previously defined (A)
+0009C8 9A00           00020     bcf led_verde
+0009CA 0012           00021     return
+                      00022     
+                      00023     
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0009CC                00024 RANDOM_REGISTER ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
+0009CC 6A09           00025     clrf    shifter
+Error[113]  : Symbol not previously defined (TMR2)
+Error[113]  : Symbol not previously defined (A)
+0009CE 5000           00026     movf    TMR2, W, A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0009D0 B000           00027     btfsc   WREG, 0, A
+Error[113]  : Symbol not previously defined (A)
+0009D2 8009           00028     bsf     shifter, 0, A
+Error[113]  : Symbol not previously defined (WREG)
+Error[113]  : Symbol not previously defined (A)
+0009D4 B200           00029     btfsc   WREG, 1, A
+Error[113]  : Symbol not previously defined (A)
+0009D6 8209           00030     bsf     shifter, 1, A
+                      00031   
+0009D8                00032 DECODER ; PONE boton_esperado EN LA MISMA CONFIG QUE boton_presionado
+0009D8 6A07           00033     clrf    boton_esperado
+Error[113]  : Symbol not previously defined (A)
+0009DA 5009           00034     movf    shifter , W, A 
+Error[113]  : Symbol not previously defined (STATUS)
+Error[113]  : Symbol not previously defined (A)
+0009DC A400           00035     btfss   STATUS, 2, A                ; checa si es 00
+0009DE EF?? F???      00036     goto    LED_01
+Error[113]  : Symbol not previously defined (A)
+0009E2 8007           00037     bsf     boton_esperado, 0, A        ; significa que 00 -> led azul es el esperado "0001"
+0009E4 0012           00038     return
+                      00039     
+0009E6                00040 LED_01
+0009E6 0801           00041     sublw   .1
+Error[113]  : Symbol not previously defined (STATUS)
+Error[113]  : Symbol not previously defined (A)
+0009E8 A200           00042     btfss   STATUS, 1 , A               ; checa si restando 1 se vuelve 0
+0009EA EF?? F???      00043     goto    LED_10
+Error[113]  : Symbol not previously defined (A)
+0009EE 8207           00044     bsf     boton_esperado, 1 , A       ; significa que 01 -> led amar es el esperado "0010"
+0009F0 0012           00045     return
+                      00046     
+0009F2                00047 LED_10 
+0009F2 0801           00048     sublw   .1
+Error[113]  : Symbol not previously defined (STATUS)
+Error[113]  : Symbol not previously defined (A)
+0009F4 A200           00049     btfss   STATUS, 1 , A               ; checa si restando 1 se vuelve 0
+0009F6 EF?? F???      00050     goto    LED_11
+Error[113]  : Symbol not previously defined (A)
+0009FA 8407           00051     bsf     boton_esperado, 2 , A       ; significa que 01 -> led naranj es el esperado "0100"
+0009FC 0012           00052     return
+                      00053 
+0009FE                00054 LED_11 
+Error[113]  : Symbol not previously defined (A)
+0009FE 8607           00055     bsf     boton_esperado, 3 , A       ; significa que 11 -> led blanco es el esperado "1000"
+000A00 0012           00056     return
+Error[129]  : Expected (END)
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BOTON_AMARILLO                    00000970
+BOTON_AZUL                        00000958
+BOTON_BLANCO                      00000940
+BOTON_NARANJA                     00000928
+BOTON_START_STOP                  00000916
+CONFIGURA                         00000030
+CONFIGURE_LCD                     0000012C
+DATA_READ                         000000FC
+DATA_WRITE                        000000F4
+DECODER                           000009D8
+DELAY_100ms                       0000006E
+DELAY_100us                       00000062
+DELAY_20ms                        00000084
+E                                 LATC, 1, A
+ESPERA_LCD                        00000112
+GAME_OVER                         000000CA
+INSTRUCTION_WRITE                 000000EC
+LED_01                            000009E6
+LED_10                            000009F2
+LED_11                            000009FE
+LOOP1                             0000008C
+LOOP_LOSER_LEFT                   00000680
+LOOP_LOSER_RIGHT                  00000698
+NIVEL_SUPERADO                    000000DE
+ON_GREEN                          00000998
+ON_RED                            000009B2
+RANDOM_REGISTER                   000009CC
+RECORRIDO_JUEGO                   000008EA
+REGRESA                           0000011C
+REVISAR_BOTON                     00000988
+RS                                LATC, 0, A
+RW                                LATC, 2, A
+SEND_DATA                         00000104
+SHOW_HIGHSCORE                    000007CC
+SHOW_MAIN_MENU                    0000014C
+SHOW_TIMES_OVER                   0000089A
+STOP                              000000CE
+TIMER_5s                          0000009A
+TIME_OUT                          000000C2
+WIN_ANIMATION_LOOP                000006EC
+_256                              00000003
+_26                               00000004
+_LOADING_CHARS_GANAR              0000027C
+_LOADING_CHARS_PERDER             000003AC
+_LOADING_CHARS_TIEMPO             0000020C
+_LOSING_PIXELS                    000003BA
+_SAD_PIXELS                       0000021A
+_WINNER_PIXELS                    0000028A
+_WRITING_LOSER_ANIM               0000053C
+_WRITING_WINNER_ANIM              000006AE
+__18F45K50                        00000001
+__DEBUG                           
+__MPLAB_DEBUGGER_SIMULATOR        1
+MPASM 5.87              OTRAS_SUBRUTINAS.ASM   10-23-2021  14:11:24         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+bit_led_amarillo                  boton_presionado, 1, A
+bit_led_azul                      boton_presionado, 0, A
+bit_led_blanco                    boton_presionado, 3, A
+bit_led_naranja                   boton_presionado, 2, A
+boton_esperado                    00000007
+boton_presionado                  00000006
+configFlag                        TRISD, 7, A
+correcto                          0x10, 1, A
+dataLCD                           LATD, A
+espera                            000000AA
+fila1                             PORTB, 0, A
+fila2                             PORTB, 1, A
+flag                              PORTD, 7, A
+led_amarillo                      LATA, 1, A
+led_azul                          LATA, 0, A
+led_blanco                        LATA, 3, A
+led_naranja                       LATA, 2, A
+led_rojo                          LATA, 4, A
+led_verde                         LATA, 5, A
+loop1                             00000066
+loop2                             00000076
+para                              0x10, 2, A
+perdio                            0x10, 0, A
+puntaje                           00000005
+register_loser                    00000008
+sec1                              00000011
+sec10                             0000001A
+sec2                              00000012
+sec3                              00000013
+sec4                              00000014
+sec5                              00000015
+sec6                              00000016
+sec7                              00000017
+sec8                              00000018
+sec9                              00000019
+shifter                           00000009
+var1                              00000000
+var2                              00000001
+var3                              00000002
+
+Errors   :   259
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

@@ -1,0 +1,1585 @@
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "lcd_subrutinas.asm"
+                      00001 #include "delays.asm"
+                      00001 #include "inicializacion.asm"
+                      00001 #include "p18f45k50.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Jan 06 2020
+                      00005 ;  MPASM PIC18F45K50 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2020 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      02340         LIST
+                      00002     processor 18f45k50  ; (opcional).
+                      00003     org 0x00
+000000 EF?? F???      00004     goto CONFIGURA
+                      00005     org 0x08            ; posición para interrupciones.
+000008 0010           00006     retfie
+                      00007     org 0x18            ; posición para interrupciones.
+000018 0010           00008     retfie
+                      00009     org 0x30            ; Origen real (opcional pero recomendado).
+                      00010 
+                      00011 ; DEFINICION DE EQUIVALENCIAS.
+  00000000            00012 var1                EQU 0x00
+  00000001            00013 var2                EQU 0x01
+  00000002            00014 var3                EQU 0x02
+  00000003            00015 _256                EQU 0x03
+  00000004            00016 _26                 EQU 0x04
+  00000005            00017 puntaje             EQU 0x05
+  00000006            00018 boton_presionado    EQU 0x06
+  00000007            00019 boton_esperado      EQU 0x07
+  00000008            00020 register_loser      EQU 0x08
+  00000009            00021 shifter             EQU 0x09
+  00000011            00022 sec1                EQU 0x11
+  00000012            00023 sec2                EQU 0x12
+  00000013            00024 sec3                EQU 0x13
+  00000014            00025 sec4                EQU 0x14
+  00000015            00026 sec5                EQU 0x15
+  00000016            00027 sec6                EQU 0x16
+  00000017            00028 sec7                EQU 0x17
+  00000018            00029 sec8                EQU 0x18
+  00000019            00030 sec9                EQU 0x19
+  0000001A            00031 sec10               EQU 0x1A
+                      00032 
+                      00033 
+                      00034 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
+                      00035     #define led_azul            LATA, 0, A
+                      00036     #define led_amarillo        LATA, 1, A
+                      00037     #define led_naranja         LATA, 2, A
+                      00038     #define led_blanco          LATA, 3, A
+                      00039     #define led_rojo            LATA, 4, A
+                      00040     #define led_verde           LATA, 5, A
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00041     #define fila1               PORTB, 0, A
+                      00042     #define fila2               PORTB, 1, A
+                      00043     #define bit_led_azul        boton_presionado, 0, A
+                      00044     #define bit_led_amarillo    boton_presionado, 1, A
+                      00045     #define bit_led_naranja     boton_presionado, 2, A
+                      00046     #define bit_led_blanco      boton_presionado, 3, A
+                      00047     #define RS                  LATC, 0, A              ; RB0 -> Register Select.
+                      00048     #define E                   LATC, 1, A              ; RB1 -> Enable.
+                      00049     #define RW                  LATC, 2, A              ; RB2 -> Read/Write.
+                      00050     #define flag                PORTD, 7, A             ; RD7 -> Busy flag.
+                      00051     #define configFlag          TRISD, 7, A             ; Switch flag from INPUT to OUTPUT and viceversa
+                            .
+                      00052     #define dataLCD             LATD, A
+                      00053     #define perdio              0x10, 0, A              ; Se activa este bit cuando el usuario pierde.
+                      00054     #define correcto            0x10, 1, A              ; Se activa cuando se presiona el boton correcto
+                            .
+                      00055     #define para                0x10, 2, A              ; Se activa este bit cuando el usuario presiona 
+                            el boton de paro.
+                      00056     
+000030                00057 CONFIGURA
+000030 010F           00058     movlb   .15
+000032 6B5B           00059     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
+000034 6B5C           00060     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
+000036 6B5D           00061     clrf    ANSELC, BANKED                      ; REGC -> DIGITAL.
+000038 6B5E           00062     clrf    ANSELD, BANKED                      ; REGD -> DIGITAL.
+00003A 9EF1           00063     bcf     INTCON2, 7                          ; ENABLE pull-ups.
+00003C 0E03           00064     movlw   B'00000011'                 
+00003E 6E93           00065     movwf   TRISB                               ; 3 salidas, 2 entradas.
+000040 6E85           00066     movwf   WPUB                                ; habilitar 2 pull ups.
+000042 6A92           00067     clrf    TRISA                               ; REGA -> OUTPUT.
+000044 6A94           00068     clrf    TRISC                               ; REGC-> OUTPUT.
+000046 6A95           00069     clrf    TRISD                               ; REGD -> OUTPUT.
+000048 6A89           00070     clrf    LATA                                ; Limpiar la salida A.
+00004A 6A8B           00071     clrf    LATC                                ; Limpiar la salida C.
+00004C 6A8C           00072     clrf    LATD                                ; Limpiar la salida D.
+00004E 6ABB           00073     clrf    PR2, A                              ; CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
+000050 0E04           00074     movlw   b'00000100'                         ; TMR2 ON, 1:1 , NO POST
+000052 6EBA           00075     movwf   T2CON
+000054 0E30           00076     movlw   '0'
+000056 6E05           00077     movwf   puntaje, A
+000058 9010           00078     bcf     perdio                              ; Asegura que empieza desactivada la opcion de perder.
+00005A 9210           00079     bcf     correcto                            ; Asegura que empieza desactivada el bit de boton correc
+                            to.
+00005C 9410           00080     bcf     para                                ; Asegura que empieza desactivada la opcion de STOP.
+Error[113]  : Symbol not previously defined (LOOP)
+00005E EF00 F000      00081     goto    LOOP
+                      00082     
+000062                00083 DELAY_100us
+000062 0E21           00084     movlw   .33
+000064 6E00           00085     movwf   var1
+000066                00086 loop1                           
+000066 2E00           00087     decfsz  var1 
+000068 EF?? F???      00088     goto    loop1    
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00006C 0012           00089     return ; 100us approx.
+                      00090 
+00006E                00091 DELAY_100ms
+00006E 0E00           00092     movlw   .0          
+000070 6E00           00093     movwf   var1
+000072 0E80           00094     movlw   .128
+000074 6E01           00095     movwf   var2
+000076                00096 loop2                           
+000076 2E00           00097     decfsz  var1
+000078 EF?? F???      00098     goto    loop2
+00007C 2E01           00099     decfsz  var2
+00007E EF?? F???      00100     goto    loop2
+000082 0012           00101     return      ; 100ms approx.
+                      00102     
+000084                00103 DELAY_20ms
+000084 0E00           00104     movlw   .0                  
+000086 6E03           00105     movwf   _256
+000088 0E1A           00106     movlw   .26
+00008A 6E04           00107     movwf   _26 
+00008C                00108 LOOP1
+00008C 2E03           00109     decfsz  _256
+00008E EF?? F???      00110     goto    LOOP1               ; (3)*256
+000092 2E04           00111     decfsz  _26
+000094 EF?? F???      00112     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00113     ; 20046+4 = 20.05ms approx. 
+000098 0012           00114     return
+                      00115     
+00009A                00116 TIMER_5s
+00009A 0E07           00117     movlw   b'00000111'         ; Configuración T0CON
+00009C 6ED5           00118     movwf   T0CON, A
+00009E 0EB3           00119     movlw   b'10110011'
+0000A0 6ED7           00120     movwf   TMR0H,A
+0000A2 0EB4           00121     movlw   b'10110100'
+0000A4 94F2           00122     bcf     INTCON,2,A
+0000A6 6ED6           00123     movwf   TMR0L,A   
+0000A8 8ED5           00124     bsf     T0CON,7,A           ; Activa conteo
+0000AA                00125 espera  
+0000AA B4F2           00126     btfsc   INTCON,2,A          ; Si se activa la bandera del TIMER, ir a TIME_OUT.
+0000AC EF?? F???      00127     goto    TIME_OUT
+0000B0 EC?? F???      00128     call    RECORRIDO_JUEGO     ; Checar que boton se presiona.
+0000B4 B410           00129     btfsc   para                ; Si se presiono el boton de paro, ir a STOP.
+0000B6 EF?? F???      00130     goto    STOP
+0000BA B210           00131     btfsc   correcto            ; Si se presiono el boton correcto, continuar.
+0000BC 0012           00132     return
+0000BE EF?? F???      00133     goto    espera
+0000C2                00134 TIME_OUT
+0000C2 EC?? F???      00135     call    _SAD_PIXELS
+0000C6 EC?? F???      00136     call    SHOW_TIMES_OVER
+0000CA                00137 GAME_OVER
+0000CA EC?? F???      00138     call    ON_RED
+0000CE                00139 STOP
+0000CE EC?? F???      00140     call    _LOADING_CHARS_PERDER
+0000D2 EC?? F???      00141     call    _WRITING_LOSER_ANIM
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00142     ; TODO: Imprimir puntaje obtenido.
+0000D6 EC?? F???      00143     call    SHOW_HIGHSCORE
+                      00144     ; TODO: Guardar en la EEPROM si fue highscore.
+0000DA 8010           00145     bsf     perdio
+0000DC 0012           00146     return
+0000DE                00147 NIVEL_SUPERADO
+0000DE EC?? F???      00148     call    ON_GREEN
+0000E2 EC?? F???      00149     call    _LOADING_CHARS_GANAR
+0000E6 EC?? F???      00150     call    _WRITING_WINNER_ANIM
+                      00151     ; TODO: Mostrar puntaje obtenido.
+0000EA 0012           00152     return
+                      00153     
+0000EC                00154 INSTRUCTION_WRITE
+0000EC 908B           00155     bcf     RS                  ; RS -> 0
+0000EE 948B           00156     bcf     RW                  ; RW -> 0
+0000F0 EF?? F???      00157     goto    SEND_DATA
+0000F4                00158 DATA_WRITE
+0000F4 808B           00159     bsf     RS                  ; RS -> 1
+0000F6 948B           00160     bcf     RW                  ; RW -> 0
+0000F8 EF?? F???      00161     goto    SEND_DATA
+0000FC                00162 DATA_READ
+0000FC 808B           00163     bsf     RS                  ; RS -> 1
+0000FE 848B           00164     bsf     RW                  ; RW -> 1
+000100 EF?? F???      00165     goto    SEND_DATA
+                      00166     
+000104                00167 SEND_DATA
+000104 828B           00168     bsf     E                   ; Enable.
+000106 6E8C           00169     movwf   dataLCD             ; Data transmission.
+000108 0000           00170     nop                         ; Wait 1us to make sure the instruction was received.
+00010A 928B           00171     bcf     E                   ; Stop Enable.
+00010C EC?? F???      00172     call    ESPERA_LCD          ; Wait to see if LCD is done.
+000110 0012           00173     return
+                      00174     
+000112                00175 ESPERA_LCD
+000112 8E95           00176     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+000114 908B           00177     bcf     RS                  ; RS -> 0
+000116 848B           00178     bsf     RW                  ; RW -> 1
+000118 828B           00179     bsf     E                   ; E -> 1
+00011A 0000           00180     nop
+00011C                00181 REGRESA
+00011C EC?? F???      00182     call    DELAY_100us         ; Wait 100us.
+000120 BE83           00183     btfsc   flag                ; Read bussy flag.
+000122 EF?? F???      00184     goto    REGRESA             ; If set, keep waiting.
+000126 928B           00185     bcf     E
+000128 9E95           00186     bcf     configFlag          ; RD7 -> OUTPUT again.
+00012A 0012           00187     return                      ; If not set, return.
+                      00188 
+00012C                00189 CONFIGURE_LCD   
+00012C 928B           00190     bcf     E
+00012E EC?? F???      00191     call    DELAY_100ms
+000132 0E38           00192     movlw   b'00111000'         ; 8-bit, 2 lines, 5x7.
+000134 EC?? F???      00193     call    INSTRUCTION_WRITE
+000138 0E0F           00194     movlw   b'00001111'         ; Display on, cursor on, blynk on.
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00013A EC?? F???      00195     call    INSTRUCTION_WRITE
+00013E 0E07           00196     movlw   b'00000111'         ; Increment cursor position, display shift.
+000140 EC?? F???      00197     call    INSTRUCTION_WRITE
+000144 0E01           00198     movlw   b'00000001'         ; Clear display and return to home position.
+000146 EC?? F???      00199     call    INSTRUCTION_WRITE
+00014A 0012           00200     return
+                      00201 
+00014C                00202 SHOW_MAIN_MENU
+00014C 0E41           00203     movlw   'A'                 
+00014E EC?? F???      00204     call    DATA_WRITE    
+000152 0E2D           00205     movlw   '-'                 
+000154 EC?? F???      00206     call    DATA_WRITE
+000158 0E2D           00207     movlw   '-'                 
+00015A EC?? F???      00208     call    DATA_WRITE
+00015E 0E3E           00209     movlw   '>'                 
+000160 EC?? F???      00210     call    DATA_WRITE
+                      00211     
+                      00212     ;SPACE
+000164 0E05           00213     movlw   0x05        
+000166 8EE8           00214     bsf     WREG, 7, A          
+000168 EC?? F???      00215     call    INSTRUCTION_WRITE
+                      00216     
+00016C 0E4E           00217     movlw   'N'                 
+00016E EC?? F???      00218     call    DATA_WRITE
+000172 0E45           00219     movlw   'E'                 
+000174 EC?? F???      00220     call    DATA_WRITE
+000178 0E57           00221     movlw   'W'                 
+00017A EC?? F???      00222     call    DATA_WRITE
+                      00223     
+                      00224     ;SPACE
+00017E 0E09           00225     movlw   0x09
+000180 8EE8           00226     bsf WREG, 7, A              
+000182 EC?? F???      00227     call    INSTRUCTION_WRITE
+                      00228     
+000186 0E47           00229     movlw   'G'                 
+000188 EC?? F???      00230     call    DATA_WRITE
+00018C 0E41           00231     movlw   'A'                 
+00018E EC?? F???      00232     call    DATA_WRITE
+000192 0E4D           00233     movlw   'M'                 
+000194 EC?? F???      00234     call    DATA_WRITE
+000198 0E45           00235     movlw   'E'                 
+00019A EC?? F???      00236     call    DATA_WRITE
+                      00237     
+                      00238     ;SECOND LINE
+00019E 0E40           00239     movlw   0x40
+0001A0 8EE8           00240     bsf WREG, 7, A              
+0001A2 EC?? F???      00241     call    INSTRUCTION_WRITE
+                      00242     
+0001A6 0E42           00243     movlw   'B'                 
+0001A8 EC?? F???      00244     call    DATA_WRITE    
+0001AC 0E2D           00245     movlw   '-'                 
+0001AE EC?? F???      00246     call    DATA_WRITE
+0001B2 0E2D           00247     movlw   '-'                 
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0001B4 EC?? F???      00248     call    DATA_WRITE
+0001B8 0E3E           00249     movlw   '>'                 
+0001BA EC?? F???      00250     call    DATA_WRITE
+                      00251     
+                      00252     ;SPACE
+0001BE 0E45           00253     movlw   0x45        
+0001C0 8EE8           00254     bsf WREG, 7, A              
+0001C2 EC?? F???      00255     call    INSTRUCTION_WRITE
+                      00256     
+0001C6 0E48           00257     movlw   'H'                 
+0001C8 EC?? F???      00258     call    DATA_WRITE
+0001CC 0E49           00259     movlw   'I'                 
+0001CE EC?? F???      00260     call    DATA_WRITE
+0001D2 0E47           00261     movlw   'G'                 
+0001D4 EC?? F???      00262     call    DATA_WRITE
+0001D8 0E48           00263     movlw   'H'                 
+0001DA EC?? F???      00264     call    DATA_WRITE
+                      00265     
+                      00266     ;SPACE
+0001DE 0E4A           00267     movlw   0x4A
+0001E0 8EE8           00268     bsf WREG, 7, A              
+0001E2 EC?? F???      00269     call    INSTRUCTION_WRITE
+                      00270     
+0001E6 0E53           00271     movlw   'S'                 
+0001E8 EC?? F???      00272     call    DATA_WRITE
+0001EC 0E43           00273     movlw   'C'                 
+0001EE EC?? F???      00274     call    DATA_WRITE
+0001F2 0E4F           00275     movlw   'O'                 
+0001F4 EC?? F???      00276     call    DATA_WRITE
+0001F8 0E52           00277     movlw   'R'                 
+0001FA EC?? F???      00278     call    DATA_WRITE
+0001FE 0E45           00279     movlw   'E'                 
+000200 EC?? F???      00280     call    DATA_WRITE
+000204 0E53           00281     movlw   'S'                 
+000206 EC?? F???      00282     call    DATA_WRITE
+00020A 0012           00283     return
+                      00284 
+                      00285 #include "lcd_subrutinas.asm"
+                      00002 #include "delays.asm"
+Error[138]  : Include files nested too deep
+                      00002 #include "inicializacion.asm"
+                      00003     
+Error[116]  : Address label duplicated or different in second pass (DELAY_100us)
+00020C                00004 DELAY_100us
+00020C 0E21           00005     movlw   .33
+00020E 6E00           00006     movwf   var1
+Error[116]  : Address label duplicated or different in second pass (loop1)
+000210                00007 loop1                           
+000210 2E00           00008     decfsz  var1 
+000212 EF?? F???      00009     goto    loop1    
+000216 0012           00010     return ; 100us approx.
+                      00011 
+Error[116]  : Address label duplicated or different in second pass (DELAY_100ms)
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000218                00012 DELAY_100ms
+000218 0E00           00013     movlw   .0          
+00021A 6E00           00014     movwf   var1
+00021C 0E80           00015     movlw   .128
+00021E 6E01           00016     movwf   var2
+Error[116]  : Address label duplicated or different in second pass (loop2)
+000220                00017 loop2                           
+000220 2E00           00018     decfsz  var1
+000222 EF?? F???      00019     goto    loop2
+000226 2E01           00020     decfsz  var2
+000228 EF?? F???      00021     goto    loop2
+00022C 0012           00022     return      ; 100ms approx.
+                      00023     
+Error[116]  : Address label duplicated or different in second pass (DELAY_20ms)
+00022E                00024 DELAY_20ms
+00022E 0E00           00025     movlw   .0                  
+000230 6E03           00026     movwf   _256
+000232 0E1A           00027     movlw   .26
+000234 6E04           00028     movwf   _26 
+Error[116]  : Address label duplicated or different in second pass (LOOP1)
+000236                00029 LOOP1
+000236 2E03           00030     decfsz  _256
+000238 EF?? F???      00031     goto    LOOP1               ; (3)*256
+00023C 2E04           00032     decfsz  _26
+00023E EF?? F???      00033     goto    LOOP1               ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00034     ; 20046+4 = 20.05ms approx. 
+000242 0012           00035     return
+                      00036     
+Error[116]  : Address label duplicated or different in second pass (TIMER_5s)
+000244                00037 TIMER_5s
+000244 0E07           00038     movlw   b'00000111'         ; Configuración T0CON
+000246 6ED5           00039     movwf   T0CON, A
+000248 0EB3           00040     movlw   b'10110011'
+00024A 6ED7           00041     movwf   TMR0H,A
+00024C 0EB4           00042     movlw   b'10110100'
+00024E 94F2           00043     bcf     INTCON,2,A
+000250 6ED6           00044     movwf   TMR0L,A   
+000252 8ED5           00045     bsf     T0CON,7,A           ; Activa conteo
+Error[116]  : Address label duplicated or different in second pass (espera)
+000254                00046 espera  
+000254 B4F2           00047     btfsc   INTCON,2,A          ; Si se activa la bandera del TIMER, ir a TIME_OUT.
+000256 EF?? F???      00048     goto    TIME_OUT
+00025A EC?? F???      00049     call    RECORRIDO_JUEGO     ; Checar que boton se presiona.
+00025E B410           00050     btfsc   para                ; Si se presiono el boton de paro, ir a STOP.
+000260 EF?? F???      00051     goto    STOP
+000264 B210           00052     btfsc   correcto            ; Si se presiono el boton correcto, continuar.
+000266 0012           00053     return
+000268 EF?? F???      00054     goto    espera
+Error[116]  : Address label duplicated or different in second pass (TIME_OUT)
+00026C                00055 TIME_OUT
+00026C EC?? F???      00056     call    _SAD_PIXELS
+000270 EC?? F???      00057     call    SHOW_TIMES_OVER
+Error[116]  : Address label duplicated or different in second pass (GAME_OVER)
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000274                00058 GAME_OVER
+000274 EC?? F???      00059     call    ON_RED
+Error[116]  : Address label duplicated or different in second pass (STOP)
+000278                00060 STOP
+000278 EC?? F???      00061     call    _LOADING_CHARS_PERDER
+00027C EC?? F???      00062     call    _WRITING_LOSER_ANIM
+                      00063     ; TODO: Imprimir puntaje obtenido.
+000280 EC?? F???      00064     call    SHOW_HIGHSCORE
+                      00065     ; TODO: Guardar en la EEPROM si fue highscore.
+000284 8010           00066     bsf     perdio
+000286 0012           00067     return
+Error[116]  : Address label duplicated or different in second pass (NIVEL_SUPERADO)
+000288                00068 NIVEL_SUPERADO
+000288 EC?? F???      00069     call    ON_GREEN
+00028C EC?? F???      00070     call    _LOADING_CHARS_GANAR
+000290 EC?? F???      00071     call    _WRITING_WINNER_ANIM
+                      00072     ; TODO: Mostrar puntaje obtenido.
+000294 0012           00073     return
+                      00074     
+                      00003     
+Error[116]  : Address label duplicated or different in second pass (INSTRUCTION_WRITE)
+000296                00004 INSTRUCTION_WRITE
+000296 908B           00005     bcf     RS                  ; RS -> 0
+000298 948B           00006     bcf     RW                  ; RW -> 0
+00029A EF?? F???      00007     goto    SEND_DATA
+Error[116]  : Address label duplicated or different in second pass (DATA_WRITE)
+00029E                00008 DATA_WRITE
+00029E 808B           00009     bsf     RS                  ; RS -> 1
+0002A0 948B           00010     bcf     RW                  ; RW -> 0
+0002A2 EF?? F???      00011     goto    SEND_DATA
+Error[116]  : Address label duplicated or different in second pass (DATA_READ)
+0002A6                00012 DATA_READ
+0002A6 808B           00013     bsf     RS                  ; RS -> 1
+0002A8 848B           00014     bsf     RW                  ; RW -> 1
+0002AA EF?? F???      00015     goto    SEND_DATA
+                      00016     
+Error[116]  : Address label duplicated or different in second pass (SEND_DATA)
+0002AE                00017 SEND_DATA
+0002AE 828B           00018     bsf     E                   ; Enable.
+0002B0 6E8C           00019     movwf   dataLCD             ; Data transmission.
+0002B2 0000           00020     nop                         ; Wait 1us to make sure the instruction was received.
+0002B4 928B           00021     bcf     E                   ; Stop Enable.
+0002B6 EC?? F???      00022     call    ESPERA_LCD          ; Wait to see if LCD is done.
+0002BA 0012           00023     return
+                      00024     
+Error[116]  : Address label duplicated or different in second pass (ESPERA_LCD)
+0002BC                00025 ESPERA_LCD
+0002BC 8E95           00026     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+0002BE 908B           00027     bcf     RS                  ; RS -> 0
+0002C0 848B           00028     bsf     RW                  ; RW -> 1
+0002C2 828B           00029     bsf     E                   ; E -> 1
+0002C4 0000           00030     nop
+Error[116]  : Address label duplicated or different in second pass (REGRESA)
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0002C6                00031 REGRESA
+0002C6 EC?? F???      00032     call    DELAY_100us         ; Wait 100us.
+0002CA BE83           00033     btfsc   flag                ; Read bussy flag.
+0002CC EF?? F???      00034     goto    REGRESA             ; If set, keep waiting.
+0002D0 928B           00035     bcf     E
+0002D2 9E95           00036     bcf     configFlag          ; RD7 -> OUTPUT again.
+0002D4 0012           00037     return                      ; If not set, return.
+                      00038 
+Error[116]  : Address label duplicated or different in second pass (CONFIGURE_LCD)
+0002D6                00039 CONFIGURE_LCD   
+0002D6 928B           00040     bcf     E
+0002D8 EC?? F???      00041     call    DELAY_100ms
+0002DC 0E38           00042     movlw   b'00111000'         ; 8-bit, 2 lines, 5x7.
+0002DE EC?? F???      00043     call    INSTRUCTION_WRITE
+0002E2 0E0F           00044     movlw   b'00001111'         ; Display on, cursor on, blynk on.
+0002E4 EC?? F???      00045     call    INSTRUCTION_WRITE
+0002E8 0E07           00046     movlw   b'00000111'         ; Increment cursor position, display shift.
+0002EA EC?? F???      00047     call    INSTRUCTION_WRITE
+0002EE 0E01           00048     movlw   b'00000001'         ; Clear display and return to home position.
+0002F0 EC?? F???      00049     call    INSTRUCTION_WRITE
+0002F4 0012           00050     return
+                      00051 
+Error[116]  : Address label duplicated or different in second pass (SHOW_MAIN_MENU)
+0002F6                00052 SHOW_MAIN_MENU
+0002F6 0E41           00053     movlw   'A'                 
+0002F8 EC?? F???      00054     call    DATA_WRITE    
+0002FC 0E2D           00055     movlw   '-'                 
+0002FE EC?? F???      00056     call    DATA_WRITE
+000302 0E2D           00057     movlw   '-'                 
+000304 EC?? F???      00058     call    DATA_WRITE
+000308 0E3E           00059     movlw   '>'                 
+00030A EC?? F???      00060     call    DATA_WRITE
+                      00061     
+                      00062     ;SPACE
+00030E 0E05           00063     movlw   0x05        
+000310 8EE8           00064     bsf     WREG, 7, A          
+000312 EC?? F???      00065     call    INSTRUCTION_WRITE
+                      00066     
+000316 0E4E           00067     movlw   'N'                 
+000318 EC?? F???      00068     call    DATA_WRITE
+00031C 0E45           00069     movlw   'E'                 
+00031E EC?? F???      00070     call    DATA_WRITE
+000322 0E57           00071     movlw   'W'                 
+000324 EC?? F???      00072     call    DATA_WRITE
+                      00073     
+                      00074     ;SPACE
+000328 0E09           00075     movlw   0x09
+00032A 8EE8           00076     bsf WREG, 7, A              
+00032C EC?? F???      00077     call    INSTRUCTION_WRITE
+                      00078     
+000330 0E47           00079     movlw   'G'                 
+000332 EC?? F???      00080     call    DATA_WRITE
+000336 0E41           00081     movlw   'A'                 
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000338 EC?? F???      00082     call    DATA_WRITE
+00033C 0E4D           00083     movlw   'M'                 
+00033E EC?? F???      00084     call    DATA_WRITE
+000342 0E45           00085     movlw   'E'                 
+000344 EC?? F???      00086     call    DATA_WRITE
+                      00087     
+                      00088     ;SECOND LINE
+000348 0E40           00089     movlw   0x40
+00034A 8EE8           00090     bsf WREG, 7, A              
+00034C EC?? F???      00091     call    INSTRUCTION_WRITE
+                      00092     
+000350 0E42           00093     movlw   'B'                 
+000352 EC?? F???      00094     call    DATA_WRITE    
+000356 0E2D           00095     movlw   '-'                 
+000358 EC?? F???      00096     call    DATA_WRITE
+00035C 0E2D           00097     movlw   '-'                 
+00035E EC?? F???      00098     call    DATA_WRITE
+000362 0E3E           00099     movlw   '>'                 
+000364 EC?? F???      00100     call    DATA_WRITE
+                      00101     
+                      00102     ;SPACE
+000368 0E45           00103     movlw   0x45        
+00036A 8EE8           00104     bsf WREG, 7, A              
+00036C EC?? F???      00105     call    INSTRUCTION_WRITE
+                      00106     
+000370 0E48           00107     movlw   'H'                 
+000372 EC?? F???      00108     call    DATA_WRITE
+000376 0E49           00109     movlw   'I'                 
+000378 EC?? F???      00110     call    DATA_WRITE
+00037C 0E47           00111     movlw   'G'                 
+00037E EC?? F???      00112     call    DATA_WRITE
+000382 0E48           00113     movlw   'H'                 
+000384 EC?? F???      00114     call    DATA_WRITE
+                      00115     
+                      00116     ;SPACE
+000388 0E4A           00117     movlw   0x4A
+00038A 8EE8           00118     bsf WREG, 7, A              
+00038C EC?? F???      00119     call    INSTRUCTION_WRITE
+                      00120     
+000390 0E53           00121     movlw   'S'                 
+000392 EC?? F???      00122     call    DATA_WRITE
+000396 0E43           00123     movlw   'C'                 
+000398 EC?? F???      00124     call    DATA_WRITE
+00039C 0E4F           00125     movlw   'O'                 
+00039E EC?? F???      00126     call    DATA_WRITE
+0003A2 0E52           00127     movlw   'R'                 
+0003A4 EC?? F???      00128     call    DATA_WRITE
+0003A8 0E45           00129     movlw   'E'                 
+0003AA EC?? F???      00130     call    DATA_WRITE
+0003AE 0E53           00131     movlw   'S'                 
+0003B0 EC?? F???      00132     call    DATA_WRITE
+0003B4 0012           00133     return
+                      00286     
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0003B6                00287 _LOADING_CHARS_TIEMPO
+                      00288     ; write custom characters
+0003B6 0E00           00289     movlw .0
+0003B8 8CE8           00290     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+0003BA EC?? F???      00291     call INSTRUCTION_WRITE
+0003BE EC?? F???      00292     call _SAD_PIXELS
+0003C2 0012           00293     return
+                      00294  
+                      00295  
+0003C4                00296 _SAD_PIXELS
+                      00297     ; first square .0 char
+0003C4 0E00           00298     movlw b'00000'
+0003C6 EC?? F???      00299     call DATA_WRITE
+0003CA 0E06           00300     movlw b'00110'
+0003CC EC?? F???      00301     call DATA_WRITE
+0003D0 0E06           00302     movlw b'00110'
+0003D2 EC?? F???      00303     call DATA_WRITE
+0003D6 0E00           00304     movlw b'00000'
+0003D8 EC?? F???      00305     call DATA_WRITE
+0003DC 0E01           00306     movlw b'00001'
+0003DE EC?? F???      00307     call DATA_WRITE
+0003E2 0E06           00308     movlw b'00110'
+0003E4 EC?? F???      00309     call DATA_WRITE
+0003E8 0E08           00310     movlw b'01000'
+0003EA EC?? F???      00311     call DATA_WRITE
+0003EE 0E00           00312     movlw b'00000'
+0003F0 EC?? F???      00313     call DATA_WRITE
+                      00314     ; second square .8 char
+0003F4 0E00           00315     movlw b'00000'
+0003F6 EC?? F???      00316     call DATA_WRITE
+0003FA 0E0C           00317     movlw b'01100'
+0003FC EC?? F???      00318     call DATA_WRITE
+000400 0E0C           00319     movlw b'01100'
+000402 EC?? F???      00320     call DATA_WRITE
+000406 0E00           00321     movlw b'00000'
+000408 EC?? F???      00322     call DATA_WRITE
+00040C 0E10           00323     movlw b'10000'
+00040E EC?? F???      00324     call DATA_WRITE
+000412 0E0C           00325     movlw b'01100'
+000414 EC?? F???      00326     call DATA_WRITE
+000418 0E02           00327     movlw b'00010'
+00041A EC?? F???      00328     call DATA_WRITE
+00041E 0E00           00329     movlw b'00000'
+000420 EC?? F???      00330     call DATA_WRITE
+000424 0012           00331     return
+                      00332     
+000426                00333 _LOADING_CHARS_GANAR
+                      00334     ; write custom characters
+000426 0E00           00335     movlw .0
+000428 8CE8           00336     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+00042A EC?? F???      00337     call INSTRUCTION_WRITE
+00042E EC?? F???      00338     call _WINNER_PIXELS
+000432 0012           00339     return
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00340  
+                      00341  
+000434                00342 _WINNER_PIXELS
+                      00343     ; first square .0 char
+000434 0E00           00344     movlw b'00000'
+000436 EC?? F???      00345     call DATA_WRITE
+00043A 0E00           00346     movlw b'00000'
+00043C EC?? F???      00347     call DATA_WRITE
+000440 0E00           00348     movlw b'00000'
+000442 EC?? F???      00349     call DATA_WRITE
+000446 0E00           00350     movlw b'00000'
+000448 EC?? F???      00351     call DATA_WRITE
+00044C 0E00           00352     movlw b'00000'
+00044E EC?? F???      00353     call DATA_WRITE
+000452 0E00           00354     movlw b'00000'
+000454 EC?? F???      00355     call DATA_WRITE
+000458 0E04           00356     movlw b'00100'
+00045A EC?? F???      00357     call DATA_WRITE
+00045E 0E0E           00358     movlw b'01110'
+000460 EC?? F???      00359     call DATA_WRITE
+                      00360     ; second square .8 char
+000464 0E00           00361     movlw b'00000'
+000466 EC?? F???      00362     call DATA_WRITE
+00046A 0E00           00363     movlw b'00000'
+00046C EC?? F???      00364     call DATA_WRITE
+000470 0E00           00365     movlw b'00000'
+000472 EC?? F???      00366     call DATA_WRITE
+000476 0E00           00367     movlw b'00000'
+000478 EC?? F???      00368     call DATA_WRITE
+00047C 0E04           00369     movlw b'00100'
+00047E EC?? F???      00370     call DATA_WRITE
+000482 0E0E           00371     movlw b'01110'
+000484 EC?? F???      00372     call DATA_WRITE
+000488 0E15           00373     movlw b'10101'
+00048A EC?? F???      00374     call DATA_WRITE
+00048E 0E04           00375     movlw b'00100'
+000490 EC?? F???      00376     call DATA_WRITE
+                      00377     ; third square .16 char
+000494 0E00           00378     movlw b'00000'
+000496 EC?? F???      00379     call DATA_WRITE
+00049A 0E00           00380     movlw b'00000'
+00049C EC?? F???      00381     call DATA_WRITE
+0004A0 0E04           00382     movlw b'00100'
+0004A2 EC?? F???      00383     call DATA_WRITE
+0004A6 0E0E           00384     movlw b'01110'
+0004A8 EC?? F???      00385     call DATA_WRITE
+0004AC 0E15           00386     movlw b'10101'
+0004AE EC?? F???      00387     call DATA_WRITE
+0004B2 0E04           00388     movlw b'00100'
+0004B4 EC?? F???      00389     call DATA_WRITE
+0004B8 0E04           00390     movlw b'00100'
+0004BA EC?? F???      00391     call DATA_WRITE
+0004BE 0E04           00392     movlw b'00100'
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0004C0 EC?? F???      00393     call DATA_WRITE
+                      00394     ; fourth square .24 char
+0004C4 0E04           00395     movlw b'00100'
+0004C6 EC?? F???      00396     call DATA_WRITE
+0004CA 0E0E           00397     movlw b'01110'
+0004CC EC?? F???      00398     call DATA_WRITE
+0004D0 0E15           00399     movlw b'10101'
+0004D2 EC?? F???      00400     call DATA_WRITE
+0004D6 0E04           00401     movlw b'00100'
+0004D8 EC?? F???      00402     call DATA_WRITE
+0004DC 0E04           00403     movlw b'00100'
+0004DE EC?? F???      00404     call DATA_WRITE
+0004E2 0E04           00405     movlw b'00100'
+0004E4 EC?? F???      00406     call DATA_WRITE
+0004E8 0E04           00407     movlw b'00100'
+0004EA EC?? F???      00408     call DATA_WRITE
+0004EE 0E00           00409     movlw b'00000'
+0004F0 EC?? F???      00410     call DATA_WRITE
+                      00411     ; fifth square .32 char
+0004F4 0E15           00412     movlw b'10101'
+0004F6 EC?? F???      00413     call DATA_WRITE
+0004FA 0E04           00414     movlw b'00100'
+0004FC EC?? F???      00415     call DATA_WRITE
+000500 0E04           00416     movlw b'00100'
+000502 EC?? F???      00417     call DATA_WRITE
+000506 0E04           00418     movlw b'00100'
+000508 EC?? F???      00419     call DATA_WRITE
+00050C 0E04           00420     movlw b'00100'
+00050E EC?? F???      00421     call DATA_WRITE
+000512 0E00           00422     movlw b'00000'
+000514 EC?? F???      00423     call DATA_WRITE
+000518 0E00           00424     movlw b'00000'
+00051A EC?? F???      00425     call DATA_WRITE
+00051E 0E00           00426     movlw b'00000'
+000520 EC?? F???      00427     call DATA_WRITE
+                      00428     ; sixth square .40 char
+000524 0E04           00429     movlw b'00100'
+000526 EC?? F???      00430     call DATA_WRITE
+00052A 0E04           00431     movlw b'00100'
+00052C EC?? F???      00432     call DATA_WRITE
+000530 0E04           00433     movlw b'00100'
+000532 EC?? F???      00434     call DATA_WRITE
+000536 0E00           00435     movlw b'00000'
+000538 EC?? F???      00436     call DATA_WRITE
+00053C 0E00           00437     movlw b'00000'
+00053E EC?? F???      00438     call DATA_WRITE
+000542 0E00           00439     movlw b'00000'
+000544 EC?? F???      00440     call DATA_WRITE
+000548 0E00           00441     movlw b'00000'
+00054A EC?? F???      00442     call DATA_WRITE
+00054E 0E00           00443     movlw b'00000'
+000550 EC?? F???      00444     call DATA_WRITE
+000554 0012           00445     return
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00446 
+000556                00447 _LOADING_CHARS_PERDER
+                      00448     ; write custom characters
+000556 0E00           00449     movlw .0
+000558 8CE8           00450     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+00055A EC?? F???      00451     call INSTRUCTION_WRITE
+00055E EC?? F???      00452     call _LOSING_PIXELS
+000562 0012           00453     return
+                      00454     
+000564                00455 _LOSING_PIXELS
+                      00456     ; first square .0 char
+000564 0E03           00457     movlw b'00011'
+000566 EC?? F???      00458     call DATA_WRITE
+00056A 0E0F           00459     movlw b'01111'
+00056C EC?? F???      00460     call DATA_WRITE
+000570 0E0F           00461     movlw b'01111'
+000572 EC?? F???      00462     call DATA_WRITE
+000576 0E1F           00463     movlw b'11111'
+000578 EC?? F???      00464     call DATA_WRITE
+00057C 0E1F           00465     movlw b'11111'
+00057E EC?? F???      00466     call DATA_WRITE
+000582 0E1D           00467     movlw b'11101'
+000584 EC?? F???      00468     call DATA_WRITE
+000588 0E19           00469     movlw b'11001'
+00058A EC?? F???      00470     call DATA_WRITE
+00058E 0E1B           00471     movlw b'11011'
+000590 EC?? F???      00472     call DATA_WRITE
+                      00473     ; second square .8 char
+000594 0E10           00474     movlw b'10000'
+000596 EC?? F???      00475     call DATA_WRITE
+00059A 0E1C           00476     movlw b'11100'
+00059C EC?? F???      00477     call DATA_WRITE
+0005A0 0E1C           00478     movlw b'11100'
+0005A2 EC?? F???      00479     call DATA_WRITE
+0005A6 0E1E           00480     movlw b'11110'
+0005A8 EC?? F???      00481     call DATA_WRITE
+0005AC 0E1E           00482     movlw b'11110'
+0005AE EC?? F???      00483     call DATA_WRITE
+0005B2 0E0E           00484     movlw b'01110'
+0005B4 EC?? F???      00485     call DATA_WRITE
+0005B8 0E06           00486     movlw b'00110'
+0005BA EC?? F???      00487     call DATA_WRITE
+0005BE 0E16           00488     movlw b'10110'
+0005C0 EC?? F???      00489     call DATA_WRITE
+                      00490     ; third square .16 char
+0005C4 0E0F           00491     movlw b'01111'
+0005C6 EC?? F???      00492     call DATA_WRITE
+0005CA 0E0E           00493     movlw b'01110'
+0005CC EC?? F???      00494     call DATA_WRITE
+0005D0 0E07           00495     movlw b'00111'
+0005D2 EC?? F???      00496     call DATA_WRITE
+0005D6 0E04           00497     movlw b'00100'
+0005D8 EC?? F???      00498     call DATA_WRITE
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0005DC 0E05           00499     movlw b'00101'
+0005DE EC?? F???      00500     call DATA_WRITE
+0005E2 0E05           00501     movlw b'00101'
+0005E4 EC?? F???      00502     call DATA_WRITE
+0005E8 0E07           00503     movlw b'00111'
+0005EA EC?? F???      00504     call DATA_WRITE
+0005EE 0E03           00505     movlw b'00011'
+0005F0 EC?? F???      00506     call DATA_WRITE
+                      00507     ; fourth square .24 char
+0005F4 0E1C           00508     movlw b'11100'
+0005F6 EC?? F???      00509     call DATA_WRITE
+0005FA 0E1C           00510     movlw b'11100'
+0005FC EC?? F???      00511     call DATA_WRITE
+000600 0E18           00512     movlw b'11000'
+000602 EC?? F???      00513     call DATA_WRITE
+000606 0E08           00514     movlw b'01000'
+000608 EC?? F???      00515     call DATA_WRITE
+00060C 0E08           00516     movlw b'01000'
+00060E EC?? F???      00517     call DATA_WRITE
+000612 0E08           00518     movlw b'01000'
+000614 EC?? F???      00519     call DATA_WRITE
+000618 0E18           00520     movlw b'11000'
+00061A EC?? F???      00521     call DATA_WRITE
+00061E 0E10           00522     movlw b'10000'
+000620 EC?? F???      00523     call DATA_WRITE
+                      00524     
+                      00525     ; fifth square .32 char
+000624 0E1C           00526     movlw b'11100'
+000626 EC?? F???      00527     call DATA_WRITE
+00062A 0E10           00528     movlw b'10000'
+00062C EC?? F???      00529     call DATA_WRITE
+000630 0E10           00530     movlw b'10000'
+000632 EC?? F???      00531     call DATA_WRITE
+000636 0E00           00532     movlw b'00000'
+000638 EC?? F???      00533     call DATA_WRITE
+00063C 0E00           00534     movlw b'00000'
+00063E EC?? F???      00535     call DATA_WRITE
+000642 0E02           00536     movlw b'00010'
+000644 EC?? F???      00537     call DATA_WRITE
+000648 0E06           00538     movlw b'00110'
+00064A EC?? F???      00539     call DATA_WRITE
+00064E 0E04           00540     movlw b'00100'
+000650 EC?? F???      00541     call DATA_WRITE
+                      00542     ; sixth square .40 char
+000654 0E0F           00543     movlw b'01111'
+000656 EC?? F???      00544     call DATA_WRITE
+00065A 0E03           00545     movlw b'00011'
+00065C EC?? F???      00546     call DATA_WRITE
+000660 0E03           00547     movlw b'00011'
+000662 EC?? F???      00548     call DATA_WRITE
+000666 0E01           00549     movlw b'00001'
+000668 EC?? F???      00550     call DATA_WRITE
+00066C 0E01           00551     movlw b'00001'
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00066E EC?? F???      00552     call DATA_WRITE
+000672 0E11           00553     movlw b'10001'
+000674 EC?? F???      00554     call DATA_WRITE
+000678 0E19           00555     movlw b'11001'
+00067A EC?? F???      00556     call DATA_WRITE
+00067E 0E09           00557     movlw b'01001'
+000680 EC?? F???      00558     call DATA_WRITE
+                      00559     ; seventh square .48 char
+000684 0E10           00560     movlw b'10000'
+000686 EC?? F???      00561     call DATA_WRITE
+00068A 0E11           00562     movlw b'10001'
+00068C EC?? F???      00563     call DATA_WRITE
+000690 0E18           00564     movlw b'11000'
+000692 EC?? F???      00565     call DATA_WRITE
+000696 0E1B           00566     movlw b'11011'
+000698 EC?? F???      00567     call DATA_WRITE
+00069C 0E1A           00568     movlw b'11010'
+00069E EC?? F???      00569     call DATA_WRITE
+0006A2 0E1A           00570     movlw b'11010'
+0006A4 EC?? F???      00571     call DATA_WRITE
+0006A8 0E18           00572     movlw b'11000'
+0006AA EC?? F???      00573     call DATA_WRITE
+0006AE 0E1C           00574     movlw b'11100'
+0006B0 EC?? F???      00575     call DATA_WRITE
+                      00576     ; eight square .56 char
+0006B4 0E03           00577     movlw b'00011'
+0006B6 EC?? F???      00578     call DATA_WRITE
+0006BA 0E03           00579     movlw b'00011'
+0006BC EC?? F???      00580     call DATA_WRITE
+0006C0 0E07           00581     movlw b'00111'
+0006C2 EC?? F???      00582     call DATA_WRITE
+0006C6 0E17           00583     movlw b'10111'
+0006C8 EC?? F???      00584     call DATA_WRITE
+0006CC 0E17           00585     movlw b'10111'
+0006CE EC?? F???      00586     call DATA_WRITE
+0006D2 0E17           00587     movlw b'10111'
+0006D4 EC?? F???      00588     call DATA_WRITE
+0006D8 0E07           00589     movlw b'00111'
+0006DA EC?? F???      00590     call DATA_WRITE
+0006DE 0E0F           00591     movlw b'01111'
+0006E0 EC?? F???      00592     call DATA_WRITE
+                      00593    
+0006E4 0012           00594     return
+                      00595 
+0006E6                00596 _WRITING_LOSER_ANIM ; writing the chars into the lcd display 
+                      00597     ; first line of lcd
+0006E6 0E01           00598     movlw   0x01 ; Move cursor to 0x00.
+0006E8 8EE8           00599     bsf    WREG, 7, A 
+0006EA EC?? F???      00600     call    INSTRUCTION_WRITE
+                      00601    
+0006EE 0E00           00602     movlw   .0 ; Write first square.
+0006F0 EC?? F???      00603     call    DATA_WRITE
+0006F4 0E01           00604     movlw   .1 ; Write second square.
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0006F6 EC?? F???      00605     call    DATA_WRITE
+                      00606     
+0006FA 0E04           00607     movlw   .4 ; Write fifth square.
+0006FC EC?? F???      00608     call    DATA_WRITE
+000700 0E05           00609     movlw   .5 ; Write sixth square.
+000702 EC?? F???      00610     call    DATA_WRITE
+                      00611     ; one space
+000706 0E06           00612     movlw   0x06 ; Move cursor to 0x05.
+000708 8EE8           00613     bsf    WREG, 7, A 
+00070A EC?? F???      00614     call    INSTRUCTION_WRITE
+                      00615     
+00070E 0E47           00616     movlw   'G' ; Write a 'G'.
+000710 EC?? F???      00617     call    DATA_WRITE
+000714 0E41           00618     movlw   'A' ; Write a 'A'.
+000716 EC?? F???      00619     call    DATA_WRITE
+00071A 0E4D           00620     movlw   'M' ; Write a 'M'.
+00071C EC?? F???      00621     call    DATA_WRITE
+000720 0E45           00622     movlw   'E' ; Write a 'E'.
+000722 EC?? F???      00623     call    DATA_WRITE
+                      00624     
+                      00625     ; one space
+000726 0E0B           00626     movlw   0x0B ; Move cursor to 0x0A.
+000728 8EE8           00627     bsf    WREG, 7, A 
+00072A EC?? F???      00628     call    INSTRUCTION_WRITE
+                      00629     
+00072E 0E00           00630     movlw   .0 ; Write firt square.
+000730 EC?? F???      00631     call    DATA_WRITE
+000734 0E01           00632     movlw   .1 ; Write second square.
+000736 EC?? F???      00633     call    DATA_WRITE
+                      00634     
+00073A 0E04           00635     movlw   .4 ; Write fifth square.
+00073C EC?? F???      00636     call    DATA_WRITE
+000740 0E05           00637     movlw   .5 ; Write sixth square.
+000742 EC?? F???      00638     call    DATA_WRITE
+                      00639     ; one space
+000746 0E10           00640     movlw   0x10 ; Move cursor to 0x0E.
+000748 8EE8           00641     bsf    WREG, 7, A 
+00074A EC?? F???      00642     call    INSTRUCTION_WRITE
+                      00643     
+00074E 0E47           00644     movlw   'G' ; Write a 'G'.
+000750 EC?? F???      00645     call    DATA_WRITE
+000754 0E41           00646     movlw   'A' ; Write a 'A'.
+000756 EC?? F???      00647     call    DATA_WRITE
+00075A 0E4D           00648     movlw   'M' ; Write a 'M'.
+00075C EC?? F???      00649     call    DATA_WRITE
+000760 0E45           00650     movlw   'E' ; Write a 'E'.
+000762 EC?? F???      00651     call    DATA_WRITE
+                      00652     ; one space
+000766 0E15           00653     movlw   0x15 ; Move cursor to 0x14.
+000768 8EE8           00654     bsf    WREG, 7, A 
+00076A EC?? F???      00655     call    INSTRUCTION_WRITE
+                      00656    
+                      00657     
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00076E 0E00           00658     movlw   .0 ; Write first square.
+000770 EC?? F???      00659     call    DATA_WRITE
+000774 0E01           00660     movlw   .1 ; Write second square.
+000776 EC?? F???      00661     call    DATA_WRITE
+                      00662     
+00077A 0E04           00663     movlw   .4 ; Write fifth square.
+00077C EC?? F???      00664     call    DATA_WRITE
+000780 0E05           00665     movlw   .5 ; Write sixth square.
+000782 EC?? F???      00666     call    DATA_WRITE
+                      00667     
+                      00668     ; second line of lcd
+000786 0E41           00669     movlw   0x41 ; Move cursor to 0x40.
+000788 8EE8           00670     bsf    WREG, 7, A 
+00078A EC?? F???      00671     call    INSTRUCTION_WRITE
+                      00672     
+00078E 0E02           00673     movlw   .2 ; Write firt square.
+000790 EC?? F???      00674     call    DATA_WRITE
+000794 0E03           00675     movlw   .3 ; Write second square.
+000796 EC?? F???      00676     call    DATA_WRITE
+                      00677     
+00079A 0E06           00678     movlw   .6 ; Write fifth square.
+00079C EC?? F???      00679     call    DATA_WRITE
+0007A0 0E07           00680     movlw   .7 ; Write sixth square.
+0007A2 EC?? F???      00681     call    DATA_WRITE
+                      00682     ; one space
+0007A6 0E46           00683     movlw   0x46 ; Move cursor to 0x05.
+0007A8 8EE8           00684     bsf    WREG, 7, A 
+0007AA EC?? F???      00685     call    INSTRUCTION_WRITE
+                      00686     
+0007AE 0E4F           00687     movlw   'O' ; Write a 'O'.
+0007B0 EC?? F???      00688     call    DATA_WRITE
+0007B4 0E56           00689     movlw   'V' ; Write a 'V'.
+0007B6 EC?? F???      00690     call    DATA_WRITE
+0007BA 0E45           00691     movlw   'E' ; Write a 'E'.
+0007BC EC?? F???      00692     call    DATA_WRITE
+0007C0 0E52           00693     movlw   'R' ; Write a 'R'.
+0007C2 EC?? F???      00694     call    DATA_WRITE
+                      00695     ; one space
+0007C6 0E4B           00696     movlw   0x4B ; Move cursor to 0x10.
+0007C8 8EE8           00697     bsf    WREG, 7, A 
+0007CA EC?? F???      00698     call    INSTRUCTION_WRITE
+                      00699     
+0007CE 0E02           00700     movlw   .2 ; Write firt square.
+0007D0 EC?? F???      00701     call    DATA_WRITE
+0007D4 0E03           00702     movlw   .3 ; Write second square.
+0007D6 EC?? F???      00703     call    DATA_WRITE
+                      00704     
+0007DA 0E06           00705     movlw   .6 ; Write fifth square.
+0007DC EC?? F???      00706     call    DATA_WRITE
+0007E0 0E07           00707     movlw   .7 ; Write sixth square.
+0007E2 EC?? F???      00708     call    DATA_WRITE
+                      00709      ; one space
+0007E6 0E50           00710     movlw   0x50 ; Move cursor to 0x05.
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0007E8 8EE8           00711     bsf    WREG, 7, A 
+0007EA EC?? F???      00712     call    INSTRUCTION_WRITE
+                      00713     
+0007EE 0E4F           00714     movlw   'O' ; Write a 'O'.
+0007F0 EC?? F???      00715     call    DATA_WRITE
+0007F4 0E56           00716     movlw   'V' ; Write a 'V'.
+0007F6 EC?? F???      00717     call    DATA_WRITE
+0007FA 0E45           00718     movlw   'E' ; Write a 'E'.
+0007FC EC?? F???      00719     call    DATA_WRITE
+000800 0E52           00720     movlw   'R' ; Write a 'R'.
+000802 EC?? F???      00721     call    DATA_WRITE
+                      00722     ; six spaces
+000806 0E55           00723     movlw   0x55 ; Move cursor to 0x20.
+000808 8EE8           00724     bsf    WREG, 7, A 
+00080A EC?? F???      00725     call    INSTRUCTION_WRITE
+                      00726     
+00080E 0E02           00727     movlw   .2 ; Write first square.
+000810 EC?? F???      00728     call    DATA_WRITE
+000814 0E03           00729     movlw   .3 ; Write second square.
+000816 EC?? F???      00730     call    DATA_WRITE
+                      00731     
+00081A 0E06           00732     movlw   .6 ; Write fifth square.
+00081C EC?? F???      00733     call    DATA_WRITE
+000820 0E07           00734     movlw   .7 ; Write sixth square.
+000822 EC?? F???      00735     call    DATA_WRITE
+                      00736     
+                      00737     ; display shift for animation
+000826 0EF0           00738     movlw .240
+000828 6E08           00739     movwf register_loser, A
+                      00740  
+00082A                00741 LOOP_LOSER_LEFT
+Error[113]  : Symbol not previously defined (delay100us)
+00082A EC00 F000      00742     call delay100us
+Error[113]  : Symbol not previously defined (delay100us)
+00082E EC00 F000      00743     call delay100us
+000832 0E18           00744     movlw b'00011000' ; set move display to the left
+000834 EC?? F???      00745     call INSTRUCTION_WRITE
+000838 3E08           00746     incfsz register_loser, 1, A
+00083A EF?? F???      00747     goto LOOP_LOSER_LEFT
+00083E 0EF0           00748     movlw .240
+000840 6E08           00749     movwf register_loser, A
+                      00750  
+000842                00751 LOOP_LOSER_RIGHT
+Error[113]  : Symbol not previously defined (delay100us)
+000842 EC00 F000      00752     call delay100us
+Error[113]  : Symbol not previously defined (delay100us)
+000846 EC00 F000      00753     call delay100us
+00084A 0E1C           00754     movlw b'00011100' ; set move display to the left
+00084C EC?? F???      00755     call INSTRUCTION_WRITE
+000850 3E08           00756     incfsz register_loser, 1, A
+000852 EF?? F???      00757     goto LOOP_LOSER_RIGHT
+000856 0012           00758     return
+                      00759 
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000858                00760 _WRITING_WINNER_ANIM
+                      00761     ;SECOND LINE
+000858 0E44           00762     movlw   0x44
+00085A 8EE8           00763     bsf     WREG, 7, A          
+00085C EC?? F???      00764     call    INSTRUCTION_WRITE
+                      00765     
+000860 0E4C           00766     movlw   'L'                 
+000862 EC?? F???      00767     call    DATA_WRITE    
+000866 0E45           00768     movlw   'E'                 
+000868 EC?? F???      00769     call    DATA_WRITE    
+00086C 0E56           00770     movlw   'V'                 
+00086E EC?? F???      00771     call    DATA_WRITE    
+000872 0E45           00772     movlw   'E'                 
+000874 EC?? F???      00773     call    DATA_WRITE    
+000878 0E4C           00774     movlw   'L'                 
+00087A EC?? F???      00775     call    DATA_WRITE    
+                      00776     
+                      00777     ;SPACE
+00087E 0E4A           00778     movlw   0x4A
+000880 8EE8           00779     bsf     WREG, 7, A          
+000882 EC?? F???      00780     call    INSTRUCTION_WRITE
+                      00781     
+000886 0E55           00782     movlw   'U'                 
+000888 EC?? F???      00783     call    DATA_WRITE    
+00088C 0E50           00784     movlw   'P'                 
+00088E EC?? F???      00785     call    DATA_WRITE    
+                      00786     
+000892 0E05           00787     movlw .5 ;Repeat animation 5 times
+000894 6E02           00788     movwf var3
+000896                00789 WIN_ANIMATION_LOOP
+                      00790    ;0  
+000896 0E02           00791     movlw   0x02
+000898 8EE8           00792     bsf     WREG, 7, A          
+00089A EC?? F???      00793     call    INSTRUCTION_WRITE
+                      00794     
+00089E 0E00           00795     movlw   .0                  
+0008A0 EC?? F???      00796     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008A4 EC00 F000      00797     call    delay100us
+                      00798     
+                      00799     
+0008A8 0E0D           00800     movlw   0x0D
+0008AA 8EE8           00801     bsf     WREG, 7, A          
+0008AC EC?? F???      00802     call    INSTRUCTION_WRITE
+                      00803     
+0008B0 0E00           00804     movlw   .0                  
+0008B2 EC?? F???      00805     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008B6 EC00 F000      00806     call    delay100us
+                      00807     
+                      00808     
+                      00809     ;1   
+0008BA 0E02           00810     movlw   0x02
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0008BC 8EE8           00811     bsf     WREG, 7, A          
+0008BE EC?? F???      00812     call    INSTRUCTION_WRITE
+                      00813     
+0008C2 0E01           00814     movlw   .1          
+0008C4 EC?? F???      00815     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008C8 EC00 F000      00816     call    delay100us
+                      00817     
+                      00818     
+0008CC 0E0D           00819     movlw   0x0D
+0008CE 8EE8           00820     bsf     WREG, 7, A          
+0008D0 EC?? F???      00821     call    INSTRUCTION_WRITE
+                      00822     
+0008D4 0E01           00823     movlw   .1          
+0008D6 EC?? F???      00824     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008DA EC00 F000      00825     call    delay100us
+                      00826     
+                      00827     ;2   
+0008DE 0E02           00828     movlw   0x02
+0008E0 8EE8           00829     bsf     WREG, 7, A          
+0008E2 EC?? F???      00830     call    INSTRUCTION_WRITE
+                      00831     
+0008E6 0E02           00832     movlw   .2          
+0008E8 EC?? F???      00833     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008EC EC00 F000      00834     call    delay100us
+                      00835     
+                      00836     
+0008F0 0E0D           00837     movlw   0x0D
+0008F2 8EE8           00838     bsf     WREG, 7, A          
+0008F4 EC?? F???      00839     call    INSTRUCTION_WRITE
+                      00840     
+0008F8 0E02           00841     movlw   .2          
+0008FA EC?? F???      00842     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+0008FE EC00 F000      00843     call    delay100us
+                      00844     
+                      00845     ;3
+000902 0E02           00846     movlw   0x02
+000904 8EE8           00847     bsf     WREG, 7, A          
+000906 EC?? F???      00848     call    INSTRUCTION_WRITE
+                      00849     
+00090A 0E03           00850     movlw   .3          
+00090C EC?? F???      00851     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000910 EC00 F000      00852     call    delay100us
+                      00853     
+                      00854     
+000914 0E0D           00855     movlw   0x0D
+000916 8EE8           00856     bsf     WREG, 7, A          
+000918 EC?? F???      00857     call    INSTRUCTION_WRITE
+                      00858     
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00091C 0E03           00859     movlw   .3          
+00091E EC?? F???      00860     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000922 EC00 F000      00861     call    delay100us
+                      00862     
+                      00863     ;4
+000926 0E02           00864     movlw   0x02
+000928 8EE8           00865     bsf     WREG, 7, A          
+00092A EC?? F???      00866     call    INSTRUCTION_WRITE
+                      00867     
+00092E 0E04           00868     movlw   .4          
+000930 EC?? F???      00869     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000934 EC00 F000      00870     call    delay100us
+                      00871     
+                      00872     
+000938 0E0D           00873     movlw   0x0D
+00093A 8EE8           00874     bsf     WREG, 7, A          
+00093C EC?? F???      00875     call    INSTRUCTION_WRITE
+                      00876     
+000940 0E04           00877     movlw   .4          
+000942 EC?? F???      00878     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000946 EC00 F000      00879     call    delay100us
+                      00880     
+                      00881     ;5
+00094A 0E02           00882     movlw   0x02
+00094C 8EE8           00883     bsf     WREG, 7, A          
+00094E EC?? F???      00884     call    INSTRUCTION_WRITE
+                      00885     
+000952 0E05           00886     movlw   .5          
+000954 EC?? F???      00887     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+000958 EC00 F000      00888     call    delay100us
+                      00889     
+                      00890     
+00095C 0E0D           00891     movlw   0x0D
+00095E 8EE8           00892     bsf     WREG, 7, A          
+000960 EC?? F???      00893     call    INSTRUCTION_WRITE
+                      00894     
+000964 0E05           00895     movlw   .5  
+000966 EC?? F???      00896     call    DATA_WRITE
+Error[113]  : Symbol not previously defined (delay100us)
+00096A EC00 F000      00897     call    delay100us
+                      00898     
+00096E 2E02           00899     DECFSZ var3
+000970 EF?? F???      00900     goto WIN_ANIMATION_LOOP
+000974 0012           00901     return
+                      00902 
+000976                00903 SHOW_HIGHSCORE
+000976 0E21           00904     movlw   '!'                 
+000978 EC?? F???      00905     call    DATA_WRITE   
+00097C 0E4E           00906     movlw   'N'                 
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00097E EC?? F???      00907     call    DATA_WRITE    
+000982 0E45           00908     movlw   'E'                 
+000984 EC?? F???      00909     call    DATA_WRITE
+000988 0E57           00910     movlw   'W'                 
+00098A EC?? F???      00911     call    DATA_WRITE
+                      00912     
+                      00913     ;SPACE
+00098E 0E05           00914     movlw   0x05        
+000990 8EE8           00915     bsf     WREG, 7, A          
+000992 EC?? F???      00916     call    INSTRUCTION_WRITE
+                      00917     
+000996 0E48           00918     movlw   'H'                 
+000998 EC?? F???      00919     call    DATA_WRITE
+00099C 0E49           00920     movlw   'I'                 
+00099E EC?? F???      00921     call    DATA_WRITE
+0009A2 0E47           00922     movlw   'G'                 
+0009A4 EC?? F???      00923     call    DATA_WRITE
+0009A8 0E48           00924     movlw   'H'                 
+0009AA EC?? F???      00925     call    DATA_WRITE
+                      00926  
+                      00927     ;SPACE
+0009AE 0E0A           00928     movlw   0x0A
+0009B0 8EE8           00929     bsf     WREG, 7, A          
+0009B2 EC?? F???      00930     call    INSTRUCTION_WRITE
+                      00931     
+0009B6 0E53           00932     movlw   'S'                 
+0009B8 EC?? F???      00933     call    DATA_WRITE
+0009BC 0E43           00934     movlw   'C'                 
+0009BE EC?? F???      00935     call    DATA_WRITE
+0009C2 0E4F           00936     movlw   'O'                 
+0009C4 EC?? F???      00937     call    DATA_WRITE
+0009C8 0E52           00938     movlw   'R'                 
+0009CA EC?? F???      00939     call    DATA_WRITE
+0009CE 0E45           00940     movlw   'E'                 
+0009D0 EC?? F???      00941     call    DATA_WRITE
+0009D4 0E21           00942     movlw   '!'                 
+0009D6 EC?? F???      00943     call    DATA_WRITE   
+                      00944     
+                      00945     
+                      00946     ;SECOND LINE
+0009DA 0E40           00947     movlw   0x40
+0009DC 8EE8           00948     bsf     WREG, 7, A          
+0009DE EC?? F???      00949     call    INSTRUCTION_WRITE
+                      00950     
+0009E2 0E2D           00951     movlw   '-'                 
+0009E4 EC?? F???      00952     call    DATA_WRITE    
+0009E8 0E2D           00953     movlw   '-'                 
+0009EA EC?? F???      00954     call    DATA_WRITE    
+0009EE 0E2D           00955     movlw   '-'                 
+0009F0 EC?? F???      00956     call    DATA_WRITE    
+0009F4 0E2D           00957     movlw   '-'                 
+0009F6 EC?? F???      00958     call    DATA_WRITE    
+0009FA 0E2D           00959     movlw   '-'                 
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0009FC EC?? F???      00960     call    DATA_WRITE    
+000A00 0E2D           00961     movlw   '-'                 
+000A02 EC?? F???      00962     call    DATA_WRITE    
+000A06 0E3E           00963     movlw   '>'                 
+000A08 EC?? F???      00964     call    DATA_WRITE    
+000A0C 0E30           00965     movlw   '0'                 
+000A0E EC?? F???      00966     call    DATA_WRITE      
+000A12 5005           00967     movf    puntaje, W, A
+000A14 EC?? F???      00968     call    DATA_WRITE     
+000A18 0E3C           00969     movlw   '<'                 
+000A1A EC?? F???      00970     call    DATA_WRITE    
+000A1E 0E2D           00971     movlw   '-'                 
+000A20 EC?? F???      00972     call    DATA_WRITE    
+000A24 0E2D           00973     movlw   '-'                 
+000A26 EC?? F???      00974     call    DATA_WRITE    
+000A2A 0E2D           00975     movlw   '-'                 
+000A2C EC?? F???      00976     call    DATA_WRITE    
+000A30 0E2D           00977     movlw   '-'                 
+000A32 EC?? F???      00978     call    DATA_WRITE    
+000A36 0E2D           00979     movlw   '-'                 
+000A38 EC?? F???      00980     call    DATA_WRITE    
+000A3C 0E2D           00981     movlw   '-'                 
+000A3E EC?? F???      00982     call    DATA_WRITE    
+000A42 0012           00983     return
+                      00984 
+000A44                00985 SHOW_TIMES_OVER
+000A44 0E04           00986     movlw   0x04        
+000A46 8EE8           00987     bsf     WREG, 7, A          
+000A48 EC?? F???      00988     call    INSTRUCTION_WRITE
+                      00989     
+000A4C 0E54           00990     movlw   'T'                 
+000A4E EC?? F???      00991     call    DATA_WRITE    
+000A52 0E49           00992     movlw   'I'                 
+000A54 EC?? F???      00993     call    DATA_WRITE
+000A58 0E4D           00994     movlw   'M'                 
+000A5A EC?? F???      00995     call    DATA_WRITE
+000A5E 0E45           00996     movlw   'E'                 
+000A60 EC?? F???      00997     call    DATA_WRITE
+000A64 0E53           00998     movlw   'S'                 
+000A66 EC?? F???      00999     call    DATA_WRITE
+                      01000     
+                      01001     ;SPACE
+000A6A 0E0A           01002     movlw   0x0A
+000A6C 8EE8           01003     bsf     WREG, 7, A          
+000A6E EC?? F???      01004     call    INSTRUCTION_WRITE
+                      01005     
+000A72 0E55           01006     movlw   'U'                 
+000A74 EC?? F???      01007     call    DATA_WRITE
+000A78 0E50           01008     movlw   'P'                 
+000A7A EC?? F???      01009     call    DATA_WRITE    
+                      01010     
+                      01011     ;SECOND LINE
+000A7E 0E47           01012     movlw   0x47
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000A80 8EE8           01013     bsf     WREG, 7, A          
+000A82 EC?? F???      01014     call    INSTRUCTION_WRITE
+                      01015  
+000A86 0E00           01016     movlw   .0                  ; Write first square.
+000A88 EC?? F???      01017     call    DATA_WRITE
+000A8C 0E01           01018     movlw   .1                  ; Write a second square.
+000A8E EC?? F???      01019     call    DATA_WRITE
+                      01020  
+000A92 0012           01021     return
+                      01022 
+000A94                01023 RECORRIDO_JUEGO
+000A94 0EFB           01024     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+000A96 6E8A           01025     movwf   LATB, A
+000A98 A081           01026     btfss   fila1                       ; Revisar si se presiona el boton de START/STOP.
+000A9A EC?? F???      01027     call    BOTON_START_STOP
+000A9E A281           01028     btfss   fila2                       ; Revisar si se presiona el boton naranja.
+000AA0 EC?? F???      01029     call    BOTON_NARANJA
+000AA4 0EF7           01030     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
+000AA6 6E8A           01031     movwf   LATB, A
+000AA8 A081           01032     btfss   fila1                       ; Revisar si se presiona el boton blanco.
+000AAA EC?? F???      01033     call    BOTON_BLANCO
+000AAE A281           01034     btfss   fila2                       ; Revisar si se presiona el boton azul.
+000AB0 EC?? F???      01035     call    BOTON_AZUL
+000AB4 0EEF           01036     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
+000AB6 6E8A           01037     movwf   LATB, A
+                      01038     ;btfss   fila1                      ; Revisar si se presiona el boton de HIGHSCORE.
+                      01039     ;call    BOTON_HIGHSCORE
+000AB8 A281           01040     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
+000ABA EC?? F???      01041     call    BOTON_AMARILLO
+000ABE 0012           01042     return
+                      01043     
+000AC0                01044 BOTON_START_STOP
+000AC0 A081           01045     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000AC2 EF?? F???      01046     goto    BOTON_START_STOP            ; Si aun no se suleta, esperar.
+000AC6 0E30           01047     movlw   '0'
+000AC8 6E05           01048     movwf   puntaje
+000ACA EC?? F???      01049     call    DELAY_20ms                  ; Antirebote.
+000ACE 8410           01050     bsf     para                        ; Encender bit de que se presiono STOP.
+000AD0 0012           01051     return
+000AD2                01052 BOTON_NARANJA
+000AD2 8489           01053     bsf     led_naranja                 ; Prender el LED.
+000AD4 A281           01054     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000AD6 EF?? F???      01055     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
+000ADA 9489           01056     bcf     led_naranja                 ; Apagar el LED.
+000ADC 6A06           01057     clrf    boton_presionado            ; Limpiar el registro.
+000ADE 8406           01058     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
+000AE0 EC?? F???      01059     call    DELAY_20ms                  ; Antirebote.
+000AE4 EC?? F???      01060     call    REVISAR_BOTON
+000AE8 0012           01061     return
+000AEA                01062 BOTON_BLANCO
+000AEA 8689           01063     bsf     led_blanco                  ; Prender el LED.
+000AEC A081           01064     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000AEE EF?? F???      01065     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000AF2 9689           01066     bcf     led_blanco                  ; Apagar el LED.
+000AF4 6A06           01067     clrf    boton_presionado            ; Limpiar el registro.
+000AF6 8606           01068     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
+000AF8 EC?? F???      01069     call    DELAY_20ms                  ; Antirebote.
+000AFC EC?? F???      01070     call    REVISAR_BOTON
+000B00 0012           01071     return
+000B02                01072 BOTON_AZUL
+000B02 8089           01073     bsf     led_azul                    ; Prender el LED.
+000B04 A281           01074     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000B06 EF?? F???      01075     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
+000B0A 9089           01076     bcf     led_azul                    ; Apagar el LED.
+000B0C 6A06           01077     clrf    boton_presionado            ; Limpiar el registro.
+000B0E 8006           01078     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
+000B10 EC?? F???      01079     call    DELAY_20ms                  ; Antirebote.
+000B14 EC?? F???      01080     call    REVISAR_BOTON
+000B18 0012           01081     return
+                      01082 ;BOTON_HIGHSCORE
+                      01083     ;btfss   fila1                      ; Revisar si sigue presionado el boton.
+                      01084     ;goto    BOTON_HIGHSCORE            ; Si aun no se suleta, esperar.
+                      01085     ;call    DELAY_20ms                 ; Antirebote.
+                      01086     ;return
+000B1A                01087 BOTON_AMARILLO
+000B1A 8289           01088     bsf     led_amarillo                ; Prender el LED.
+000B1C A281           01089     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000B1E EF?? F???      01090     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
+000B22 9289           01091     bcf     led_amarillo                ; Apagar el LED.
+000B24 6A06           01092     clrf    boton_presionado            ; Limpiar el registro.
+000B26 8206           01093     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
+000B28 EC?? F???      01094     call    DELAY_20ms                  ; Antirebote.
+000B2C EC?? F???      01095     call    REVISAR_BOTON
+000B30 0012           01096     return
+                      01097     
+000B32                01098 REVISAR_BOTON
+                      01099     ; clrf  boton_esperado                      ; Limpiar el registro.
+                      01100     ; bsf   boton_esperado, 0, A                ; Esperamos que se presione el boton del LED azul.
+                      01101     ; Estas dos lineas fueron pruebas para la simulacion.
+000B32 5007           01102     movf    boton_esperado, W, A                ; Se resta boton_esperado - boton_presionado.
+000B34 5C06           01103     subwf   boton_presionado, W, A              ; Si son iguales, la resta debe dar 0.
+000B36 50E8           01104     movf    WREG, W, A                          ; Se activa STATUS para WREG.
+000B38 B4D8           01105     btfsc   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+000B3A 8010           01106     bsf     perdio                              ; Si no da 0, no era el boton correcto, pierde.
+000B3C A4D8           01107     btfss   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+000B3E 8210           01108     bsf     correcto                            ; Si era 0, activa el bit de correcto.
+000B40 0012           01109     return
+                      01110     
+000B42                01111 ON_GREEN
+000B42 8889           01112     bsf led_rojo
+000B44 EC?? F???      01113     call DELAY_100ms
+000B48 EC?? F???      01114     call DELAY_100ms
+000B4C EC?? F???      01115     call DELAY_100ms
+000B50 EC?? F???      01116     call DELAY_100ms
+000B54 EC?? F???      01117     call DELAY_100ms
+000B58 9889           01118     bcf led_rojo
+MPASM 5.87                LCD_CARACTERES.ASM   10-23-2021  14:20:12         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000B5A 0012           01119     return
+                      01120  
+000B5C                01121 ON_RED
+000B5C 8A89           01122     bsf led_verde
+000B5E EC?? F???      01123     call DELAY_100ms
+000B62 EC?? F???      01124     call DELAY_100ms
+000B66 EC?? F???      01125     call DELAY_100ms
+000B6A EC?? F???      01126     call DELAY_100ms
+000B6E EC?? F???      01127     call DELAY_100ms
+000B72 9A89           01128     bcf led_verde
+000B74 0012           01129     return
+                      01130     
+                      01131     
+000B76                01132 RANDOM_REGISTER ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
+000B76 6A09           01133     clrf    shifter
+000B78 50BC           01134     movf    TMR2, W, A
+000B7A B0E8           01135     btfsc   WREG, 0, A
+000B7C 8009           01136     bsf     shifter, 0, A
+000B7E B2E8           01137     btfsc   WREG, 1, A
+000B80 8209           01138     bsf     shifter, 1, A
+                      01139   
+000B82                01140 DECODER ; PONE boton_esperado EN LA MISMA CONFIG QUE boton_presionado
+000B82 6A07           01141     clrf    boton_esperado
+000B84 5009           01142     movf    shifter , W, A 
+000B86 A4D8           01143     btfss   STATUS, 2, A                ; checa si es 00
+000B88 EF?? F???      01144     goto    LED_01
+000B8C 8007           01145     bsf     boton_esperado, 0, A        ; significa que 00 -> led azul es el esperado "0001"
+000B8E 0012           01146     return
+                      01147     
+000B90                01148 LED_01
+000B90 0801           01149     sublw   .1
+000B92 A2D8           01150     btfss   STATUS, 1 , A               ; checa si restando 1 se vuelve 0
+000B94 EF?? F???      01151     goto    LED_10
+000B98 8207           01152     bsf     boton_esperado, 1 , A       ; significa que 01 -> led amar es el esperado "0010"
+000B9A 0012           01153     return
+                      01154     
+000B9C                01155 LED_10 
+000B9C 0801           01156     sublw   .1
+000B9E A2D8           01157     btfss   STATUS, 1 , A               ; checa si restando 1 se vuelve 0
+000BA0 EF?? F???      01158     goto    LED_11
+000BA4 8407           01159     bsf     boton_esperado, 2 , A       ; significa que 01 -> led naranj es el esperado "0100"
+000BA6 0012           01160     return
+                      01161 
+000BA8                01162 LED_11 
+000BA8 8607           01163     bsf     boton_esperado, 3 , A       ; significa que 11 -
