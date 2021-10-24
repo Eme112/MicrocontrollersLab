@@ -16,9 +16,10 @@ DATA_READ
 SEND_DATA
     bsf	    E			; Enable.
     movwf   dataLCD		; Data transmission.
-    nop				; Wait 1us to make sure the instruction was received.
+    call    DELAY_100us
     bcf	    E			; Stop Enable.
-    call    ESPERA_LCD		; Wait to see if LCD is done.
+    call    DELAY_100us
+    ;call    ESPERA_LCD		; Wait to see if LCD is done.
     return
     
 ESPERA_LCD
@@ -28,7 +29,7 @@ ESPERA_LCD
     bsf	    E			; E -> 1
     nop
 REGRESA
-    call    DELAY_100us		; Wait 100us.
+    call    DELAY_100ms		; Wait 100us.
     btfsc   flag		; Read bussy flag.
     goto    REGRESA		; If set, keep waiting.
     bcf	    E
@@ -42,14 +43,19 @@ CONFIGURE_LCD
     call    INSTRUCTION_WRITE
     movlw   b'00001111'		; Display on, cursor on, blynk on.
     call    INSTRUCTION_WRITE
-    movlw   b'00000111'		; Increment cursor position, display shift.
+    call    DELAY_100ms
+    movlw   b'00011100'		; Increment cursor position, display shift.
     call    INSTRUCTION_WRITE
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
+    call    DELAY_100ms
     return
 
 SHOW_MAIN_MENU
-    movlw   'A'			
+    movlw   b'00000001'		; Clear display and return to home position.
+    call    INSTRUCTION_WRITE
+    call    DELAY_100ms
+    movlw   'W'			
     call    DATA_WRITE    
     movlw   '-'			
     call    DATA_WRITE

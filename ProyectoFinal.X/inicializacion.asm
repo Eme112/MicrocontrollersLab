@@ -19,6 +19,8 @@ boton_presionado    EQU 0x06
 boton_esperado	    EQU 0x07
 register_loser	    EQU 0x08
 shifter		    EQU 0x09
+trayectoria	    EQU 0x0A
+encender_led	    EQU 0x0B
 sec1		    EQU 0x11
 sec2		    EQU 0x12
 sec3		    EQU 0x13
@@ -29,6 +31,10 @@ sec7		    EQU 0x17
 sec8		    EQU 0x18
 sec9		    EQU 0x19
 sec10		    EQU 0x1A
+_256_1		    EQU 0x20
+_256_2		    EQU 0x21
+_5		    EQU 0x22
+_17		    EQU 0x23
 
 
 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
@@ -45,14 +51,14 @@ sec10		    EQU 0x1A
     #define bit_led_naranja	boton_presionado, 2, A
     #define bit_led_blanco	boton_presionado, 3, A
     #define RS			LATC, 0, A		; RB0 -> Register Select.
-    #define E			LATC, 1, A		; RB1 -> Enable.
-    #define RW			LATC, 2, A		; RB2 -> Read/Write.
+    #define RW			LATC, 1, A		; RB2 -> Read/Write.
+    #define E			LATC, 2, A		; RB1 -> Enable.
     #define flag		PORTD, 7, A		; RD7 -> Busy flag.
     #define configFlag		TRISD, 7, A		; Switch flag from INPUT to OUTPUT and viceversa.
     #define dataLCD		LATD, A
-    #define perdio		0x10, 0, A		; Se activa este bit cuando el usuario pierde.
-    #define correcto		0x10, 1, A		; Se activa cuando se presiona el boton correcto.
-    #define para		0x10, 2, A		; Se activa este bit cuando el usuario presiona el boton de paro.
+    #define perdio		trayectoria, 0, A	; Se activa este bit cuando el usuario pierde.
+    #define correcto		trayectoria, 1, A	; Se activa cuando se presiona el boton correcto.
+    #define para		trayectoria, 2, A	; Se activa este bit cuando el usuario presiona el boton de paro.
     
 CONFIGURA
     movlb   .15
@@ -79,4 +85,3 @@ CONFIGURA
     bcf	    correcto				; Asegura que empieza desactivada el bit de boton correcto.
     bcf	    para				; Asegura que empieza desactivada la opcion de STOP.
     goto    MAIN
-    

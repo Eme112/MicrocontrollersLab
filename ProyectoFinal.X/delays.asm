@@ -27,10 +27,36 @@ DELAY_20ms
     movwf   _26	
 LOOP1
     decfsz  _256
-    goto    LOOP1		; (3)*256
+    goto    LOOP1			; (3)*256
     decfsz  _26
-    goto    LOOP1		; (3)*256*26 + (3)*26 = 78*256 + 78
+    goto    LOOP1			; (3)*256*26 + (3)*26 = 78*256 + 78
     ; 20046+4 = 20.05ms approx. 
+    return
+    
+DELAY_1s
+    movlw   .0			
+    movwf   _256_1
+    movwf   _256_2
+    movlw   .5
+    movwf   _5
+    movlw   .17
+    movwf   _17	
+    ; 7us approx. in this section
+DELAY_1s_LOOP1				
+    decfsz  _256_1
+    goto    DELAY_1s_LOOP1		; (3)*256^2
+    decfsz  _256_2
+    goto    DELAY_1s_LOOP1		; (3)*256
+    decfsz  _5
+    goto    DELAY_1s_LOOP1		; (3)*(256^2+256)*5 + (3)*5 = 15*256^2 + 15*256 + 15
+    ; 986,907us approx.
+DELAY_1s_LOOP2				
+    decfsz  _256_1		
+    goto    DELAY_1s_LOOP2		; (3)*256
+    decfsz  _17		
+    goto    DELAY_1s_LOOP2		; (3)*256*17 + (3)*17 = 51*256 + 51
+    ; 13,107us approx.
+    ; ===1.000021 seg approx.===
     return
     
 TIMER_5s
@@ -48,26 +74,35 @@ espera
     call    RECORRIDO_JUEGO	; Checar que boton se presiona.
     btfsc   para		; Si se presiono el boton de paro, ir a STOP.
     goto    STOP
-    btfsc   correcto		; Si se presiono el boton correcto, continuar.
+    btfsc   correcto		; Si se presiono el boton correcto, regresar.
     return
-    goto    espera
+    btfsc   perdio		; Si se presiono un boton incorrecto, ir a GAME_OVER
+    goto    GAME_OVER
+    goto    espera		; Si no se ha presionado nada, continuar.
 TIME_OUT
-    call    _SAD_PIXELS
+    call    _LOADING_CHARS_TIEMPO
     call    SHOW_TIMES_OVER
+    call    DELAY_1s
 GAME_OVER
     call    ON_RED
+    call    DELAY_1s
 STOP
     call    _LOADING_CHARS_PERDER
     call    _WRITING_LOSER_ANIM
+    call    DELAY_1s
     ; TODO: Imprimir puntaje obtenido.
     call    SHOW_HIGHSCORE
+    call    DELAY_1s
     ; TODO: Guardar en la EEPROM si fue highscore.
     bsf	    perdio
+    call    DELAY_1s
     return
 NIVEL_SUPERADO
     call    ON_GREEN
     call    _LOADING_CHARS_GANAR
     call    _WRITING_WINNER_ANIM
-    ; TODO: Mostrar puntaje obtenido.
+    call    DELAY_1s
+    call    SHOW_PUNTAJE
+    call    DELAY_1s
     return
     

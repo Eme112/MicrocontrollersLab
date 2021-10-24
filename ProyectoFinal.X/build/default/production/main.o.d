@@ -1,4 +1,4 @@
-build/default/debug/main.o:  \
+build/default/production/main.o:  \
 	C:/MicrochipProjects/ProyectoFinal.X/main.asm  \
 	C:/MicrochipProjects/ProyectoFinal.X/inicializacion.asm  \
 	C:/MicrochipProjects/ProyectoFinal.X/delays.asm  \

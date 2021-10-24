@@ -21,6 +21,17 @@ RECORRIDO_JUEGO
     call    BOTON_AMARILLO
     return
     
+RECORRIDO_MENU
+    movlw   b'11111011'			; ACTIVAR COLUMNA 1 (START/STOP, naranja).
+    movwf   LATB, A
+    btfss   fila1			; Revisar si se presiona el boton de START/STOP.
+    goto    BOTON_START_MENU
+    movlw   b'11101111'			; ACTIVAR COLUMNA 3 (HIGHSCORE, amarillo).
+    movwf   LATB, A
+    btfss   fila1			; Revisar si se presiona el boton de HIGHSCORE.
+    goto    BOTON_HIGHSCORE
+    goto    RECORRIDO_MENU
+    
 BOTON_START_STOP
     btfss   fila1			; Revisar si sigue presionado el boton.
     goto    BOTON_START_STOP		; Si aun no se suleta, esperar.
@@ -59,11 +70,6 @@ BOTON_AZUL
     call    DELAY_20ms			; Antirebote.
     call    REVISAR_BOTON
     return
-;BOTON_HIGHSCORE
-    ;btfss   fila1			; Revisar si sigue presionado el boton.
-    ;goto    BOTON_HIGHSCORE		; Si aun no se suleta, esperar.
-    ;call    DELAY_20ms			; Antirebote.
-    ;return
 BOTON_AMARILLO
     bsf	    led_amarillo		; Prender el LED.
     btfss   fila2			; Revisar si sigue presionado el boton.
@@ -75,15 +81,26 @@ BOTON_AMARILLO
     call    REVISAR_BOTON
     return
     
+BOTON_START_MENU
+    btfss   fila1			; Revisar si sigue presionado el boton.
+    goto    BOTON_START_MENU		; Si aun no se suleta, esperar.
+    call    DELAY_20ms			; Antirebote.
+    call    ON_WHITE
+    goto    JUEGO
+    
+BOTON_HIGHSCORE
+    btfss   fila1			; Revisar si sigue presionado el boton.
+    goto    BOTON_HIGHSCORE		; Si aun no se suleta, esperar.
+    call    DELAY_20ms			; Antirebote.
+    call    ON_BLUE
+    goto    PUNTAJES    
+    
 REVISAR_BOTON
-    ; clrf  boton_esperado			; Limpiar el registro.
-    ; bsf   boton_esperado, 0, A		; Esperamos que se presione el boton del LED azul.
-    ; Estas dos lineas fueron pruebas para la simulacion.
     movf    boton_esperado, W, A		; Se resta boton_esperado - boton_presionado.
     subwf   boton_presionado, W, A		; Si son iguales, la resta debe dar 0.
     movf    WREG, W, A				; Se activa STATUS para WREG.
-    btfsc   STATUS, Z, A			; Se revisa el bit de CERO en STATUS.
-    bsf	    perdio				; Si no da 0, no era el boton correcto, pierde.
     btfss   STATUS, Z, A			; Se revisa el bit de CERO en STATUS.
+    bsf	    perdio				; Si no da 0, no era el boton correcto, pierde.
+    btfsc   STATUS, Z, A			; Se revisa el bit de CERO en STATUS.
     bsf	    correcto				; Si era 0, activa el bit de correcto.
     return

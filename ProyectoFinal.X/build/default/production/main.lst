@@ -1,0 +1,3713 @@
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "inicializacion.asm"
+                      00001 #include "p18f45k50.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Jan 06 2020
+                      00005 ;  MPASM PIC18F45K50 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2020 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      02340         LIST
+                      00002     processor 18f45k50  ; (opcional).
+                      00003     org 0x00
+000000 EF?? F???      00004     goto CONFIGURA
+                      00005     org 0x08            ; posición para interrupciones.
+000008 0010           00006     retfie
+                      00007     org 0x18            ; posición para interrupciones.
+000018 0010           00008     retfie
+                      00009     org 0x30            ; Origen real (opcional pero recomendado).
+                      00010 
+                      00011 ; DEFINICION DE EQUIVALENCIAS.
+  00000000            00012 var1                EQU 0x00
+  00000001            00013 var2                EQU 0x01
+  00000002            00014 var3                EQU 0x02
+  00000003            00015 _256                EQU 0x03
+  00000004            00016 _26                 EQU 0x04
+  00000005            00017 puntaje             EQU 0x05
+  00000006            00018 boton_presionado    EQU 0x06
+  00000007            00019 boton_esperado      EQU 0x07
+  00000008            00020 register_loser      EQU 0x08
+  00000009            00021 shifter             EQU 0x09
+  0000000A            00022 trayectoria         EQU 0x0A
+  0000000B            00023 encender_led        EQU 0x0B
+  00000011            00024 sec1                EQU 0x11
+  00000012            00025 sec2                EQU 0x12
+  00000013            00026 sec3                EQU 0x13
+  00000014            00027 sec4                EQU 0x14
+  00000015            00028 sec5                EQU 0x15
+  00000016            00029 sec6                EQU 0x16
+  00000017            00030 sec7                EQU 0x17
+  00000018            00031 sec8                EQU 0x18
+  00000019            00032 sec9                EQU 0x19
+  0000001A            00033 sec10               EQU 0x1A
+  00000020            00034 _256_1              EQU 0x20
+  00000021            00035 _256_2              EQU 0x21
+  00000022            00036 _5                  EQU 0x22
+  00000023            00037 _17                 EQU 0x23
+                      00038 
+                      00039 
+                      00040 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
+                      00041     #define led_azul            LATA, 0, A
+                      00042     #define led_amarillo        LATA, 1, A
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00043     #define led_naranja         LATA, 2, A
+                      00044     #define led_blanco          LATA, 3, A
+                      00045     #define led_rojo            LATA, 4, A
+                      00046     #define led_verde           LATA, 5, A
+                      00047     #define fila1               PORTB, 0, A
+                      00048     #define fila2               PORTB, 1, A
+                      00049     #define bit_led_azul        boton_presionado, 0, A
+                      00050     #define bit_led_amarillo    boton_presionado, 1, A
+                      00051     #define bit_led_naranja     boton_presionado, 2, A
+                      00052     #define bit_led_blanco      boton_presionado, 3, A
+                      00053     #define RS                  LATC, 0, A              ; RB0 -> Register Select.
+                      00054     #define RW                  LATC, 1, A              ; RB2 -> Read/Write.
+                      00055     #define E                   LATC, 2, A              ; RB1 -> Enable.
+                      00056     #define flag                PORTD, 7, A             ; RD7 -> Busy flag.
+                      00057     #define configFlag          TRISD, 7, A             ; Switch flag from INPUT to OUTPUT and viceversa
+                            .
+                      00058     #define dataLCD             LATD, A
+                      00059     #define perdio              trayectoria, 0, A       ; Se activa este bit cuando el usuario pierde.
+                      00060     #define correcto            trayectoria, 1, A       ; Se activa cuando se presiona el boton correcto
+                            .
+                      00061     #define para                trayectoria, 2, A       ; Se activa este bit cuando el usuario presiona 
+                            el boton de paro.
+                      00062     
+000030                00063 CONFIGURA
+000030 010F           00064     movlb   .15
+000032 6B5B           00065     clrf    ANSELA, BANKED                      ; REGA -> DIGITAL.
+000034 6B5C           00066     clrf    ANSELB, BANKED                      ; REGB -> DIGITAL.
+000036 6B5D           00067     clrf    ANSELC, BANKED                      ; REGC -> DIGITAL.
+000038 6B5E           00068     clrf    ANSELD, BANKED                      ; REGD -> DIGITAL.
+00003A 9EF1           00069     bcf     INTCON2, 7                          ; ENABLE pull-ups.
+00003C 0E03           00070     movlw   B'00000011'                 
+00003E 6E93           00071     movwf   TRISB                               ; 3 salidas, 2 entradas.
+000040 6E85           00072     movwf   WPUB                                ; habilitar 2 pull ups.
+000042 6A92           00073     clrf    TRISA                               ; REGA -> OUTPUT.
+000044 6A94           00074     clrf    TRISC                               ; REGC-> OUTPUT.
+000046 6A95           00075     clrf    TRISD                               ; REGD -> OUTPUT.
+000048 6A89           00076     clrf    LATA                                ; Limpiar la salida A.
+00004A 6A8B           00077     clrf    LATC                                ; Limpiar la salida C.
+00004C 6A8C           00078     clrf    LATD                                ; Limpiar la salida D.
+00004E 6ABB           00079     clrf    PR2, A                              ; CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
+000050 0E04           00080     movlw   b'00000100'                         ; TMR2 ON, 1:1 , NO POST
+000052 6EBA           00081     movwf   T2CON
+000054 0E30           00082     movlw   '0'
+000056 6E05           00083     movwf   puntaje, A
+000058 900A           00084     bcf     perdio                              ; Asegura que empieza desactivada la opcion de perder.
+00005A 920A           00085     bcf     correcto                            ; Asegura que empieza desactivada el bit de boton correc
+                            to.
+00005C 940A           00086     bcf     para                                ; Asegura que empieza desactivada la opcion de STOP.
+00005E EF?? F???      00087     goto    MAIN
+                      00002 #include "delays.asm"
+                      00001 ;#include "inicializacion.asm"
+                      00002     
+000062                00003 DELAY_100us
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000062 0E21           00004     movlw   .33
+000064 6E00           00005     movwf   var1
+000066                00006 loop1                           
+000066 2E00           00007     decfsz  var1 
+000068 EF?? F???      00008     goto    loop1    
+00006C 0012           00009     return ; 100us approx.
+                      00010 
+00006E                00011 DELAY_100ms
+00006E 0E00           00012     movlw   .0          
+000070 6E00           00013     movwf   var1
+000072 0E80           00014     movlw   .128
+000074 6E01           00015     movwf   var2
+000076                00016 loop2                           
+000076 2E00           00017     decfsz  var1
+000078 EF?? F???      00018     goto    loop2
+00007C 2E01           00019     decfsz  var2
+00007E EF?? F???      00020     goto    loop2
+000082 0012           00021     return      ; 100ms approx.
+                      00022     
+000084                00023 DELAY_20ms
+000084 0E00           00024     movlw   .0                  
+000086 6E03           00025     movwf   _256
+000088 0E1A           00026     movlw   .26
+00008A 6E04           00027     movwf   _26 
+00008C                00028 LOOP1
+00008C 2E03           00029     decfsz  _256
+00008E EF?? F???      00030     goto    LOOP1                       ; (3)*256
+000092 2E04           00031     decfsz  _26
+000094 EF?? F???      00032     goto    LOOP1                       ; (3)*256*26 + (3)*26 = 78*256 + 78
+                      00033     ; 20046+4 = 20.05ms approx. 
+000098 0012           00034     return
+                      00035     
+00009A                00036 DELAY_1s
+00009A 0E00           00037     movlw   .0                  
+00009C 6E20           00038     movwf   _256_1
+00009E 6E21           00039     movwf   _256_2
+0000A0 0E05           00040     movlw   .5
+0000A2 6E22           00041     movwf   _5
+0000A4 0E11           00042     movlw   .17
+0000A6 6E23           00043     movwf   _17 
+                      00044     ; 7us approx. in this section
+0000A8                00045 DELAY_1s_LOOP1                          
+0000A8 2E20           00046     decfsz  _256_1
+0000AA EF?? F???      00047     goto    DELAY_1s_LOOP1              ; (3)*256^2
+0000AE 2E21           00048     decfsz  _256_2
+0000B0 EF?? F???      00049     goto    DELAY_1s_LOOP1              ; (3)*256
+0000B4 2E22           00050     decfsz  _5
+0000B6 EF?? F???      00051     goto    DELAY_1s_LOOP1              ; (3)*(256^2+256)*5 + (3)*5 = 15*256^2 + 15*256 + 15
+                      00052     ; 986,907us approx.
+0000BA                00053 DELAY_1s_LOOP2                          
+0000BA 2E20           00054     decfsz  _256_1              
+0000BC EF?? F???      00055     goto    DELAY_1s_LOOP2              ; (3)*256
+0000C0 2E23           00056     decfsz  _17         
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0000C2 EF?? F???      00057     goto    DELAY_1s_LOOP2              ; (3)*256*17 + (3)*17 = 51*256 + 51
+                      00058     ; 13,107us approx.
+                      00059     ; ===1.000021 seg approx.===
+0000C6 0012           00060     return
+                      00061     
+0000C8                00062 TIMER_5s
+0000C8 0E07           00063     movlw   b'00000111'         ; Configuración T0CON
+0000CA 6ED5           00064     movwf   T0CON, A
+0000CC 0EB3           00065     movlw   b'10110011'
+0000CE 6ED7           00066     movwf   TMR0H,A
+0000D0 0EB4           00067     movlw   b'10110100'
+0000D2 94F2           00068     bcf     INTCON,2,A
+0000D4 6ED6           00069     movwf   TMR0L,A   
+0000D6 8ED5           00070     bsf     T0CON,7,A           ; Activa conteo
+0000D8                00071 espera  
+0000D8 B4F2           00072     btfsc   INTCON,2,A          ; Si se activa la bandera del TIMER, ir a TIME_OUT.
+0000DA EF?? F???      00073     goto    TIME_OUT
+0000DE EC?? F???      00074     call    RECORRIDO_JUEGO     ; Checar que boton se presiona.
+0000E2 B40A           00075     btfsc   para                ; Si se presiono el boton de paro, ir a STOP.
+0000E4 EF?? F???      00076     goto    STOP
+0000E8 B20A           00077     btfsc   correcto            ; Si se presiono el boton correcto, regresar.
+0000EA 0012           00078     return
+0000EC B00A           00079     btfsc   perdio              ; Si se presiono un boton incorrecto, ir a GAME_OVER
+0000EE EF?? F???      00080     goto    GAME_OVER
+0000F2 EF?? F???      00081     goto    espera              ; Si no se ha presionado nada, continuar.
+0000F6                00082 TIME_OUT
+0000F6 EC?? F???      00083     call    _LOADING_CHARS_TIEMPO
+0000FA EC?? F???      00084     call    SHOW_TIMES_OVER
+0000FE EC?? F???      00085     call    DELAY_1s
+000102                00086 GAME_OVER
+000102 EC?? F???      00087     call    ON_RED
+000106 EC?? F???      00088     call    DELAY_1s
+00010A                00089 STOP
+00010A EC?? F???      00090     call    _LOADING_CHARS_PERDER
+00010E EC?? F???      00091     call    _WRITING_LOSER_ANIM
+000112 EC?? F???      00092     call    DELAY_1s
+                      00093     ; TODO: Imprimir puntaje obtenido.
+000116 EC?? F???      00094     call    SHOW_HIGHSCORE
+00011A EC?? F???      00095     call    DELAY_1s
+                      00096     ; TODO: Guardar en la EEPROM si fue highscore.
+00011E 800A           00097     bsf     perdio
+000120 EC?? F???      00098     call    DELAY_1s
+000124 0012           00099     return
+000126                00100 NIVEL_SUPERADO
+000126 EC?? F???      00101     call    ON_GREEN
+00012A EC?? F???      00102     call    _LOADING_CHARS_GANAR
+00012E EC?? F???      00103     call    _WRITING_WINNER_ANIM
+000132 EC?? F???      00104     call    DELAY_1s
+000136 EC?? F???      00105     call    SHOW_PUNTAJE
+00013A EC?? F???      00106     call    DELAY_1s
+00013E 0012           00107     return
+                      00108     
+                      00003 #include "lcd_subrutinas.asm"
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;#include "delays.asm"
+                      00002     
+000140                00003 INSTRUCTION_WRITE
+000140 908B           00004     bcf     RS                  ; RS -> 0
+000142 928B           00005     bcf     RW                  ; RW -> 0
+000144 EF?? F???      00006     goto    SEND_DATA
+000148                00007 DATA_WRITE
+000148 808B           00008     bsf     RS                  ; RS -> 1
+00014A 928B           00009     bcf     RW                  ; RW -> 0
+00014C EF?? F???      00010     goto    SEND_DATA
+000150                00011 DATA_READ
+000150 808B           00012     bsf     RS                  ; RS -> 1
+000152 828B           00013     bsf     RW                  ; RW -> 1
+000154 EF?? F???      00014     goto    SEND_DATA
+                      00015     
+000158                00016 SEND_DATA
+000158 848B           00017     bsf     E                   ; Enable.
+00015A 6E8C           00018     movwf   dataLCD             ; Data transmission.
+00015C EC?? F???      00019     call    DELAY_100us
+000160 948B           00020     bcf     E                   ; Stop Enable.
+000162 EC?? F???      00021     call    DELAY_100us
+                      00022     ;call    ESPERA_LCD         ; Wait to see if LCD is done.
+000166 0012           00023     return
+                      00024     
+000168                00025 ESPERA_LCD
+000168 8E95           00026     bsf     configFlag          ; RD7 -> INPUT (to be able to  read it).
+00016A 908B           00027     bcf     RS                  ; RS -> 0
+00016C 828B           00028     bsf     RW                  ; RW -> 1
+00016E 848B           00029     bsf     E                   ; E -> 1
+000170 0000           00030     nop
+000172                00031 REGRESA
+000172 EC?? F???      00032     call    DELAY_100ms         ; Wait 100us.
+000176 BE83           00033     btfsc   flag                ; Read bussy flag.
+000178 EF?? F???      00034     goto    REGRESA             ; If set, keep waiting.
+00017C 948B           00035     bcf     E
+00017E 9E95           00036     bcf     configFlag          ; RD7 -> OUTPUT again.
+000180 0012           00037     return                      ; If not set, return.
+                      00038 
+000182                00039 CONFIGURE_LCD   
+000182 948B           00040     bcf     E
+000184 EC?? F???      00041     call    DELAY_100ms
+000188 0E38           00042     movlw   b'00111000'         ; 8-bit, 2 lines, 5x7.
+00018A EC?? F???      00043     call    INSTRUCTION_WRITE
+00018E 0E0F           00044     movlw   b'00001111'         ; Display on, cursor on, blynk on.
+000190 EC?? F???      00045     call    INSTRUCTION_WRITE
+000194 EC?? F???      00046     call    DELAY_100ms
+000198 0E1C           00047     movlw   b'00011100'         ; Increment cursor position, display shift.
+00019A EC?? F???      00048     call    INSTRUCTION_WRITE
+00019E 0E01           00049     movlw   b'00000001'         ; Clear display and return to home position.
+0001A0 EC?? F???      00050     call    INSTRUCTION_WRITE
+0001A4 EC?? F???      00051     call    DELAY_100ms
+0001A8 0012           00052     return
+                      00053 
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0001AA                00054 SHOW_MAIN_MENU
+0001AA 0E01           00055     movlw   b'00000001'         ; Clear display and return to home position.
+0001AC EC?? F???      00056     call    INSTRUCTION_WRITE
+0001B0 EC?? F???      00057     call    DELAY_100ms
+0001B4 0E57           00058     movlw   'W'                 
+0001B6 EC?? F???      00059     call    DATA_WRITE    
+0001BA 0E2D           00060     movlw   '-'                 
+0001BC EC?? F???      00061     call    DATA_WRITE
+0001C0 0E2D           00062     movlw   '-'                 
+0001C2 EC?? F???      00063     call    DATA_WRITE
+0001C6 0E3E           00064     movlw   '>'                 
+0001C8 EC?? F???      00065     call    DATA_WRITE
+                      00066     
+                      00067     ;SPACE
+0001CC 0E05           00068     movlw   0x05        
+0001CE 8EE8           00069     bsf     WREG, 7, A          
+0001D0 EC?? F???      00070     call    INSTRUCTION_WRITE
+                      00071     
+0001D4 0E4E           00072     movlw   'N'                 
+0001D6 EC?? F???      00073     call    DATA_WRITE
+0001DA 0E45           00074     movlw   'E'                 
+0001DC EC?? F???      00075     call    DATA_WRITE
+0001E0 0E57           00076     movlw   'W'                 
+0001E2 EC?? F???      00077     call    DATA_WRITE
+                      00078     
+                      00079     ;SPACE
+0001E6 0E09           00080     movlw   0x09
+0001E8 8EE8           00081     bsf WREG, 7, A              
+0001EA EC?? F???      00082     call    INSTRUCTION_WRITE
+                      00083     
+0001EE 0E47           00084     movlw   'G'                 
+0001F0 EC?? F???      00085     call    DATA_WRITE
+0001F4 0E41           00086     movlw   'A'                 
+0001F6 EC?? F???      00087     call    DATA_WRITE
+0001FA 0E4D           00088     movlw   'M'                 
+0001FC EC?? F???      00089     call    DATA_WRITE
+000200 0E45           00090     movlw   'E'                 
+000202 EC?? F???      00091     call    DATA_WRITE
+                      00092     
+                      00093     ;SECOND LINE
+000206 0E40           00094     movlw   0x40
+000208 8EE8           00095     bsf WREG, 7, A              
+00020A EC?? F???      00096     call    INSTRUCTION_WRITE
+                      00097     
+00020E 0E42           00098     movlw   'B'                 
+000210 EC?? F???      00099     call    DATA_WRITE    
+000214 0E2D           00100     movlw   '-'                 
+000216 EC?? F???      00101     call    DATA_WRITE
+00021A 0E2D           00102     movlw   '-'                 
+00021C EC?? F???      00103     call    DATA_WRITE
+000220 0E3E           00104     movlw   '>'                 
+000222 EC?? F???      00105     call    DATA_WRITE
+                      00106     
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00107     ;SPACE
+000226 0E45           00108     movlw   0x45        
+000228 8EE8           00109     bsf WREG, 7, A              
+00022A EC?? F???      00110     call    INSTRUCTION_WRITE
+                      00111     
+00022E 0E48           00112     movlw   'H'                 
+000230 EC?? F???      00113     call    DATA_WRITE
+000234 0E49           00114     movlw   'I'                 
+000236 EC?? F???      00115     call    DATA_WRITE
+00023A 0E47           00116     movlw   'G'                 
+00023C EC?? F???      00117     call    DATA_WRITE
+000240 0E48           00118     movlw   'H'                 
+000242 EC?? F???      00119     call    DATA_WRITE
+                      00120     
+                      00121     ;SPACE
+000246 0E4A           00122     movlw   0x4A
+000248 8EE8           00123     bsf WREG, 7, A              
+00024A EC?? F???      00124     call    INSTRUCTION_WRITE
+                      00125     
+00024E 0E53           00126     movlw   'S'                 
+000250 EC?? F???      00127     call    DATA_WRITE
+000254 0E43           00128     movlw   'C'                 
+000256 EC?? F???      00129     call    DATA_WRITE
+00025A 0E4F           00130     movlw   'O'                 
+00025C EC?? F???      00131     call    DATA_WRITE
+000260 0E52           00132     movlw   'R'                 
+000262 EC?? F???      00133     call    DATA_WRITE
+000266 0E45           00134     movlw   'E'                 
+000268 EC?? F???      00135     call    DATA_WRITE
+00026C 0E53           00136     movlw   'S'                 
+00026E EC?? F???      00137     call    DATA_WRITE
+000272 0012           00138     return
+                      00004 #include "lcd_caracteres.asm"
+                      00001 ;#include "lcd_subrutinas.asm"
+                      00002     
+000274                00003 _LOADING_CHARS_TIEMPO
+                      00004     ; write custom characters
+000274 0E00           00005     movlw .0
+000276 8CE8           00006     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+000278 EC?? F???      00007     call INSTRUCTION_WRITE
+00027C EC?? F???      00008     call _SAD_PIXELS
+000280 0012           00009     return
+000282                00010 _SAD_PIXELS
+                      00011     ; first square .0 char
+000282 0E00           00012     movlw b'00000'
+000284 EC?? F???      00013     call DATA_WRITE
+000288 0E06           00014     movlw b'00110'
+00028A EC?? F???      00015     call DATA_WRITE
+00028E 0E06           00016     movlw b'00110'
+000290 EC?? F???      00017     call DATA_WRITE
+000294 0E00           00018     movlw b'00000'
+000296 EC?? F???      00019     call DATA_WRITE
+00029A 0E01           00020     movlw b'00001'
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00029C EC?? F???      00021     call DATA_WRITE
+0002A0 0E06           00022     movlw b'00110'
+0002A2 EC?? F???      00023     call DATA_WRITE
+0002A6 0E08           00024     movlw b'01000'
+0002A8 EC?? F???      00025     call DATA_WRITE
+0002AC 0E00           00026     movlw b'00000'
+0002AE EC?? F???      00027     call DATA_WRITE
+                      00028     ; second square .8 char
+0002B2 0E00           00029     movlw b'00000'
+0002B4 EC?? F???      00030     call DATA_WRITE
+0002B8 0E0C           00031     movlw b'01100'
+0002BA EC?? F???      00032     call DATA_WRITE
+0002BE 0E0C           00033     movlw b'01100'
+0002C0 EC?? F???      00034     call DATA_WRITE
+0002C4 0E00           00035     movlw b'00000'
+0002C6 EC?? F???      00036     call DATA_WRITE
+0002CA 0E10           00037     movlw b'10000'
+0002CC EC?? F???      00038     call DATA_WRITE
+0002D0 0E0C           00039     movlw b'01100'
+0002D2 EC?? F???      00040     call DATA_WRITE
+0002D6 0E02           00041     movlw b'00010'
+0002D8 EC?? F???      00042     call DATA_WRITE
+0002DC 0E00           00043     movlw b'00000'
+0002DE EC?? F???      00044     call DATA_WRITE
+0002E2 0012           00045     return
+                      00046     
+0002E4                00047 _LOADING_CHARS_GANAR
+                      00048     ; write custom characters
+0002E4 0E00           00049     movlw .0
+0002E6 8CE8           00050     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+0002E8 EC?? F???      00051     call INSTRUCTION_WRITE
+0002EC EC?? F???      00052     call _WINNER_PIXELS
+0002F0 0012           00053     return
+0002F2                00054 _WINNER_PIXELS
+                      00055     ; first square .0 char
+0002F2 0E00           00056     movlw b'00000'
+0002F4 EC?? F???      00057     call DATA_WRITE
+0002F8 0E00           00058     movlw b'00000'
+0002FA EC?? F???      00059     call DATA_WRITE
+0002FE 0E00           00060     movlw b'00000'
+000300 EC?? F???      00061     call DATA_WRITE
+000304 0E00           00062     movlw b'00000'
+000306 EC?? F???      00063     call DATA_WRITE
+00030A 0E00           00064     movlw b'00000'
+00030C EC?? F???      00065     call DATA_WRITE
+000310 0E00           00066     movlw b'00000'
+000312 EC?? F???      00067     call DATA_WRITE
+000316 0E04           00068     movlw b'00100'
+000318 EC?? F???      00069     call DATA_WRITE
+00031C 0E0E           00070     movlw b'01110'
+00031E EC?? F???      00071     call DATA_WRITE
+                      00072     ; second square .8 char
+000322 0E00           00073     movlw b'00000'
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000324 EC?? F???      00074     call DATA_WRITE
+000328 0E00           00075     movlw b'00000'
+00032A EC?? F???      00076     call DATA_WRITE
+00032E 0E00           00077     movlw b'00000'
+000330 EC?? F???      00078     call DATA_WRITE
+000334 0E00           00079     movlw b'00000'
+000336 EC?? F???      00080     call DATA_WRITE
+00033A 0E04           00081     movlw b'00100'
+00033C EC?? F???      00082     call DATA_WRITE
+000340 0E0E           00083     movlw b'01110'
+000342 EC?? F???      00084     call DATA_WRITE
+000346 0E15           00085     movlw b'10101'
+000348 EC?? F???      00086     call DATA_WRITE
+00034C 0E04           00087     movlw b'00100'
+00034E EC?? F???      00088     call DATA_WRITE
+                      00089     ; third square .16 char
+000352 0E00           00090     movlw b'00000'
+000354 EC?? F???      00091     call DATA_WRITE
+000358 0E00           00092     movlw b'00000'
+00035A EC?? F???      00093     call DATA_WRITE
+00035E 0E04           00094     movlw b'00100'
+000360 EC?? F???      00095     call DATA_WRITE
+000364 0E0E           00096     movlw b'01110'
+000366 EC?? F???      00097     call DATA_WRITE
+00036A 0E15           00098     movlw b'10101'
+00036C EC?? F???      00099     call DATA_WRITE
+000370 0E04           00100     movlw b'00100'
+000372 EC?? F???      00101     call DATA_WRITE
+000376 0E04           00102     movlw b'00100'
+000378 EC?? F???      00103     call DATA_WRITE
+00037C 0E04           00104     movlw b'00100'
+00037E EC?? F???      00105     call DATA_WRITE
+                      00106     ; fourth square .24 char
+000382 0E04           00107     movlw b'00100'
+000384 EC?? F???      00108     call DATA_WRITE
+000388 0E0E           00109     movlw b'01110'
+00038A EC?? F???      00110     call DATA_WRITE
+00038E 0E15           00111     movlw b'10101'
+000390 EC?? F???      00112     call DATA_WRITE
+000394 0E04           00113     movlw b'00100'
+000396 EC?? F???      00114     call DATA_WRITE
+00039A 0E04           00115     movlw b'00100'
+00039C EC?? F???      00116     call DATA_WRITE
+0003A0 0E04           00117     movlw b'00100'
+0003A2 EC?? F???      00118     call DATA_WRITE
+0003A6 0E04           00119     movlw b'00100'
+0003A8 EC?? F???      00120     call DATA_WRITE
+0003AC 0E00           00121     movlw b'00000'
+0003AE EC?? F???      00122     call DATA_WRITE
+                      00123     ; fifth square .32 char
+0003B2 0E15           00124     movlw b'10101'
+0003B4 EC?? F???      00125     call DATA_WRITE
+0003B8 0E04           00126     movlw b'00100'
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0003BA EC?? F???      00127     call DATA_WRITE
+0003BE 0E04           00128     movlw b'00100'
+0003C0 EC?? F???      00129     call DATA_WRITE
+0003C4 0E04           00130     movlw b'00100'
+0003C6 EC?? F???      00131     call DATA_WRITE
+0003CA 0E04           00132     movlw b'00100'
+0003CC EC?? F???      00133     call DATA_WRITE
+0003D0 0E00           00134     movlw b'00000'
+0003D2 EC?? F???      00135     call DATA_WRITE
+0003D6 0E00           00136     movlw b'00000'
+0003D8 EC?? F???      00137     call DATA_WRITE
+0003DC 0E00           00138     movlw b'00000'
+0003DE EC?? F???      00139     call DATA_WRITE
+                      00140     ; sixth square .40 char
+0003E2 0E04           00141     movlw b'00100'
+0003E4 EC?? F???      00142     call DATA_WRITE
+0003E8 0E04           00143     movlw b'00100'
+0003EA EC?? F???      00144     call DATA_WRITE
+0003EE 0E04           00145     movlw b'00100'
+0003F0 EC?? F???      00146     call DATA_WRITE
+0003F4 0E00           00147     movlw b'00000'
+0003F6 EC?? F???      00148     call DATA_WRITE
+0003FA 0E00           00149     movlw b'00000'
+0003FC EC?? F???      00150     call DATA_WRITE
+000400 0E00           00151     movlw b'00000'
+000402 EC?? F???      00152     call DATA_WRITE
+000406 0E00           00153     movlw b'00000'
+000408 EC?? F???      00154     call DATA_WRITE
+00040C 0E00           00155     movlw b'00000'
+00040E EC?? F???      00156     call DATA_WRITE
+000412 0012           00157     return
+                      00158 
+000414                00159 _LOADING_CHARS_PERDER
+                      00160     ; write custom characters
+000414 0E00           00161     movlw .0
+000416 8CE8           00162     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
+000418 EC?? F???      00163     call INSTRUCTION_WRITE
+00041C EC?? F???      00164     call _LOSING_PIXELS
+000420 0012           00165     return
+000422                00166 _LOSING_PIXELS
+                      00167     ; first square .0 char
+000422 0E03           00168     movlw b'00011'
+000424 EC?? F???      00169     call DATA_WRITE
+000428 0E0F           00170     movlw b'01111'
+00042A EC?? F???      00171     call DATA_WRITE
+00042E 0E0F           00172     movlw b'01111'
+000430 EC?? F???      00173     call DATA_WRITE
+000434 0E1F           00174     movlw b'11111'
+000436 EC?? F???      00175     call DATA_WRITE
+00043A 0E1F           00176     movlw b'11111'
+00043C EC?? F???      00177     call DATA_WRITE
+000440 0E1D           00178     movlw b'11101'
+000442 EC?? F???      00179     call DATA_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000446 0E19           00180     movlw b'11001'
+000448 EC?? F???      00181     call DATA_WRITE
+00044C 0E1B           00182     movlw b'11011'
+00044E EC?? F???      00183     call DATA_WRITE
+                      00184     ; second square .8 char
+000452 0E10           00185     movlw b'10000'
+000454 EC?? F???      00186     call DATA_WRITE
+000458 0E1C           00187     movlw b'11100'
+00045A EC?? F???      00188     call DATA_WRITE
+00045E 0E1C           00189     movlw b'11100'
+000460 EC?? F???      00190     call DATA_WRITE
+000464 0E1E           00191     movlw b'11110'
+000466 EC?? F???      00192     call DATA_WRITE
+00046A 0E1E           00193     movlw b'11110'
+00046C EC?? F???      00194     call DATA_WRITE
+000470 0E0E           00195     movlw b'01110'
+000472 EC?? F???      00196     call DATA_WRITE
+000476 0E06           00197     movlw b'00110'
+000478 EC?? F???      00198     call DATA_WRITE
+00047C 0E16           00199     movlw b'10110'
+00047E EC?? F???      00200     call DATA_WRITE
+                      00201     ; third square .16 char
+000482 0E0F           00202     movlw b'01111'
+000484 EC?? F???      00203     call DATA_WRITE
+000488 0E0E           00204     movlw b'01110'
+00048A EC?? F???      00205     call DATA_WRITE
+00048E 0E07           00206     movlw b'00111'
+000490 EC?? F???      00207     call DATA_WRITE
+000494 0E04           00208     movlw b'00100'
+000496 EC?? F???      00209     call DATA_WRITE
+00049A 0E05           00210     movlw b'00101'
+00049C EC?? F???      00211     call DATA_WRITE
+0004A0 0E05           00212     movlw b'00101'
+0004A2 EC?? F???      00213     call DATA_WRITE
+0004A6 0E07           00214     movlw b'00111'
+0004A8 EC?? F???      00215     call DATA_WRITE
+0004AC 0E03           00216     movlw b'00011'
+0004AE EC?? F???      00217     call DATA_WRITE
+                      00218     ; fourth square .24 char
+0004B2 0E1C           00219     movlw b'11100'
+0004B4 EC?? F???      00220     call DATA_WRITE
+0004B8 0E1C           00221     movlw b'11100'
+0004BA EC?? F???      00222     call DATA_WRITE
+0004BE 0E18           00223     movlw b'11000'
+0004C0 EC?? F???      00224     call DATA_WRITE
+0004C4 0E08           00225     movlw b'01000'
+0004C6 EC?? F???      00226     call DATA_WRITE
+0004CA 0E08           00227     movlw b'01000'
+0004CC EC?? F???      00228     call DATA_WRITE
+0004D0 0E08           00229     movlw b'01000'
+0004D2 EC?? F???      00230     call DATA_WRITE
+0004D6 0E18           00231     movlw b'11000'
+0004D8 EC?? F???      00232     call DATA_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0004DC 0E10           00233     movlw b'10000'
+0004DE EC?? F???      00234     call DATA_WRITE
+                      00235     
+                      00236     ; fifth square .32 char
+0004E2 0E1C           00237     movlw b'11100'
+0004E4 EC?? F???      00238     call DATA_WRITE
+0004E8 0E10           00239     movlw b'10000'
+0004EA EC?? F???      00240     call DATA_WRITE
+0004EE 0E10           00241     movlw b'10000'
+0004F0 EC?? F???      00242     call DATA_WRITE
+0004F4 0E00           00243     movlw b'00000'
+0004F6 EC?? F???      00244     call DATA_WRITE
+0004FA 0E00           00245     movlw b'00000'
+0004FC EC?? F???      00246     call DATA_WRITE
+000500 0E02           00247     movlw b'00010'
+000502 EC?? F???      00248     call DATA_WRITE
+000506 0E06           00249     movlw b'00110'
+000508 EC?? F???      00250     call DATA_WRITE
+00050C 0E04           00251     movlw b'00100'
+00050E EC?? F???      00252     call DATA_WRITE
+                      00253     ; sixth square .40 char
+000512 0E0F           00254     movlw b'01111'
+000514 EC?? F???      00255     call DATA_WRITE
+000518 0E03           00256     movlw b'00011'
+00051A EC?? F???      00257     call DATA_WRITE
+00051E 0E03           00258     movlw b'00011'
+000520 EC?? F???      00259     call DATA_WRITE
+000524 0E01           00260     movlw b'00001'
+000526 EC?? F???      00261     call DATA_WRITE
+00052A 0E01           00262     movlw b'00001'
+00052C EC?? F???      00263     call DATA_WRITE
+000530 0E11           00264     movlw b'10001'
+000532 EC?? F???      00265     call DATA_WRITE
+000536 0E19           00266     movlw b'11001'
+000538 EC?? F???      00267     call DATA_WRITE
+00053C 0E09           00268     movlw b'01001'
+00053E EC?? F???      00269     call DATA_WRITE
+                      00270     ; seventh square .48 char
+000542 0E10           00271     movlw b'10000'
+000544 EC?? F???      00272     call DATA_WRITE
+000548 0E11           00273     movlw b'10001'
+00054A EC?? F???      00274     call DATA_WRITE
+00054E 0E18           00275     movlw b'11000'
+000550 EC?? F???      00276     call DATA_WRITE
+000554 0E1B           00277     movlw b'11011'
+000556 EC?? F???      00278     call DATA_WRITE
+00055A 0E1A           00279     movlw b'11010'
+00055C EC?? F???      00280     call DATA_WRITE
+000560 0E1A           00281     movlw b'11010'
+000562 EC?? F???      00282     call DATA_WRITE
+000566 0E18           00283     movlw b'11000'
+000568 EC?? F???      00284     call DATA_WRITE
+00056C 0E1C           00285     movlw b'11100'
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00056E EC?? F???      00286     call DATA_WRITE
+                      00287     ; eight square .56 char
+000572 0E03           00288     movlw b'00011'
+000574 EC?? F???      00289     call DATA_WRITE
+000578 0E03           00290     movlw b'00011'
+00057A EC?? F???      00291     call DATA_WRITE
+00057E 0E07           00292     movlw b'00111'
+000580 EC?? F???      00293     call DATA_WRITE
+000584 0E17           00294     movlw b'10111'
+000586 EC?? F???      00295     call DATA_WRITE
+00058A 0E17           00296     movlw b'10111'
+00058C EC?? F???      00297     call DATA_WRITE
+000590 0E17           00298     movlw b'10111'
+000592 EC?? F???      00299     call DATA_WRITE
+000596 0E07           00300     movlw b'00111'
+000598 EC?? F???      00301     call DATA_WRITE
+00059C 0E0F           00302     movlw b'01111'
+00059E EC?? F???      00303     call DATA_WRITE
+                      00304    
+0005A2 0012           00305     return
+                      00306 
+0005A4                00307 _WRITING_LOSER_ANIM ; writing the chars into the lcd display 
+0005A4 0E01           00308     movlw   b'00000001'         ; Clear display and return to home position.
+0005A6 EC?? F???      00309     call    INSTRUCTION_WRITE
+0005AA EC?? F???      00310     call    DELAY_100ms
+                      00311     ; first line of lcd
+0005AE 0E01           00312     movlw   0x01 ; Move cursor to 0x00.
+0005B0 8EE8           00313     bsf    WREG, 7, A 
+0005B2 EC?? F???      00314     call    INSTRUCTION_WRITE
+                      00315    
+0005B6 0E00           00316     movlw   .0 ; Write first square.
+0005B8 EC?? F???      00317     call    DATA_WRITE
+0005BC 0E01           00318     movlw   .1 ; Write second square.
+0005BE EC?? F???      00319     call    DATA_WRITE
+                      00320     
+0005C2 0E04           00321     movlw   .4 ; Write fifth square.
+0005C4 EC?? F???      00322     call    DATA_WRITE
+0005C8 0E05           00323     movlw   .5 ; Write sixth square.
+0005CA EC?? F???      00324     call    DATA_WRITE
+                      00325     ; one space
+0005CE 0E06           00326     movlw   0x06 ; Move cursor to 0x05.
+0005D0 8EE8           00327     bsf    WREG, 7, A 
+0005D2 EC?? F???      00328     call    INSTRUCTION_WRITE
+                      00329     
+0005D6 0E47           00330     movlw   'G' ; Write a 'G'.
+0005D8 EC?? F???      00331     call    DATA_WRITE
+0005DC 0E41           00332     movlw   'A' ; Write a 'A'.
+0005DE EC?? F???      00333     call    DATA_WRITE
+0005E2 0E4D           00334     movlw   'M' ; Write a 'M'.
+0005E4 EC?? F???      00335     call    DATA_WRITE
+0005E8 0E45           00336     movlw   'E' ; Write a 'E'.
+0005EA EC?? F???      00337     call    DATA_WRITE
+                      00338     
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00339     ; one space
+0005EE 0E0B           00340     movlw   0x0B ; Move cursor to 0x0A.
+0005F0 8EE8           00341     bsf    WREG, 7, A 
+0005F2 EC?? F???      00342     call    INSTRUCTION_WRITE
+                      00343     
+0005F6 0E00           00344     movlw   .0 ; Write firt square.
+0005F8 EC?? F???      00345     call    DATA_WRITE
+0005FC 0E01           00346     movlw   .1 ; Write second square.
+0005FE EC?? F???      00347     call    DATA_WRITE
+                      00348     
+000602 0E04           00349     movlw   .4 ; Write fifth square.
+000604 EC?? F???      00350     call    DATA_WRITE
+000608 0E05           00351     movlw   .5 ; Write sixth square.
+00060A EC?? F???      00352     call    DATA_WRITE
+                      00353     ; one space
+00060E 0E10           00354     movlw   0x10 ; Move cursor to 0x0E.
+000610 8EE8           00355     bsf    WREG, 7, A 
+000612 EC?? F???      00356     call    INSTRUCTION_WRITE
+                      00357     
+000616 0E47           00358     movlw   'G' ; Write a 'G'.
+000618 EC?? F???      00359     call    DATA_WRITE
+00061C 0E41           00360     movlw   'A' ; Write a 'A'.
+00061E EC?? F???      00361     call    DATA_WRITE
+000622 0E4D           00362     movlw   'M' ; Write a 'M'.
+000624 EC?? F???      00363     call    DATA_WRITE
+000628 0E45           00364     movlw   'E' ; Write a 'E'.
+00062A EC?? F???      00365     call    DATA_WRITE
+                      00366     ; one space
+00062E 0E15           00367     movlw   0x15 ; Move cursor to 0x14.
+000630 8EE8           00368     bsf    WREG, 7, A 
+000632 EC?? F???      00369     call    INSTRUCTION_WRITE
+                      00370    
+                      00371     
+000636 0E00           00372     movlw   .0 ; Write first square.
+000638 EC?? F???      00373     call    DATA_WRITE
+00063C 0E01           00374     movlw   .1 ; Write second square.
+00063E EC?? F???      00375     call    DATA_WRITE
+                      00376     
+000642 0E04           00377     movlw   .4 ; Write fifth square.
+000644 EC?? F???      00378     call    DATA_WRITE
+000648 0E05           00379     movlw   .5 ; Write sixth square.
+00064A EC?? F???      00380     call    DATA_WRITE
+                      00381     
+                      00382     ; second line of lcd
+00064E 0E41           00383     movlw   0x41 ; Move cursor to 0x40.
+000650 8EE8           00384     bsf    WREG, 7, A 
+000652 EC?? F???      00385     call    INSTRUCTION_WRITE
+                      00386     
+000656 0E02           00387     movlw   .2 ; Write firt square.
+000658 EC?? F???      00388     call    DATA_WRITE
+00065C 0E03           00389     movlw   .3 ; Write second square.
+00065E EC?? F???      00390     call    DATA_WRITE
+                      00391     
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000662 0E06           00392     movlw   .6 ; Write fifth square.
+000664 EC?? F???      00393     call    DATA_WRITE
+000668 0E07           00394     movlw   .7 ; Write sixth square.
+00066A EC?? F???      00395     call    DATA_WRITE
+                      00396     ; one space
+00066E 0E46           00397     movlw   0x46 ; Move cursor to 0x05.
+000670 8EE8           00398     bsf    WREG, 7, A 
+000672 EC?? F???      00399     call    INSTRUCTION_WRITE
+                      00400     
+000676 0E4F           00401     movlw   'O' ; Write a 'O'.
+000678 EC?? F???      00402     call    DATA_WRITE
+00067C 0E56           00403     movlw   'V' ; Write a 'V'.
+00067E EC?? F???      00404     call    DATA_WRITE
+000682 0E45           00405     movlw   'E' ; Write a 'E'.
+000684 EC?? F???      00406     call    DATA_WRITE
+000688 0E52           00407     movlw   'R' ; Write a 'R'.
+00068A EC?? F???      00408     call    DATA_WRITE
+                      00409     ; one space
+00068E 0E4B           00410     movlw   0x4B ; Move cursor to 0x10.
+000690 8EE8           00411     bsf    WREG, 7, A 
+000692 EC?? F???      00412     call    INSTRUCTION_WRITE
+                      00413     
+000696 0E02           00414     movlw   .2 ; Write firt square.
+000698 EC?? F???      00415     call    DATA_WRITE
+00069C 0E03           00416     movlw   .3 ; Write second square.
+00069E EC?? F???      00417     call    DATA_WRITE
+                      00418     
+0006A2 0E06           00419     movlw   .6 ; Write fifth square.
+0006A4 EC?? F???      00420     call    DATA_WRITE
+0006A8 0E07           00421     movlw   .7 ; Write sixth square.
+0006AA EC?? F???      00422     call    DATA_WRITE
+                      00423      ; one space
+0006AE 0E50           00424     movlw   0x50 ; Move cursor to 0x05.
+0006B0 8EE8           00425     bsf    WREG, 7, A 
+0006B2 EC?? F???      00426     call    INSTRUCTION_WRITE
+                      00427     
+0006B6 0E4F           00428     movlw   'O' ; Write a 'O'.
+0006B8 EC?? F???      00429     call    DATA_WRITE
+0006BC 0E56           00430     movlw   'V' ; Write a 'V'.
+0006BE EC?? F???      00431     call    DATA_WRITE
+0006C2 0E45           00432     movlw   'E' ; Write a 'E'.
+0006C4 EC?? F???      00433     call    DATA_WRITE
+0006C8 0E52           00434     movlw   'R' ; Write a 'R'.
+0006CA EC?? F???      00435     call    DATA_WRITE
+                      00436     ; six spaces
+0006CE 0E55           00437     movlw   0x55 ; Move cursor to 0x20.
+0006D0 8EE8           00438     bsf    WREG, 7, A 
+0006D2 EC?? F???      00439     call    INSTRUCTION_WRITE
+                      00440     
+0006D6 0E02           00441     movlw   .2 ; Write first square.
+0006D8 EC?? F???      00442     call    DATA_WRITE
+0006DC 0E03           00443     movlw   .3 ; Write second square.
+0006DE EC?? F???      00444     call    DATA_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00445     
+0006E2 0E06           00446     movlw   .6 ; Write fifth square.
+0006E4 EC?? F???      00447     call    DATA_WRITE
+0006E8 0E07           00448     movlw   .7 ; Write sixth square.
+0006EA EC?? F???      00449     call    DATA_WRITE
+                      00450     
+                      00451     ; display shift for animation
+0006EE 0EF0           00452     movlw .240
+0006F0 6E08           00453     movwf register_loser, A
+                      00454  
+0006F2                00455 LOOP_LOSER_LEFT
+0006F2 EC?? F???      00456     call DELAY_100us
+0006F6 EC?? F???      00457     call DELAY_100us
+0006FA 0E18           00458     movlw b'00011000' ; set move display to the left
+0006FC EC?? F???      00459     call INSTRUCTION_WRITE
+000700 3E08           00460     incfsz register_loser, 1, A
+000702 EF?? F???      00461     goto LOOP_LOSER_LEFT
+000706 0EF0           00462     movlw .240
+000708 6E08           00463     movwf register_loser, A
+                      00464  
+00070A                00465 LOOP_LOSER_RIGHT
+00070A EC?? F???      00466     call DELAY_100us
+00070E EC?? F???      00467     call DELAY_100us
+000712 0E1C           00468     movlw b'00011100' ; set move display to the left
+000714 EC?? F???      00469     call INSTRUCTION_WRITE
+000718 3E08           00470     incfsz register_loser, 1, A
+00071A EF?? F???      00471     goto LOOP_LOSER_RIGHT
+00071E 0012           00472     return
+                      00473 
+000720                00474 _WRITING_WINNER_ANIM
+000720 0E01           00475     movlw   b'00000001'         ; Clear display and return to home position.
+000722 EC?? F???      00476     call    INSTRUCTION_WRITE
+000726 EC?? F???      00477     call    DELAY_100ms
+                      00478     ;SECOND LINE
+00072A 0E44           00479     movlw   0x44
+00072C 8EE8           00480     bsf     WREG, 7, A          
+00072E EC?? F???      00481     call    INSTRUCTION_WRITE
+                      00482     
+000732 0E4C           00483     movlw   'L'                 
+000734 EC?? F???      00484     call    DATA_WRITE    
+000738 0E45           00485     movlw   'E'                 
+00073A EC?? F???      00486     call    DATA_WRITE    
+00073E 0E56           00487     movlw   'V'                 
+000740 EC?? F???      00488     call    DATA_WRITE    
+000744 0E45           00489     movlw   'E'                 
+000746 EC?? F???      00490     call    DATA_WRITE    
+00074A 0E4C           00491     movlw   'L'                 
+00074C EC?? F???      00492     call    DATA_WRITE    
+                      00493     
+                      00494     ;SPACE
+000750 0E4A           00495     movlw   0x4A
+000752 8EE8           00496     bsf     WREG, 7, A          
+000754 EC?? F???      00497     call    INSTRUCTION_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00498     
+000758 0E55           00499     movlw   'U'                 
+00075A EC?? F???      00500     call    DATA_WRITE    
+00075E 0E50           00501     movlw   'P'                 
+000760 EC?? F???      00502     call    DATA_WRITE    
+                      00503     
+000764 0E05           00504     movlw   .5 ;Repeat animation 5 times
+000766 6E02           00505     movwf   var3
+000768                00506 WIN_ANIMATION_LOOP
+000768 0E01           00507     movlw   b'00000001'         ; Clear display and return to home position.
+00076A EC?? F???      00508     call    INSTRUCTION_WRITE
+00076E EC?? F???      00509     call    DELAY_100ms
+                      00510    ;0  
+000772 0E02           00511     movlw   0x02
+000774 8EE8           00512     bsf     WREG, 7, A          
+000776 EC?? F???      00513     call    INSTRUCTION_WRITE
+                      00514     
+00077A 0E00           00515     movlw   .0                  
+00077C EC?? F???      00516     call    DATA_WRITE
+000780 EC?? F???      00517     call    DELAY_100us
+                      00518     
+                      00519     
+000784 0E0D           00520     movlw   0x0D
+000786 8EE8           00521     bsf     WREG, 7, A          
+000788 EC?? F???      00522     call    INSTRUCTION_WRITE
+                      00523     
+00078C 0E00           00524     movlw   .0                  
+00078E EC?? F???      00525     call    DATA_WRITE
+000792 EC?? F???      00526     call    DELAY_100us
+                      00527     
+                      00528     
+                      00529     ;1   
+000796 0E02           00530     movlw   0x02
+000798 8EE8           00531     bsf     WREG, 7, A          
+00079A EC?? F???      00532     call    INSTRUCTION_WRITE
+                      00533     
+00079E 0E01           00534     movlw   .1          
+0007A0 EC?? F???      00535     call    DATA_WRITE
+0007A4 EC?? F???      00536     call    DELAY_100us
+                      00537     
+                      00538     
+0007A8 0E0D           00539     movlw   0x0D
+0007AA 8EE8           00540     bsf     WREG, 7, A          
+0007AC EC?? F???      00541     call    INSTRUCTION_WRITE
+                      00542     
+0007B0 0E01           00543     movlw   .1          
+0007B2 EC?? F???      00544     call    DATA_WRITE
+0007B6 EC?? F???      00545     call    DELAY_100us
+                      00546     
+                      00547     ;2   
+0007BA 0E02           00548     movlw   0x02
+0007BC 8EE8           00549     bsf     WREG, 7, A          
+0007BE EC?? F???      00550     call    INSTRUCTION_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00551     
+0007C2 0E02           00552     movlw   .2          
+0007C4 EC?? F???      00553     call    DATA_WRITE
+0007C8 EC?? F???      00554     call    DELAY_100us
+                      00555     
+                      00556     
+0007CC 0E0D           00557     movlw   0x0D
+0007CE 8EE8           00558     bsf     WREG, 7, A          
+0007D0 EC?? F???      00559     call    INSTRUCTION_WRITE
+                      00560     
+0007D4 0E02           00561     movlw   .2          
+0007D6 EC?? F???      00562     call    DATA_WRITE
+0007DA EC?? F???      00563     call    DELAY_100us
+                      00564     
+                      00565     ;3
+0007DE 0E02           00566     movlw   0x02
+0007E0 8EE8           00567     bsf     WREG, 7, A          
+0007E2 EC?? F???      00568     call    INSTRUCTION_WRITE
+                      00569     
+0007E6 0E03           00570     movlw   .3          
+0007E8 EC?? F???      00571     call    DATA_WRITE
+0007EC EC?? F???      00572     call    DELAY_100us
+                      00573     
+                      00574     
+0007F0 0E0D           00575     movlw   0x0D
+0007F2 8EE8           00576     bsf     WREG, 7, A          
+0007F4 EC?? F???      00577     call    INSTRUCTION_WRITE
+                      00578     
+0007F8 0E03           00579     movlw   .3          
+0007FA EC?? F???      00580     call    DATA_WRITE
+0007FE EC?? F???      00581     call    DELAY_100us
+                      00582     
+                      00583     ;4
+000802 0E02           00584     movlw   0x02
+000804 8EE8           00585     bsf     WREG, 7, A          
+000806 EC?? F???      00586     call    INSTRUCTION_WRITE
+                      00587     
+00080A 0E04           00588     movlw   .4          
+00080C EC?? F???      00589     call    DATA_WRITE
+000810 EC?? F???      00590     call    DELAY_100us
+                      00591     
+                      00592     
+000814 0E0D           00593     movlw   0x0D
+000816 8EE8           00594     bsf     WREG, 7, A          
+000818 EC?? F???      00595     call    INSTRUCTION_WRITE
+                      00596     
+00081C 0E04           00597     movlw   .4          
+00081E EC?? F???      00598     call    DATA_WRITE
+000822 EC?? F???      00599     call    DELAY_100us
+                      00600     
+                      00601     ;5
+000826 0E02           00602     movlw   0x02
+000828 8EE8           00603     bsf     WREG, 7, A          
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00082A EC?? F???      00604     call    INSTRUCTION_WRITE
+                      00605     
+00082E 0E05           00606     movlw   .5          
+000830 EC?? F???      00607     call    DATA_WRITE
+000834 EC?? F???      00608     call    DELAY_100us
+                      00609     
+                      00610     
+000838 0E0D           00611     movlw   0x0D
+00083A 8EE8           00612     bsf     WREG, 7, A          
+00083C EC?? F???      00613     call    INSTRUCTION_WRITE
+                      00614     
+000840 0E05           00615     movlw   .5  
+000842 EC?? F???      00616     call    DATA_WRITE
+000846 EC?? F???      00617     call    DELAY_100us
+                      00618     
+00084A 2E02           00619     decfsz  var3
+00084C EF?? F???      00620     goto    WIN_ANIMATION_LOOP
+000850 0012           00621     return
+                      00622 
+000852                00623 SHOW_HIGHSCORE
+000852 0E01           00624     movlw   b'00000001'         ; Clear display and return to home position.
+000854 EC?? F???      00625     call    INSTRUCTION_WRITE
+000858 EC?? F???      00626     call    DELAY_100ms
+00085C 0E21           00627     movlw   '!'                 
+00085E EC?? F???      00628     call    DATA_WRITE   
+000862 0E4E           00629     movlw   'N'                 
+000864 EC?? F???      00630     call    DATA_WRITE    
+000868 0E45           00631     movlw   'E'                 
+00086A EC?? F???      00632     call    DATA_WRITE
+00086E 0E57           00633     movlw   'W'                 
+000870 EC?? F???      00634     call    DATA_WRITE
+                      00635     
+                      00636     ;SPACE
+000874 0E05           00637     movlw   0x05        
+000876 8EE8           00638     bsf     WREG, 7, A          
+000878 EC?? F???      00639     call    INSTRUCTION_WRITE
+                      00640     
+00087C 0E48           00641     movlw   'H'                 
+00087E EC?? F???      00642     call    DATA_WRITE
+000882 0E49           00643     movlw   'I'                 
+000884 EC?? F???      00644     call    DATA_WRITE
+000888 0E47           00645     movlw   'G'                 
+00088A EC?? F???      00646     call    DATA_WRITE
+00088E 0E48           00647     movlw   'H'                 
+000890 EC?? F???      00648     call    DATA_WRITE
+                      00649  
+                      00650     ;SPACE
+000894 0E0A           00651     movlw   0x0A
+000896 8EE8           00652     bsf     WREG, 7, A          
+000898 EC?? F???      00653     call    INSTRUCTION_WRITE
+                      00654     
+00089C 0E53           00655     movlw   'S'                 
+00089E EC?? F???      00656     call    DATA_WRITE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0008A2 0E43           00657     movlw   'C'                 
+0008A4 EC?? F???      00658     call    DATA_WRITE
+0008A8 0E4F           00659     movlw   'O'                 
+0008AA EC?? F???      00660     call    DATA_WRITE
+0008AE 0E52           00661     movlw   'R'                 
+0008B0 EC?? F???      00662     call    DATA_WRITE
+0008B4 0E45           00663     movlw   'E'                 
+0008B6 EC?? F???      00664     call    DATA_WRITE
+0008BA 0E21           00665     movlw   '!'                 
+0008BC EC?? F???      00666     call    DATA_WRITE   
+                      00667     
+                      00668     
+                      00669     ;SECOND LINE
+0008C0 0E40           00670     movlw   0x40
+0008C2 8EE8           00671     bsf     WREG, 7, A          
+0008C4 EC?? F???      00672     call    INSTRUCTION_WRITE
+                      00673     
+0008C8 0E2D           00674     movlw   '-'                 
+0008CA EC?? F???      00675     call    DATA_WRITE    
+0008CE 0E2D           00676     movlw   '-'                 
+0008D0 EC?? F???      00677     call    DATA_WRITE    
+0008D4 0E2D           00678     movlw   '-'                 
+0008D6 EC?? F???      00679     call    DATA_WRITE    
+0008DA 0E2D           00680     movlw   '-'                 
+0008DC EC?? F???      00681     call    DATA_WRITE    
+0008E0 0E2D           00682     movlw   '-'                 
+0008E2 EC?? F???      00683     call    DATA_WRITE    
+0008E6 0E2D           00684     movlw   '-'                 
+0008E8 EC?? F???      00685     call    DATA_WRITE    
+0008EC 0E3E           00686     movlw   '>'                 
+0008EE EC?? F???      00687     call    DATA_WRITE    
+0008F2 0E30           00688     movlw   '0'                 
+0008F4 EC?? F???      00689     call    DATA_WRITE      
+0008F8 5005           00690     movf    puntaje, W, A
+0008FA EC?? F???      00691     call    DATA_WRITE     
+0008FE 0E3C           00692     movlw   '<'                 
+000900 EC?? F???      00693     call    DATA_WRITE    
+000904 0E2D           00694     movlw   '-'                 
+000906 EC?? F???      00695     call    DATA_WRITE    
+00090A 0E2D           00696     movlw   '-'                 
+00090C EC?? F???      00697     call    DATA_WRITE    
+000910 0E2D           00698     movlw   '-'                 
+000912 EC?? F???      00699     call    DATA_WRITE    
+000916 0E2D           00700     movlw   '-'                 
+000918 EC?? F???      00701     call    DATA_WRITE    
+00091C 0E2D           00702     movlw   '-'                 
+00091E EC?? F???      00703     call    DATA_WRITE    
+000922 0E2D           00704     movlw   '-'                 
+000924 EC?? F???      00705     call    DATA_WRITE    
+000928 0012           00706     return
+                      00707 
+00092A                00708 SHOW_TIMES_OVER
+00092A 0E01           00709     movlw   b'00000001'         ; Clear display and return to home position.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00092C EC?? F???      00710     call    INSTRUCTION_WRITE
+000930 EC?? F???      00711     call    DELAY_100ms
+000934 0E04           00712     movlw   0x04        
+000936 8EE8           00713     bsf     WREG, 7, A          
+000938 EC?? F???      00714     call    INSTRUCTION_WRITE
+                      00715     
+00093C 0E54           00716     movlw   'T'                 
+00093E EC?? F???      00717     call    DATA_WRITE    
+000942 0E49           00718     movlw   'I'                 
+000944 EC?? F???      00719     call    DATA_WRITE
+000948 0E4D           00720     movlw   'M'                 
+00094A EC?? F???      00721     call    DATA_WRITE
+00094E 0E45           00722     movlw   'E'                 
+000950 EC?? F???      00723     call    DATA_WRITE
+000954 0E53           00724     movlw   'S'                 
+000956 EC?? F???      00725     call    DATA_WRITE
+                      00726     
+                      00727     ;SPACE
+00095A 0E0A           00728     movlw   0x0A
+00095C 8EE8           00729     bsf     WREG, 7, A          
+00095E EC?? F???      00730     call    INSTRUCTION_WRITE
+                      00731     
+000962 0E55           00732     movlw   'U'                 
+000964 EC?? F???      00733     call    DATA_WRITE
+000968 0E50           00734     movlw   'P'                 
+00096A EC?? F???      00735     call    DATA_WRITE    
+                      00736     
+                      00737     ;SECOND LINE
+00096E 0E47           00738     movlw   0x47
+000970 8EE8           00739     bsf     WREG, 7, A          
+000972 EC?? F???      00740     call    INSTRUCTION_WRITE
+                      00741  
+000976 0E00           00742     movlw   .0                  ; Write first square.
+000978 EC?? F???      00743     call    DATA_WRITE
+00097C 0E01           00744     movlw   .1                  ; Write a second square.
+00097E EC?? F???      00745     call    DATA_WRITE
+                      00746  
+000982 0012           00747     return
+                      00748 
+                      00749 ;Subrutina para puntaje obtenido (no highscore)
+000984                00750 SHOW_PUNTAJE
+000984 0E01           00751     movlw   b'00000001'         ; Clear display and return to home position.
+000986 EC?? F???      00752     call    INSTRUCTION_WRITE
+00098A EC?? F???      00753     call    DELAY_100ms
+00098E 0E53           00754     movlw   'S'                 
+000990 EC?? F???      00755     call    DATA_WRITE   
+000994 0E43           00756     movlw   'C'                 
+000996 EC?? F???      00757     call    DATA_WRITE    
+00099A 0E4F           00758     movlw   'O'                 
+00099C EC?? F???      00759     call    DATA_WRITE
+0009A0 0E52           00760     movlw   'R'                 
+0009A2 EC?? F???      00761     call    DATA_WRITE
+0009A6 0E45           00762     movlw   'E'                 
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0009A8 EC?? F???      00763     call    DATA_WRITE
+0009AC 0E3A           00764     movlw   ':'                 
+0009AE EC?? F???      00765     call    DATA_WRITE
+                      00766    
+                      00767        
+                      00768     ;SECOND LINE
+0009B2 0E42           00769     movlw   0x42
+0009B4 8EE8           00770     bsf     WREG, 7, A          
+0009B6 EC?? F???      00771     call    INSTRUCTION_WRITE
+                      00772     
+0009BA 0E2D           00773     movlw   '-'                 
+0009BC EC?? F???      00774     call    DATA_WRITE    
+0009C0 0E2D           00775     movlw   '-'                 
+0009C2 EC?? F???      00776     call    DATA_WRITE    
+0009C6 0E2D           00777     movlw   '-'                 
+0009C8 EC?? F???      00778     call    DATA_WRITE       
+0009CC 0E3E           00779     movlw   '>'                 
+0009CE EC?? F???      00780     call    DATA_WRITE       
+0009D2 5005           00781     movf    puntaje, W, A
+0009D4 EC?? F???      00782     call    DATA_WRITE 
+0009D8 0E30           00783     movlw   '0'                 
+0009DA EC?? F???      00784     call    DATA_WRITE
+0009DE 0E30           00785     movlw   '0'                 
+0009E0 EC?? F???      00786     call    DATA_WRITE
+0009E4 0E3C           00787     movlw   '<'                 
+0009E6 EC?? F???      00788     call    DATA_WRITE    
+0009EA 0E2D           00789     movlw   '-'                 
+0009EC EC?? F???      00790     call    DATA_WRITE    
+0009F0 0E2D           00791     movlw   '-'                 
+0009F2 EC?? F???      00792     call    DATA_WRITE    
+0009F6 0E2D           00793     movlw   '-'                 
+0009F8 EC?? F???      00794     call    DATA_WRITE    
+0009FC 0012           00795     return
+                      00796     
+0009FE                00797 SHOW_SCORES_MENU
+0009FE 0E01           00798     movlw   b'00000001'         ; Clear display and return to home position.
+000A00 EC?? F???      00799     call    INSTRUCTION_WRITE
+000A04 EC?? F???      00800     call    DELAY_100ms
+000A08 0E53           00801     movlw   'S'                 
+000A0A EC?? F???      00802     call    DATA_WRITE   
+000A0E 0E43           00803     movlw   'C'                 
+000A10 EC?? F???      00804     call    DATA_WRITE    
+000A14 0E4F           00805     movlw   'O'                 
+000A16 EC?? F???      00806     call    DATA_WRITE
+000A1A 0E52           00807     movlw   'R'                 
+000A1C EC?? F???      00808     call    DATA_WRITE
+000A20 0E45           00809     movlw   'E'                 
+000A22 EC?? F???      00810     call    DATA_WRITE
+000A26 0E53           00811     movlw   'S'                 
+000A28 EC?? F???      00812     call    DATA_WRITE   
+000A2C 0E3A           00813     movlw   ':'                 
+000A2E EC?? F???      00814     call    DATA_WRITE
+000A32 0E30           00815     movlw   '0'                 
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000A34 EC?? F???      00816     call    DATA_WRITE
+000A38 0E34           00817     movlw   '4'                 
+000A3A EC?? F???      00818     call    DATA_WRITE
+000A3E 0E2D           00819     movlw   '-'                 
+000A40 EC?? F???      00820     call    DATA_WRITE
+000A44 0E30           00821     movlw   '0'                 
+000A46 EC?? F???      00822     call    DATA_WRITE
+000A4A 0E36           00823     movlw   '6'                 
+000A4C EC?? F???      00824     call    DATA_WRITE
+000A50 0E2D           00825     movlw   '-'                 
+000A52 EC?? F???      00826     call    DATA_WRITE
+000A56 0E31           00827     movlw   '1'                 
+000A58 EC?? F???      00828     call    DATA_WRITE
+000A5C 0E30           00829     movlw   '0'                 
+000A5E EC?? F???      00830     call    DATA_WRITE 
+                      00831     
+                      00832     ;SECOND LINE
+000A62 0E40           00833     movlw   0x40
+000A64 8EE8           00834     bsf     WREG, 7, A          
+000A66 EC?? F???      00835     call    INSTRUCTION_WRITE
+                      00836     
+000A6A 0E42           00837     movlw   'B'                 
+000A6C EC?? F???      00838     call    DATA_WRITE    
+000A70 0E45           00839     movlw   'E'                 
+000A72 EC?? F???      00840     call    DATA_WRITE    
+000A76 0E53           00841     movlw   'S'                 
+000A78 EC?? F???      00842     call    DATA_WRITE    
+000A7C 0E54           00843     movlw   'T'                 
+000A7E EC?? F???      00844     call    DATA_WRITE    
+                      00845     ;SPACE
+000A82 0E45           00846     movlw   0x45
+000A84 8EE8           00847     bsf     WREG, 7, A          
+000A86 EC?? F???      00848     call    INSTRUCTION_WRITE
+                      00849     
+000A8A 0E53           00850     movlw   'S'                 
+000A8C EC?? F???      00851     call    DATA_WRITE    
+000A90 0E43           00852     movlw   'C'                 
+000A92 EC?? F???      00853     call    DATA_WRITE    
+000A96 0E4F           00854     movlw   'O'                 
+000A98 EC?? F???      00855     call    DATA_WRITE      
+000A9C 0E52           00856     movlw   'R'                 
+000A9E EC?? F???      00857     call    DATA_WRITE     
+000AA2 0E45           00858     movlw   'E'                 
+000AA4 EC?? F???      00859     call    DATA_WRITE    
+000AA8 0E2D           00860     movlw   '-'                 
+000AAA EC?? F???      00861     call    DATA_WRITE    
+000AAE 0E3E           00862     movlw   '>'                 
+000AB0 EC?? F???      00863     call    DATA_WRITE    
+000AB4 0E31           00864     movlw   '1'                 
+000AB6 EC?? F???      00865     call    DATA_WRITE    
+000ABA 0E30           00866     movlw   '0'                 
+000ABC EC?? F???      00867     call    DATA_WRITE    
+000AC0 0012           00868  return
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00005 #include "teclado_subrutinas.asm"
+                      00001 ;#include "lcd_caracteres.asm"
+                      00002     
+000AC2                00003 RECORRIDO_JUEGO
+000AC2 0EFB           00004     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+000AC4 6E8A           00005     movwf   LATB, A
+000AC6 A081           00006     btfss   fila1                       ; Revisar si se presiona el boton de START/STOP.
+000AC8 EC?? F???      00007     call    BOTON_START_STOP
+000ACC A281           00008     btfss   fila2                       ; Revisar si se presiona el boton naranja.
+000ACE EC?? F???      00009     call    BOTON_NARANJA
+000AD2 0EF7           00010     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
+000AD4 6E8A           00011     movwf   LATB, A
+000AD6 A081           00012     btfss   fila1                       ; Revisar si se presiona el boton blanco.
+000AD8 EC?? F???      00013     call    BOTON_BLANCO
+000ADC A281           00014     btfss   fila2                       ; Revisar si se presiona el boton azul.
+000ADE EC?? F???      00015     call    BOTON_AZUL
+000AE2 0EEF           00016     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (rojo, amarillo).
+000AE4 6E8A           00017     movwf   LATB, A
+                      00018     ;btfss   fila1                      ; Revisar si se presiona el boton de HIGHSCORE.
+                      00019     ;call    BOTON_HIGHSCORE
+000AE6 A281           00020     btfss   PORTB, 1, A                 ; Revisar si se presiona el boton amarillo.
+000AE8 EC?? F???      00021     call    BOTON_AMARILLO
+000AEC 0012           00022     return
+                      00023     
+000AEE                00024 RECORRIDO_MENU
+000AEE 0EFB           00025     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (START/STOP, naranja).
+000AF0 6E8A           00026     movwf   LATB, A
+000AF2 A081           00027     btfss   fila1                       ; Revisar si se presiona el boton de START/STOP.
+000AF4 EF?? F???      00028     goto    BOTON_START_MENU
+000AF8 0EEF           00029     movlw   b'11101111'                 ; ACTIVAR COLUMNA 3 (HIGHSCORE, amarillo).
+000AFA 6E8A           00030     movwf   LATB, A
+000AFC A081           00031     btfss   fila1                       ; Revisar si se presiona el boton de HIGHSCORE.
+000AFE EF?? F???      00032     goto    BOTON_HIGHSCORE
+000B02 EF?? F???      00033     goto    RECORRIDO_MENU
+                      00034     
+000B06                00035 BOTON_START_STOP
+000B06 A081           00036     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000B08 EF?? F???      00037     goto    BOTON_START_STOP            ; Si aun no se suleta, esperar.
+000B0C 0E30           00038     movlw   '0'
+000B0E 6E05           00039     movwf   puntaje
+000B10 EC?? F???      00040     call    DELAY_20ms                  ; Antirebote.
+000B14 840A           00041     bsf     para                        ; Encender bit de que se presiono STOP.
+000B16 0012           00042     return
+000B18                00043 BOTON_NARANJA
+000B18 8489           00044     bsf     led_naranja                 ; Prender el LED.
+000B1A A281           00045     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000B1C EF?? F???      00046     goto    BOTON_NARANJA               ; Si aun no se suleta, esperar.
+000B20 9489           00047     bcf     led_naranja                 ; Apagar el LED.
+000B22 6A06           00048     clrf    boton_presionado            ; Limpiar el registro.
+000B24 8406           00049     bsf     bit_led_naranja             ; Encender el bit representativo del LED naranja.
+000B26 EC?? F???      00050     call    DELAY_20ms                  ; Antirebote.
+000B2A EC?? F???      00051     call    REVISAR_BOTON
+000B2E 0012           00052     return
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000B30                00053 BOTON_BLANCO
+000B30 8689           00054     bsf     led_blanco                  ; Prender el LED.
+000B32 A081           00055     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000B34 EF?? F???      00056     goto    BOTON_BLANCO                ; Si aun no se suleta, esperar.
+000B38 9689           00057     bcf     led_blanco                  ; Apagar el LED.
+000B3A 6A06           00058     clrf    boton_presionado            ; Limpiar el registro.
+000B3C 8606           00059     bsf     bit_led_blanco              ; Encender el bit representativo del LED blanco.
+000B3E EC?? F???      00060     call    DELAY_20ms                  ; Antirebote.
+000B42 EC?? F???      00061     call    REVISAR_BOTON
+000B46 0012           00062     return
+000B48                00063 BOTON_AZUL
+000B48 8089           00064     bsf     led_azul                    ; Prender el LED.
+000B4A A281           00065     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000B4C EF?? F???      00066     goto    BOTON_AZUL                  ; Si aun no se suleta, esperar.
+000B50 9089           00067     bcf     led_azul                    ; Apagar el LED.
+000B52 6A06           00068     clrf    boton_presionado            ; Limpiar el registro.
+000B54 8006           00069     bsf     bit_led_azul                ; Encender el bit representativo del LED azul.
+000B56 EC?? F???      00070     call    DELAY_20ms                  ; Antirebote.
+000B5A EC?? F???      00071     call    REVISAR_BOTON
+000B5E 0012           00072     return
+000B60                00073 BOTON_AMARILLO
+000B60 8289           00074     bsf     led_amarillo                ; Prender el LED.
+000B62 A281           00075     btfss   fila2                       ; Revisar si sigue presionado el boton.
+000B64 EF?? F???      00076     goto    BOTON_AMARILLO              ; Si aun no se suleta, esperar.
+000B68 9289           00077     bcf     led_amarillo                ; Apagar el LED.
+000B6A 6A06           00078     clrf    boton_presionado            ; Limpiar el registro.
+000B6C 8206           00079     bsf     bit_led_amarillo            ; Encender el bit representativo del LED amarillo.
+000B6E EC?? F???      00080     call    DELAY_20ms                  ; Antirebote.
+000B72 EC?? F???      00081     call    REVISAR_BOTON
+000B76 0012           00082     return
+                      00083     
+000B78                00084 BOTON_START_MENU
+000B78 A081           00085     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000B7A EF?? F???      00086     goto    BOTON_START_MENU            ; Si aun no se suleta, esperar.
+000B7E EC?? F???      00087     call    DELAY_20ms                  ; Antirebote.
+000B82 EC?? F???      00088     call    ON_WHITE
+000B86 EF?? F???      00089     goto    JUEGO
+                      00090     
+000B8A                00091 BOTON_HIGHSCORE
+000B8A A081           00092     btfss   fila1                       ; Revisar si sigue presionado el boton.
+000B8C EF?? F???      00093     goto    BOTON_HIGHSCORE             ; Si aun no se suleta, esperar.
+000B90 EC?? F???      00094     call    DELAY_20ms                  ; Antirebote.
+000B94 EC?? F???      00095     call    ON_BLUE
+000B98 EF?? F???      00096     goto    PUNTAJES    
+                      00097     
+000B9C                00098 REVISAR_BOTON
+000B9C 5007           00099     movf    boton_esperado, W, A                ; Se resta boton_esperado - boton_presionado.
+000B9E 5C06           00100     subwf   boton_presionado, W, A              ; Si son iguales, la resta debe dar 0.
+000BA0 50E8           00101     movf    WREG, W, A                          ; Se activa STATUS para WREG.
+000BA2 A4D8           00102     btfss   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+000BA4 800A           00103     bsf     perdio                              ; Si no da 0, no era el boton correcto, pierde.
+000BA6 B4D8           00104     btfsc   STATUS, Z, A                        ; Se revisa el bit de CERO en STATUS.
+000BA8 820A           00105     bsf     correcto                            ; Si era 0, activa el bit de correcto.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000BAA 0012           00106     return
+                      00006 #include "otras_subrutinas.asm"
+                      00001 ;#include "teclado_subrutinas.asm"
+                      00002     
+000BAC                00003 ON_GREEN
+000BAC 8A89           00004     bsf     led_verde
+000BAE EC?? F???      00005     call    DELAY_100ms
+000BB2 EC?? F???      00006     call    DELAY_100ms
+000BB6 EC?? F???      00007     call    DELAY_100ms
+000BBA EC?? F???      00008     call    DELAY_100ms
+000BBE EC?? F???      00009     call    DELAY_100ms
+000BC2 9A89           00010     bcf     led_verde
+000BC4 0012           00011     return
+                      00012  
+000BC6                00013 ON_RED
+000BC6 8889           00014     bsf     led_rojo
+000BC8 EC?? F???      00015     call    DELAY_100ms
+000BCC EC?? F???      00016     call    DELAY_100ms
+000BD0 EC?? F???      00017     call    DELAY_100ms
+000BD4 EC?? F???      00018     call    DELAY_100ms
+000BD8 EC?? F???      00019     call    DELAY_100ms
+000BDC 9889           00020     bcf     led_rojo
+000BDE 0012           00021     return
+                      00022     
+000BE0                00023 ON_ORANGE
+000BE0 8489           00024     bsf     led_naranja
+000BE2 EC?? F???      00025     call    DELAY_100ms
+000BE6 EC?? F???      00026     call    DELAY_100ms
+000BEA EC?? F???      00027     call    DELAY_100ms
+000BEE EC?? F???      00028     call    DELAY_100ms
+000BF2 EC?? F???      00029     call    DELAY_100ms
+000BF6 9489           00030     bcf     led_naranja
+000BF8 0012           00031     return
+                      00032     
+000BFA                00033 ON_WHITE
+000BFA 8689           00034     bsf     led_blanco
+000BFC EC?? F???      00035     call    DELAY_100ms
+000C00 EC?? F???      00036     call    DELAY_100ms
+000C04 EC?? F???      00037     call    DELAY_100ms
+000C08 EC?? F???      00038     call    DELAY_100ms
+000C0C EC?? F???      00039     call    DELAY_100ms
+000C10 9689           00040     bcf     led_blanco
+000C12 0012           00041     return
+                      00042  
+000C14                00043 ON_BLUE
+000C14 8089           00044     bsf     led_azul
+000C16 EC?? F???      00045     call    DELAY_100ms
+000C1A EC?? F???      00046     call    DELAY_100ms
+000C1E EC?? F???      00047     call    DELAY_100ms
+000C22 EC?? F???      00048     call    DELAY_100ms
+000C26 EC?? F???      00049     call    DELAY_100ms
+000C2A 9089           00050     bcf     led_azul
+000C2C 0012           00051     return
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00052     
+000C2E                00053 ON_YELLOW
+000C2E 8289           00054     bsf     led_amarillo
+000C30 EC?? F???      00055     call    DELAY_100ms
+000C34 EC?? F???      00056     call    DELAY_100ms
+000C38 EC?? F???      00057     call    DELAY_100ms
+000C3C EC?? F???      00058     call    DELAY_100ms
+000C40 EC?? F???      00059     call    DELAY_100ms
+000C44 9289           00060     bcf     led_amarillo
+000C46 0012           00061     return
+                      00062     
+                      00063     
+000C48                00064 RANDOM_REGISTER ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
+000C48 6A09           00065     clrf    shifter
+000C4A 50BC           00066     movf    TMR2, W, A
+000C4C B0E8           00067     btfsc   WREG, 0, A
+000C4E 8009           00068     bsf     shifter, 0, A
+000C50 B2E8           00069     btfsc   WREG, 1, A
+000C52 8209           00070     bsf     shifter, 1, A
+                      00071   
+000C54                00072 DECODER ; PONE boton_esperado EN LA MISMA CONFIG QUE boton_presionado
+000C54 6A07           00073     clrf    boton_esperado
+000C56 5009           00074     movf    shifter, W, A 
+000C58 A4D8           00075     btfss   STATUS, 2, A                ; checa si es 00
+000C5A EF?? F???      00076     goto    LED_01
+000C5E 8007           00077     bsf     boton_esperado, 0, A        ; significa que 00 -> led azul es el esperado "0001"
+000C60 0012           00078     return
+                      00079     
+000C62                00080 LED_01
+000C62 0801           00081     sublw   .1
+000C64 A2D8           00082     btfss   STATUS, 1, A                ; checa si restando 1 se vuelve 0
+000C66 EF?? F???      00083     goto    LED_10
+000C6A 8207           00084     bsf     boton_esperado, 1, A        ; significa que 01 -> led amar es el esperado "0010"
+000C6C 0012           00085     return
+                      00086     
+000C6E                00087 LED_10 
+000C6E 0801           00088     sublw   .1
+000C70 A2D8           00089     btfss   STATUS, 1, A                ; checa si restando 1 se vuelve 0
+000C72 EF?? F???      00090     goto    LED_11
+000C76 8407           00091     bsf     boton_esperado, 2, A        ; significa que 01 -> led naranj es el esperado "0100"
+000C78 0012           00092     return
+                      00093 
+000C7A                00094 LED_11 
+000C7A 8607           00095     bsf     boton_esperado, 3, A        ; significa que 11 -> led blanco es el esperado "1000"
+000C7C 0012           00096     return
+                      00097 
+000C7E                00098 ENCENDER_SECUENCIA 
+000C7E B00B           00099     btfsc   encender_led, 0 , A
+000C80 EC?? F???      00100     call    ON_BLUE
+000C84 B20B           00101     btfsc   encender_led, 1,  A
+000C86 EC?? F???      00102     call    ON_YELLOW
+000C8A B40B           00103     btfsc   encender_led, 2,  A
+000C8C EC?? F???      00104     call    ON_ORANGE
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 28
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000C90 B60B           00105     btfsc   encender_led, 3,  A
+000C92 EC?? F???      00106     call    ON_WHITE
+000C96 0012           00107     return
+                      00007 
+                      00008 ; TODO: Quitar esto para la ultima entrega. 
+000C98                00009 CARGAR_SECUENCIA
+000C98 0E01           00010     movlw   b'00000001'                 ; azul
+000C9A 6E11           00011     movwf   sec1, A 
+000C9C 0E02           00012     movlw   b'00000010'                 ; amarillo
+000C9E 6E12           00013     movwf   sec2, A
+000CA0 0E01           00014     movlw   b'00000001'                 ; azul
+000CA2 6E13           00015     movwf   sec3, A
+000CA4 0E08           00016     movlw   b'00001000'                 ; blanco
+000CA6 6E14           00017     movwf   sec4, A
+000CA8 0E08           00018     movlw   b'00001000'                 ; blanco
+000CAA 6E15           00019     movwf   sec5, A
+000CAC 0E02           00020     movlw   b'00000010'                 ; amarillo
+000CAE 6E16           00021     movwf   sec6, A
+000CB0 0E01           00022     movlw   b'00000001'                 ; azul
+000CB2 6E17           00023     movwf   sec7, A
+000CB4 0E04           00024     movlw   b'00000100'                 ; naranja
+000CB6 6E18           00025     movwf   sec8, A
+000CB8 0E04           00026     movlw   b'00000100'                 ; naranja
+000CBA 6E19           00027     movwf   sec9, A
+000CBC 0E08           00028     movlw   b'00001000'                 ; blanco
+000CBE 6E1A           00029     movwf   sec10, A
+000CC0 0012           00030     return
+                      00031 
+000CC2                00032 MAIN
+                      00033     ; CONFIGURACION BASICA DE LCD.
+000CC2 EC?? F???      00034     call    CONFIGURE_LCD
+000CC6 EC?? F???      00035     call    CARGAR_SECUENCIA            ; TODO: Quitar esto para la ultima entrega.
+000CCA                00036 MENU_PRINCIPAL
+000CCA 6A0A           00037     clrf    trayectoria
+                      00038     ; IMPRIMIR MENU PRINCIPAL.
+000CCC EC?? F???      00039     call    SHOW_MAIN_MENU
+                      00040     ; REVISAR SI SE PRESIONAN BOTONES DE START/STOP O HIGHSCORE.
+000CD0 EF?? F???      00041     goto    RECORRIDO_MENU
+                      00042     
+000CD4                00043 PUNTAJES
+                      00044     ; TODO: Mostrar puntajes (proxima entrega).
+000CD4 EC?? F???      00045     call    SHOW_SCORES_MENU
+                      00046     ; REVISAR SI SE PRESIONA START/STOP PARA REGRESAR A MENU PRINCIPAL.
+000CD8 0EFB           00047     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+000CDA 6E8A           00048     movwf   LATB, A
+000CDC                00049 STOP_PUNTAJES
+000CDC B081           00050     btfsc   fila1                       ; Revisar si se presiona el boton de START/STOP.
+000CDE EF?? F???      00051     goto    STOP_PUNTAJES
+000CE2                00052 ANTIRREBOTE_PUNTAJES
+000CE2 A081           00053     btfss   fila1                       ; Revisar si sigue presionado el boton de START/STOP.
+000CE4 EF?? F???      00054     goto    ANTIRREBOTE_PUNTAJES
+000CE8 EC?? F???      00055     call    DELAY_20ms
+000CEC EF?? F???      00056     goto    MENU_PRINCIPAL
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00057     
+000CF0                00058 JUEGO
+000CF0 0E30           00059     movlw   '0'
+000CF2 6E05           00060     movwf   puntaje, A
+000CF4 EC?? F???      00061     call    SHOW_PUNTAJE
+000CF8                00062 NIVEL1
+                      00063     ; MOSTRAR SECUENCIA.
+000CF8 C011 F00B      00064     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000CFC EC?? F???      00065     call    ENCENDER_SECUENCIA
+                      00066     
+                      00067     ; SECUENCIA 1.
+000D00 C011 F007      00068     movff   sec1, boton_esperado
+000D04 EC?? F???      00069     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D08 B00A           00070     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D0A EF?? F???      00071     goto    MENU_PRINCIPAL
+000D0E 6A0A           00072     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00073     
+                      00074     ; NIVEL SUPERADO.
+000D10 0E31           00075     movlw   '1'
+000D12 6E05           00076     movwf   puntaje, A
+000D14 EC?? F???      00077     call    NIVEL_SUPERADO
+                      00078     
+000D18                00079 NIVEL2
+                      00080     ; MOSTRAR SECUENCIA.
+000D18 C011 F00B      00081     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000D1C EC?? F???      00082     call    ENCENDER_SECUENCIA
+000D20 EC?? F???      00083     call    DELAY_100ms
+000D24 C012 F00B      00084     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000D28 EC?? F???      00085     call    ENCENDER_SECUENCIA
+                      00086     
+                      00087     ; SECUENCIA 1.
+000D2C C011 F007      00088     movff   sec1, boton_esperado
+000D30 EC?? F???      00089     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D34 B00A           00090     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D36 EF?? F???      00091     goto    MENU_PRINCIPAL
+000D3A 6A0A           00092     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00093     ; SECUENCIA 2.
+000D3C C012 F007      00094     movff   sec2, boton_esperado
+000D40 EC?? F???      00095     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D44 B00A           00096     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D46 EF?? F???      00097     goto    MENU_PRINCIPAL
+000D4A 6A0A           00098     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00099     
+                      00100     ; NIVEL SUPERADO.
+000D4C 0E32           00101     movlw   '2'
+000D4E 6E05           00102     movwf   puntaje, A
+000D50 EC?? F???      00103     call    NIVEL_SUPERADO
+                      00104     
+000D54                00105 NIVEL3
+                      00106     ; MOSTRAR SECUENCIA.
+000D54 C011 F00B      00107     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000D58 EC?? F???      00108     call    ENCENDER_SECUENCIA
+000D5C EC?? F???      00109     call    DELAY_100ms
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000D60 C012 F00B      00110     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000D64 EC?? F???      00111     call    ENCENDER_SECUENCIA
+000D68 EC?? F???      00112     call    DELAY_100ms
+000D6C C013 F00B      00113     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000D70 EC?? F???      00114     call    ENCENDER_SECUENCIA
+                      00115     
+                      00116     ; SECUENCIA 1.
+000D74 C011 F007      00117     movff   sec1, boton_esperado
+000D78 EC?? F???      00118     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D7C B00A           00119     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D7E EF?? F???      00120     goto    MENU_PRINCIPAL
+000D82 6A0A           00121     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00122     ; SECUENCIA 2.
+000D84 C012 F007      00123     movff   sec2, boton_esperado
+000D88 EC?? F???      00124     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D8C B00A           00125     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D8E EF?? F???      00126     goto    MENU_PRINCIPAL
+000D92 6A0A           00127     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00128     ; SECUENCIA 3.
+000D94 C013 F007      00129     movff   sec3, boton_esperado
+000D98 EC?? F???      00130     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D9C B00A           00131     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D9E EF?? F???      00132     goto    MENU_PRINCIPAL
+000DA2 6A0A           00133     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00134     
+                      00135     ; NIVEL SUPERADO.
+000DA4 0E33           00136     movlw   '3'
+000DA6 6E05           00137     movwf   puntaje, A
+000DA8 EC?? F???      00138     call    NIVEL_SUPERADO
+                      00139     
+000DAC                00140 NIVEL4
+                      00141     ; MOSTRAR SECUENCIA.
+000DAC C011 F00B      00142     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000DB0 EC?? F???      00143     call    ENCENDER_SECUENCIA
+000DB4 EC?? F???      00144     call    DELAY_100ms
+000DB8 C012 F00B      00145     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000DBC EC?? F???      00146     call    ENCENDER_SECUENCIA
+000DC0 EC?? F???      00147     call    DELAY_100ms
+000DC4 C013 F00B      00148     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000DC8 EC?? F???      00149     call    ENCENDER_SECUENCIA
+000DCC EC?? F???      00150     call    DELAY_100ms
+000DD0 C014 F00B      00151     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000DD4 EC?? F???      00152     call    ENCENDER_SECUENCIA
+                      00153     
+                      00154     ; SECUENCIA 1.
+000DD8 C011 F007      00155     movff   sec1, boton_esperado
+000DDC EC?? F???      00156     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000DE0 B00A           00157     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000DE2 EF?? F???      00158     goto    MENU_PRINCIPAL
+000DE6 6A0A           00159     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00160     ; SECUENCIA 2.
+000DE8 C012 F007      00161     movff   sec2, boton_esperado
+000DEC EC?? F???      00162     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000DF0 B00A           00163     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000DF2 EF?? F???      00164     goto    MENU_PRINCIPAL
+000DF6 6A0A           00165     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00166     ; SECUENCIA 3.
+000DF8 C013 F007      00167     movff   sec3, boton_esperado
+000DFC EC?? F???      00168     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E00 B00A           00169     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E02 EF?? F???      00170     goto    MENU_PRINCIPAL
+000E06 6A0A           00171     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00172     ; SECUENCIA 4.
+000E08 C014 F007      00173     movff   sec4, boton_esperado
+000E0C EC?? F???      00174     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E10 B00A           00175     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E12 EF?? F???      00176     goto    MENU_PRINCIPAL
+000E16 6A0A           00177     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00178     
+                      00179     ; NIVEL SUPERADO.
+000E18 0E34           00180     movlw   '4'
+000E1A 6E05           00181     movwf   puntaje, A
+000E1C EC?? F???      00182     call    NIVEL_SUPERADO
+                      00183     
+000E20                00184 NIVEL5
+                      00185     ; MOSTRAR SECUENCIA.
+000E20 C011 F00B      00186     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000E24 EC?? F???      00187     call    ENCENDER_SECUENCIA
+000E28 EC?? F???      00188     call    DELAY_100ms
+000E2C C012 F00B      00189     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000E30 EC?? F???      00190     call    ENCENDER_SECUENCIA
+000E34 EC?? F???      00191     call    DELAY_100ms
+000E38 C013 F00B      00192     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000E3C EC?? F???      00193     call    ENCENDER_SECUENCIA
+000E40 EC?? F???      00194     call    DELAY_100ms
+000E44 C014 F00B      00195     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000E48 EC?? F???      00196     call    ENCENDER_SECUENCIA
+000E4C EC?? F???      00197     call    DELAY_100ms
+000E50 C015 F00B      00198     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+000E54 EC?? F???      00199     call    ENCENDER_SECUENCIA
+                      00200     
+                      00201     ; SECUENCIA 1.
+000E58 C011 F007      00202     movff   sec1, boton_esperado
+000E5C EC?? F???      00203     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E60 B00A           00204     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E62 EF?? F???      00205     goto    MENU_PRINCIPAL
+000E66 6A0A           00206     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00207     ; SECUENCIA 2.
+000E68 C012 F007      00208     movff   sec2, boton_esperado
+000E6C EC?? F???      00209     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E70 B00A           00210     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E72 EF?? F???      00211     goto    MENU_PRINCIPAL
+000E76 6A0A           00212     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00213     ; SECUENCIA 3.
+000E78 C013 F007      00214     movff   sec3, boton_esperado
+000E7C EC?? F???      00215     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000E80 B00A           00216     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E82 EF?? F???      00217     goto    MENU_PRINCIPAL
+000E86 6A0A           00218     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00219     ; SECUENCIA 4.
+000E88 C014 F007      00220     movff   sec4, boton_esperado
+000E8C EC?? F???      00221     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E90 B00A           00222     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E92 EF?? F???      00223     goto    MENU_PRINCIPAL
+000E96 6A0A           00224     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00225     ; SECUENCIA 5.
+000E98 C015 F007      00226     movff   sec5, boton_esperado
+000E9C EC?? F???      00227     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000EA0 B00A           00228     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000EA2 EF?? F???      00229     goto    MENU_PRINCIPAL
+000EA6 6A0A           00230     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00231     
+                      00232     ; NIVEL SUPERADO.
+000EA8 0E35           00233     movlw   '5'
+000EAA 6E05           00234     movwf   puntaje, A
+000EAC EC?? F???      00235     call    NIVEL_SUPERADO
+                      00236     
+000EB0                00237 NIVEL6
+                      00238     ; MOSTRAR SECUENCIA.
+000EB0 C011 F00B      00239     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000EB4 EC?? F???      00240     call    ENCENDER_SECUENCIA
+000EB8 EC?? F???      00241     call    DELAY_100ms
+000EBC C012 F00B      00242     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000EC0 EC?? F???      00243     call    ENCENDER_SECUENCIA
+000EC4 EC?? F???      00244     call    DELAY_100ms
+000EC8 C013 F00B      00245     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000ECC EC?? F???      00246     call    ENCENDER_SECUENCIA
+000ED0 EC?? F???      00247     call    DELAY_100ms
+000ED4 C014 F00B      00248     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000ED8 EC?? F???      00249     call    ENCENDER_SECUENCIA
+000EDC EC?? F???      00250     call    DELAY_100ms
+000EE0 C015 F00B      00251     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+000EE4 EC?? F???      00252     call    ENCENDER_SECUENCIA
+000EE8 EC?? F???      00253     call    DELAY_100ms
+000EEC C016 F00B      00254     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+000EF0 EC?? F???      00255     call    ENCENDER_SECUENCIA
+                      00256     
+                      00257     ; SECUENCIA 1.
+000EF4 C011 F007      00258     movff   sec1, boton_esperado
+000EF8 EC?? F???      00259     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000EFC B00A           00260     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000EFE EF?? F???      00261     goto    MENU_PRINCIPAL
+000F02 6A0A           00262     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00263     ; SECUENCIA 2.
+000F04 C012 F007      00264     movff   sec2, boton_esperado
+000F08 EC?? F???      00265     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F0C B00A           00266     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F0E EF?? F???      00267     goto    MENU_PRINCIPAL
+000F12 6A0A           00268     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00269     ; SECUENCIA 3.
+000F14 C013 F007      00270     movff   sec3, boton_esperado
+000F18 EC?? F???      00271     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F1C B00A           00272     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F1E EF?? F???      00273     goto    MENU_PRINCIPAL
+000F22 6A0A           00274     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00275     ; SECUENCIA 4.
+000F24 C014 F007      00276     movff   sec4, boton_esperado
+000F28 EC?? F???      00277     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F2C B00A           00278     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F2E EF?? F???      00279     goto    MENU_PRINCIPAL
+000F32 6A0A           00280     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00281     ; SECUENCIA 5.
+000F34 C015 F007      00282     movff   sec5, boton_esperado
+000F38 EC?? F???      00283     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F3C B00A           00284     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F3E EF?? F???      00285     goto    MENU_PRINCIPAL
+000F42 6A0A           00286     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00287     ; SECUENCIA 6.
+000F44 C016 F007      00288     movff   sec6, boton_esperado
+000F48 EC?? F???      00289     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F4C B00A           00290     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F4E EF?? F???      00291     goto    MENU_PRINCIPAL
+000F52 6A0A           00292     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00293     
+                      00294     ; NIVEL SUPERADO.
+000F54 0E36           00295     movlw   '6'
+000F56 6E05           00296     movwf   puntaje, A
+000F58 EC?? F???      00297     call    NIVEL_SUPERADO
+                      00298     
+000F5C                00299 NIVEL7
+                      00300     ; MOSTRAR SECUENCIA.
+000F5C C011 F00B      00301     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000F60 EC?? F???      00302     call    ENCENDER_SECUENCIA
+000F64 EC?? F???      00303     call    DELAY_100ms
+000F68 C012 F00B      00304     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000F6C EC?? F???      00305     call    ENCENDER_SECUENCIA
+000F70 EC?? F???      00306     call    DELAY_100ms
+000F74 C013 F00B      00307     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000F78 EC?? F???      00308     call    ENCENDER_SECUENCIA
+000F7C EC?? F???      00309     call    DELAY_100ms
+000F80 C014 F00B      00310     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000F84 EC?? F???      00311     call    ENCENDER_SECUENCIA
+000F88 EC?? F???      00312     call    DELAY_100ms
+000F8C C015 F00B      00313     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+000F90 EC?? F???      00314     call    ENCENDER_SECUENCIA
+000F94 EC?? F???      00315     call    DELAY_100ms
+000F98 C016 F00B      00316     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+000F9C EC?? F???      00317     call    ENCENDER_SECUENCIA
+000FA0 EC?? F???      00318     call    DELAY_100ms
+000FA4 C017 F00B      00319     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+000FA8 EC?? F???      00320     call    ENCENDER_SECUENCIA
+                      00321     
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 34
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00322     ; SECUENCIA 1.
+000FAC C011 F007      00323     movff   sec1, boton_esperado
+000FB0 EC?? F???      00324     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FB4 B00A           00325     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FB6 EF?? F???      00326     goto    MENU_PRINCIPAL
+000FBA 6A0A           00327     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00328     ; SECUENCIA 2.
+000FBC C012 F007      00329     movff   sec2, boton_esperado
+000FC0 EC?? F???      00330     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FC4 B00A           00331     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FC6 EF?? F???      00332     goto    MENU_PRINCIPAL
+000FCA 6A0A           00333     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00334     ; SECUENCIA 3.
+000FCC C013 F007      00335     movff   sec3, boton_esperado
+000FD0 EC?? F???      00336     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FD4 B00A           00337     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FD6 EF?? F???      00338     goto    MENU_PRINCIPAL
+000FDA 6A0A           00339     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00340     ; SECUENCIA 4.
+000FDC C014 F007      00341     movff   sec4, boton_esperado
+000FE0 EC?? F???      00342     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FE4 B00A           00343     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FE6 EF?? F???      00344     goto    MENU_PRINCIPAL
+000FEA 6A0A           00345     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00346     ; SECUENCIA 5.
+000FEC C015 F007      00347     movff   sec5, boton_esperado
+000FF0 EC?? F???      00348     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FF4 B00A           00349     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FF6 EF?? F???      00350     goto    MENU_PRINCIPAL
+000FFA 6A0A           00351     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00352     ; SECUENCIA 6.
+000FFC C016 F007      00353     movff   sec6, boton_esperado
+001000 EC?? F???      00354     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001004 B00A           00355     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001006 EF?? F???      00356     goto    MENU_PRINCIPAL
+00100A 6A0A           00357     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00358     ; SECUENCIA 7.
+00100C C017 F007      00359     movff   sec7, boton_esperado
+001010 EC?? F???      00360     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001014 B00A           00361     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001016 EF?? F???      00362     goto    MENU_PRINCIPAL
+00101A 6A0A           00363     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00364     
+                      00365     ; NIVEL SUPERADO.
+00101C 0E37           00366     movlw   '7'
+00101E 6E05           00367     movwf   puntaje, A
+001020 EC?? F???      00368     call    NIVEL_SUPERADO
+                      00369     
+001024                00370 NIVEL8
+                      00371     ; MOSTRAR SECUENCIA.
+001024 C011 F00B      00372     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+001028 EC?? F???      00373     call    ENCENDER_SECUENCIA
+00102C EC?? F???      00374     call    DELAY_100ms
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 35
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001030 C012 F00B      00375     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+001034 EC?? F???      00376     call    ENCENDER_SECUENCIA
+001038 EC?? F???      00377     call    DELAY_100ms
+00103C C013 F00B      00378     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+001040 EC?? F???      00379     call    ENCENDER_SECUENCIA
+001044 EC?? F???      00380     call    DELAY_100ms
+001048 C014 F00B      00381     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+00104C EC?? F???      00382     call    ENCENDER_SECUENCIA
+001050 EC?? F???      00383     call    DELAY_100ms
+001054 C015 F00B      00384     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+001058 EC?? F???      00385     call    ENCENDER_SECUENCIA
+00105C EC?? F???      00386     call    DELAY_100ms
+001060 C016 F00B      00387     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001064 EC?? F???      00388     call    ENCENDER_SECUENCIA
+001068 EC?? F???      00389     call    DELAY_100ms
+00106C C017 F00B      00390     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001070 EC?? F???      00391     call    ENCENDER_SECUENCIA
+001074 EC?? F???      00392     call    DELAY_100ms
+001078 C018 F00B      00393     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+00107C EC?? F???      00394     call    ENCENDER_SECUENCIA
+                      00395     
+                      00396     ; SECUENCIA 1.
+001080 C011 F007      00397     movff   sec1, boton_esperado
+001084 EC?? F???      00398     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001088 B00A           00399     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00108A EF?? F???      00400     goto    MENU_PRINCIPAL
+00108E 6A0A           00401     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00402     ; SECUENCIA 2.
+001090 C012 F007      00403     movff   sec2, boton_esperado
+001094 EC?? F???      00404     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001098 B00A           00405     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00109A EF?? F???      00406     goto    MENU_PRINCIPAL
+00109E 6A0A           00407     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00408     ; SECUENCIA 3.
+0010A0 C013 F007      00409     movff   sec3, boton_esperado
+0010A4 EC?? F???      00410     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010A8 B00A           00411     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010AA EF?? F???      00412     goto    MENU_PRINCIPAL
+0010AE 6A0A           00413     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00414     ; SECUENCIA 4.
+0010B0 C014 F007      00415     movff   sec4, boton_esperado
+0010B4 EC?? F???      00416     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010B8 B00A           00417     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010BA EF?? F???      00418     goto    MENU_PRINCIPAL
+0010BE 6A0A           00419     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00420     ; SECUENCIA 5.
+0010C0 C015 F007      00421     movff   sec5, boton_esperado
+0010C4 EC?? F???      00422     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010C8 B00A           00423     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010CA EF?? F???      00424     goto    MENU_PRINCIPAL
+0010CE 6A0A           00425     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00426     ; SECUENCIA 6.
+0010D0 C016 F007      00427     movff   sec6, boton_esperado
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 36
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0010D4 EC?? F???      00428     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010D8 B00A           00429     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010DA EF?? F???      00430     goto    MENU_PRINCIPAL
+0010DE 6A0A           00431     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00432     ; SECUENCIA 7.
+0010E0 C017 F007      00433     movff   sec7, boton_esperado
+0010E4 EC?? F???      00434     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010E8 B00A           00435     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010EA EF?? F???      00436     goto    MENU_PRINCIPAL
+0010EE 6A0A           00437     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00438     ; SECUENCIA 8.
+0010F0 C018 F007      00439     movff   sec8, boton_esperado
+0010F4 EC?? F???      00440     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010F8 B00A           00441     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010FA EF?? F???      00442     goto    MENU_PRINCIPAL
+0010FE 6A0A           00443     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00444     
+                      00445     ; NIVEL SUPERADO.
+001100 0E38           00446     movlw   '8'
+001102 6E05           00447     movwf   puntaje, A
+001104 EC?? F???      00448     call    NIVEL_SUPERADO
+                      00449     
+001108                00450 NIVEL9
+                      00451     ; MOSTRAR SECUENCIA.
+001108 C011 F00B      00452     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+00110C EC?? F???      00453     call    ENCENDER_SECUENCIA
+001110 EC?? F???      00454     call    DELAY_100ms
+001114 C012 F00B      00455     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+001118 EC?? F???      00456     call    ENCENDER_SECUENCIA
+00111C EC?? F???      00457     call    DELAY_100ms
+001120 C013 F00B      00458     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+001124 EC?? F???      00459     call    ENCENDER_SECUENCIA
+001128 EC?? F???      00460     call    DELAY_100ms
+00112C C014 F00B      00461     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+001130 EC?? F???      00462     call    ENCENDER_SECUENCIA
+001134 EC?? F???      00463     call    DELAY_100ms
+001138 C015 F00B      00464     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+00113C EC?? F???      00465     call    ENCENDER_SECUENCIA
+001140 EC?? F???      00466     call    DELAY_100ms
+001144 C016 F00B      00467     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001148 EC?? F???      00468     call    ENCENDER_SECUENCIA
+00114C EC?? F???      00469     call    DELAY_100ms
+001150 C017 F00B      00470     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001154 EC?? F???      00471     call    ENCENDER_SECUENCIA
+001158 EC?? F???      00472     call    DELAY_100ms
+00115C C018 F00B      00473     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+001160 EC?? F???      00474     call    ENCENDER_SECUENCIA
+001164 EC?? F???      00475     call    DELAY_100ms
+001168 C019 F00B      00476     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
+00116C EC?? F???      00477     call    ENCENDER_SECUENCIA
+                      00478     
+                      00479     ; SECUENCIA 1.
+001170 C011 F007      00480     movff   sec1, boton_esperado
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 37
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001174 EC?? F???      00481     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001178 B00A           00482     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00117A EF?? F???      00483     goto    MENU_PRINCIPAL
+00117E 6A0A           00484     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00485     ; SECUENCIA 2.
+001180 C012 F007      00486     movff   sec2, boton_esperado
+001184 EC?? F???      00487     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001188 B00A           00488     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00118A EF?? F???      00489     goto    MENU_PRINCIPAL
+00118E 6A0A           00490     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00491     ; SECUENCIA 3.
+001190 C013 F007      00492     movff   sec3, boton_esperado
+001194 EC?? F???      00493     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001198 B00A           00494     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00119A EF?? F???      00495     goto    MENU_PRINCIPAL
+00119E 6A0A           00496     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00497     ; SECUENCIA 4.
+0011A0 C014 F007      00498     movff   sec4, boton_esperado
+0011A4 EC?? F???      00499     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011A8 B00A           00500     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011AA EF?? F???      00501     goto    MENU_PRINCIPAL
+0011AE 6A0A           00502     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00503     ; SECUENCIA 5.
+0011B0 C015 F007      00504     movff   sec5, boton_esperado
+0011B4 EC?? F???      00505     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011B8 B00A           00506     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011BA EF?? F???      00507     goto    MENU_PRINCIPAL
+0011BE 6A0A           00508     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00509     ; SECUENCIA 6.
+0011C0 C016 F007      00510     movff   sec6, boton_esperado
+0011C4 EC?? F???      00511     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011C8 B00A           00512     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011CA EF?? F???      00513     goto    MENU_PRINCIPAL
+0011CE 6A0A           00514     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00515     ; SECUENCIA 7.
+0011D0 C017 F007      00516     movff   sec7, boton_esperado
+0011D4 EC?? F???      00517     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011D8 B00A           00518     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011DA EF?? F???      00519     goto    MENU_PRINCIPAL
+0011DE 6A0A           00520     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00521     ; SECUENCIA 8.
+0011E0 C018 F007      00522     movff   sec8, boton_esperado
+0011E4 EC?? F???      00523     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011E8 B00A           00524     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011EA EF?? F???      00525     goto    MENU_PRINCIPAL
+0011EE 6A0A           00526     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00527     ; SECUENCIA 9.
+0011F0 C019 F007      00528     movff   sec9, boton_esperado
+0011F4 EC?? F???      00529     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011F8 B00A           00530     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011FA EF?? F???      00531     goto    MENU_PRINCIPAL
+0011FE 6A0A           00532     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00533     
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 38
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00534     ; NIVEL SUPERADO.
+001200 0E39           00535     movlw   '9'
+001202 6E05           00536     movwf   puntaje, A
+001204 EC?? F???      00537     call    NIVEL_SUPERADO
+                      00538     
+001208                00539 NIVEL10
+                      00540     ; MOSTRAR SECUENCIA.
+001208 C011 F00B      00541     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+00120C EC?? F???      00542     call    ENCENDER_SECUENCIA
+001210 EC?? F???      00543     call    DELAY_100ms
+001214 C012 F00B      00544     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+001218 EC?? F???      00545     call    ENCENDER_SECUENCIA
+00121C EC?? F???      00546     call    DELAY_100ms
+001220 C013 F00B      00547     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+001224 EC?? F???      00548     call    ENCENDER_SECUENCIA
+001228 EC?? F???      00549     call    DELAY_100ms
+00122C C014 F00B      00550     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+001230 EC?? F???      00551     call    ENCENDER_SECUENCIA
+001234 EC?? F???      00552     call    DELAY_100ms
+001238 C015 F00B      00553     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+00123C EC?? F???      00554     call    ENCENDER_SECUENCIA
+001240 EC?? F???      00555     call    DELAY_100ms
+001244 C016 F00B      00556     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001248 EC?? F???      00557     call    ENCENDER_SECUENCIA
+00124C EC?? F???      00558     call    DELAY_100ms
+001250 C017 F00B      00559     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001254 EC?? F???      00560     call    ENCENDER_SECUENCIA
+001258 EC?? F???      00561     call    DELAY_100ms
+00125C C018 F00B      00562     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+001260 EC?? F???      00563     call    ENCENDER_SECUENCIA
+001264 EC?? F???      00564     call    DELAY_100ms
+001268 C019 F00B      00565     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
+00126C EC?? F???      00566     call    ENCENDER_SECUENCIA
+001270 EC?? F???      00567     call    DELAY_100ms
+001274 C01A F00B      00568     movff   sec10, encender_led         ; Mostrarle la secuencia al usuario
+001278 EC?? F???      00569     call    ENCENDER_SECUENCIA
+                      00570     
+                      00571     ; SECUENCIA 1.
+00127C C011 F007      00572     movff   sec1, boton_esperado
+001280 EC?? F???      00573     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001284 B00A           00574     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001286 EF?? F???      00575     goto    MENU_PRINCIPAL
+00128A 6A0A           00576     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00577     ; SECUENCIA 2.
+00128C C012 F007      00578     movff   sec2, boton_esperado
+001290 EC?? F???      00579     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001294 B00A           00580     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001296 EF?? F???      00581     goto    MENU_PRINCIPAL
+00129A 6A0A           00582     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00583     ; SECUENCIA 3.
+00129C C013 F007      00584     movff   sec3, boton_esperado
+0012A0 EC?? F???      00585     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012A4 B00A           00586     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 39
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0012A6 EF?? F???      00587     goto    MENU_PRINCIPAL
+0012AA 6A0A           00588     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00589     ; SECUENCIA 4.
+0012AC C014 F007      00590     movff   sec4, boton_esperado
+0012B0 EC?? F???      00591     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012B4 B00A           00592     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012B6 EF?? F???      00593     goto    MENU_PRINCIPAL
+0012BA 6A0A           00594     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00595     ; SECUENCIA 5.
+0012BC C015 F007      00596     movff   sec5, boton_esperado
+0012C0 EC?? F???      00597     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012C4 B00A           00598     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012C6 EF?? F???      00599     goto    MENU_PRINCIPAL
+0012CA 6A0A           00600     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00601     ; SECUENCIA 6.
+0012CC C016 F007      00602     movff   sec6, boton_esperado
+0012D0 EC?? F???      00603     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012D4 B00A           00604     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012D6 EF?? F???      00605     goto    MENU_PRINCIPAL
+0012DA 6A0A           00606     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00607     ; SECUENCIA 7.
+0012DC C017 F007      00608     movff   sec7, boton_esperado
+0012E0 EC?? F???      00609     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012E4 B00A           00610     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012E6 EF?? F???      00611     goto    MENU_PRINCIPAL
+0012EA 6A0A           00612     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00613     ; SECUENCIA 8.
+0012EC C018 F007      00614     movff   sec8, boton_esperado
+0012F0 EC?? F???      00615     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012F4 B00A           00616     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012F6 EF?? F???      00617     goto    MENU_PRINCIPAL
+0012FA 6A0A           00618     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00619     ; SECUENCIA 9.
+0012FC C019 F007      00620     movff   sec9, boton_esperado
+001300 EC?? F???      00621     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001304 B00A           00622     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001306 EF?? F???      00623     goto    MENU_PRINCIPAL
+00130A 6A0A           00624     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00625     ; SECUENCIA 10.
+00130C C01A F007      00626     movff   sec10, boton_esperado
+001310 EC?? F???      00627     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001314 B00A           00628     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001316 EF?? F???      00629     goto    MENU_PRINCIPAL
+00131A 6A0A           00630     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00631     
+                      00632     ; NIVEL SUPERADO.
+00131C 0E41           00633     movlw   'A'
+00131E 6E05           00634     movwf   puntaje, A
+001320 EC?? F???      00635     call    NIVEL_SUPERADO
+                      00636     
+                      00637   end
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 40
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+A                                 00000000
+ABDEN                             00000000
+ABDOVF                            00000007
+ACCESS                            00000000
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ACKTIM                            00000007
+ACQT0                             00000003
+ACQT1                             00000004
+ACQT2                             00000005
+ACTCON                            00000FB5
+ACTD                              00000006
+ACTEN                             00000007
+ACTIE                             00000007
+ACTIF                             00000007
+ACTIP                             00000007
+ACTLOCK                           00000003
+ACTMD                             00000004
+ACTOR                             00000001
+ACTORS                            00000001
+ACTSEL                            00000007
+ACTSRC                            00000004
+ACTUD                             00000006
+ACTVIE                            00000002
+ACTVIF                            00000002
+ADCMD                             00000002
+ADCON0                            00000FC2
+ADCON1                            00000FC1
+ADCON2                            00000FC0
+ADCS0                             00000000
+ADCS1                             00000001
+ADCS2                             00000002
+ADDEN                             00000003
+ADDR0                             00000000
+ADDR1                             00000001
+ADDR2                             00000002
+ADDR3                             00000003
+ADDR4                             00000004
+ADDR5                             00000005
+ADDR6                             00000006
+ADEN                              00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADIP                              00000006
+ADON                              00000000
+ADRESH                            00000FC4
+ADRESL                            00000FC3
+AHEN                              00000001
+AN0                               00000000
+AN1                               00000001
+AN2                               00000002
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 41
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+AN3                               00000003
+AN4                               00000005
+ANSA0                             00000000
+ANSA1                             00000001
+ANSA2                             00000002
+ANSA3                             00000003
+ANSA5                             00000005
+ANSB0                             00000000
+ANSB1                             00000001
+ANSB2                             00000002
+ANSB3                             00000003
+ANSB4                             00000004
+ANSB5                             00000005
+ANSC2                             00000002
+ANSC6                             00000006
+ANSC7                             00000007
+ANSD0                             00000000
+ANSD1                             00000001
+ANSD2                             00000002
+ANSD3                             00000003
+ANSD4                             00000004
+ANSD5                             00000005
+ANSD6                             00000006
+ANSD7                             00000007
+ANSE0                             00000000
+ANSE1                             00000001
+ANSE2                             00000002
+ANSELA                            00000F5B
+ANSELB                            00000F5C
+ANSELC                            00000F5D
+ANSELD                            00000F5E
+ANSELE                            00000F5F
+ANTIRREBOTE_PUNTAJES              00000CE2
+BANKED                            00000001
+BAUDCON                           00000FB8
+BAUDCON1                          00000FB8
+BCL1IE                            00000003
+BCL1IF                            00000003
+BCL1IP                            00000003
+BCLIE                             00000003
+BCLIF                             00000003
+BCLIP                             00000003
+BF                                00000000
+BGVST                             00000006
+BOEN                              00000004
+BOR                               00000000
+BOTON_AMARILLO                    00000B60
+BOTON_AZUL                        00000B48
+BOTON_BLANCO                      00000B30
+BOTON_HIGHSCORE                   00000B8A
+BOTON_NARANJA                     00000B18
+BOTON_START_MENU                  00000B78
+BOTON_START_STOP                  00000B06
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 42
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+BRG5                              00000005
+BRG6                              00000006
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+BRGH                              00000002
+BSR                               00000FE0
+BTOEE                             00000004
+BTOEF                             00000004
+BTSEE                             00000007
+BTSEF                             00000007
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1HYS                             00000003
+C1IE                              00000006
+C1IF                              00000006
+C1IP                              00000006
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SP                              00000003
+C1SYNC                            00000001
+C1TSEL                            00000000
+C2CH0                             00000000
+C2CH1                             00000001
+C2HYS                             00000002
+C2IE                              00000005
+C2IF                              00000005
+C2IP                              00000005
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2RSEL                            00000004
+C2SP                              00000003
+C2SYNC                            00000000
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 43
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C2TSEL                            00000003
+CARGAR_SECUENCIA                  00000C98
+CCH0                              00000000
+CCH1                              00000001
+CCP1                              00000002
+CCP1ASE                           00000007
+CCP1CON                           00000FBD
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1IP                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1MD                            00000000
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           00000F97
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2IP                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2MD                            00000001
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000FBE
+CCPR1H                            00000FBF
+CCPR1L                            00000FBE
+CCPR2                             00000F90
+CCPR2H                            00000F91
+CCPR2L                            00000F90
+CCPTMRS                           00000F59
+CFGS                              00000006
+CK                                00000006
+CK1SPP                            00000000
+CK2SPP                            00000001
+CKE                               00000006
+CKP                               00000004
+CKTXP                             00000004
+CM1CON0                           00000F98
+CM1IE                             00000006
+CM1IF                             00000006
+CM1IP                             00000006
+CM2CON0                           00000F99
+CM2CON1                           00000F9A
+CM2IE                             00000005
+CM2IF                             00000005
+CM2IP                             00000005
+CMP1MD                            00000003
+CMP2MD                            00000004
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 44
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+COE                               00000005
+CON                               00000007
+CONFIGURA                         00000030
+CONFIGURE_LCD                     00000182
+COUT1                             00000006
+COUT2                             00000006
+CPOL                              00000004
+CRC16EE                           00000002
+CRC16EF                           00000002
+CRC5EE                            00000001
+CRC5EF                            00000001
+CREF                              00000002
+CREN                              00000004
+CSRC                              00000007
+CTMUCON0                          00000F8F
+CTMUCON1                          00000F8E
+CTMUCONH                          00000F8F
+CTMUCONL                          00000F8E
+CTMUEN                            00000007
+CTMUICON                          00000F88
+CTMUIE                            00000003
+CTMUIF                            00000003
+CTMUIP                            00000003
+CTMUMD                            00000005
+CTMUSIDL                          00000005
+CTTRIG                            00000000
+DACEN                             00000007
+DACLPS                            00000006
+DACNSS                            00000000
+DACOE                             00000005
+DACPSS0                           00000002
+DACPSS1                           00000003
+DACR0                             00000000
+DACR1                             00000001
+DACR2                             00000002
+DACR3                             00000003
+DACR4                             00000004
+DATA_READ                         00000150
+DATA_WRITE                        00000148
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+DDRA                              TRISA
+DDRB                              TRISB
+DDRC                              TRISC
+DDRD                              TRISD
+DDRE                              TRISE
+DECODER                           00000C54
+DELAY_100ms                       0000006E
+DELAY_100us                       00000062
+DELAY_1s                          0000009A
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 45
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+DELAY_1s_LOOP1                    000000A8
+DELAY_1s_LOOP2                    000000BA
+DELAY_20ms                        00000084
+DFN8EE                            00000003
+DFN8EF                            00000003
+DHEN                              00000000
+DIR                               00000002
+DONE                              00000001
+DTRXP                             00000005
+D_NOT_A                           00000005
+E                                 LATC, 2, A
+ECCP1AS                           00000FB6
+ECCP1AS0                          00000004
+ECCP1AS1                          00000005
+ECCP1AS2                          00000006
+ECCP1ASE                          00000007
+ECCP1CON                          00000FBD
+ECCP1DEL                          00000FB7
+ECCP2CON                          00000F97
+EDG1POL                           00000004
+EDG1SEL0                          00000002
+EDG1SEL1                          00000003
+EDG1STAT                          00000000
+EDG2POL                           00000007
+EDG2SEL0                          00000005
+EDG2SEL1                          00000006
+EDG2STAT                          00000001
+EDGEN                             00000003
+EDGSEQEN                          00000002
+EEADR                             00000FA9
+EECON1                            00000FA6
+EECON2                            00000FA7
+EEDATA                            00000FA8
+EEIE                              00000004
+EEIF                              00000004
+EEIP                              00000004
+EEPGD                             00000007
+ENCENDER_SECUENCIA                00000C7E
+ENDP0                             00000003
+ENDP1                             00000004
+ENDP2                             00000005
+ENDP3                             00000006
+EPCONDIS                          00000003
+EPHSHK                            00000004
+EPINEN                            00000001
+EPOUTEN                           00000002
+EPSTALL                           00000000
+ESPERA_LCD                        00000168
+FAST                              00000001
+FERR                              00000002
+FLTS                              00000002
+FREE                              00000004
+FRM0                              00000000
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 46
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+FRM1                              00000001
+FRM10                             00000002
+FRM2                              00000002
+FRM3                              00000003
+FRM4                              00000004
+FRM5                              00000005
+FRM6                              00000006
+FRM7                              00000007
+FRM8                              00000000
+FRM9                              00000001
+FSEN                              00000002
+FSR0                              00000000
+FSR0H                             00000FEA
+FSR0L                             00000FE9
+FSR1                              00000001
+FSR1H                             00000FE2
+FSR1L                             00000FE1
+FSR2                              00000002
+FSR2H                             00000FDA
+FSR2L                             00000FD9
+FVREN                             00000007
+FVRS0                             00000004
+FVRS1                             00000005
+FVRST                             00000006
+GAME_OVER                         00000102
+GCEN                              00000007
+GIE                               00000007
+GIEH                              00000007
+GIEL                              00000006
+GIE_GIEH                          00000007
+GO                                00000001
+GO_NOT_DONE                       00000001
+HFIOFR                            00000001
+HFIOFS                            00000002
+HLVDCON                           00000F9C
+HLVDEN                            00000004
+HLVDIE                            00000002
+HLVDIF                            00000002
+HLVDIN                            00000005
+HLVDIP                            00000002
+HLVDL0                            00000000
+HLVDL1                            00000001
+HLVDL2                            00000002
+HLVDL3                            00000003
+IDISSEN                           00000001
+IDLEIE                            00000004
+IDLEIF                            00000004
+IDLEN                             00000007
+INDF0                             00000FEF
+INDF1                             00000FE7
+INDF2                             00000FDF
+INSTRUCTION_WRITE                 00000140
+INT0                              00000000
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 47
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+INT0E                             00000004
+INT0F                             00000001
+INT0IE                            00000004
+INT0IF                            00000001
+INT1                              00000001
+INT1E                             00000003
+INT1F                             00000000
+INT1IE                            00000003
+INT1IF                            00000000
+INT1IP                            00000006
+INT1P                             00000006
+INT2                              00000002
+INT2E                             00000004
+INT2F                             00000001
+INT2IE                            00000004
+INT2IF                            00000001
+INT2IP                            00000007
+INT2P                             00000007
+INTCON                            00000FF2
+INTCON2                           00000FF1
+INTCON3                           00000FF0
+INTEDG0                           00000006
+INTEDG1                           00000005
+INTEDG2                           00000004
+INTSRC                            00000005
+IOCB                              00000F86
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IOCC                              00000F87
+IOCC0                             00000000
+IOCC1                             00000001
+IOCC2                             00000002
+IOCC4                             00000004
+IOCC5                             00000005
+IOCC6                             00000006
+IOCC7                             00000007
+IOCIE                             00000003
+IOCIF                             00000000
+IOCIP                             00000000
+IPEN                              00000007
+IPR1                              00000F9F
+IPR2                              00000FA2
+IPR3                              00000FA5
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRNG0                             00000000
+IRNG1                             00000001
+IRVST                             00000005
+ITRIM0                            00000002
+ITRIM1                            00000003
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 48
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ITRIM2                            00000004
+ITRIM3                            00000005
+ITRIM4                            00000006
+ITRIM5                            00000007
+JUEGO                             00000CF0
+LATA                              00000F89
+LATA0                             00000000
+LATA1                             00000001
+LATA2                             00000002
+LATA3                             00000003
+LATA4                             00000004
+LATA5                             00000005
+LATA6                             00000006
+LATA7                             00000007
+LATB                              00000F8A
+LATB0                             00000000
+LATB1                             00000001
+LATB2                             00000002
+LATB3                             00000003
+LATB4                             00000004
+LATB5                             00000005
+LATB6                             00000006
+LATB7                             00000007
+LATC                              00000F8B
+LATC0                             00000000
+LATC1                             00000001
+LATC2                             00000002
+LATC4                             00000004
+LATC5                             00000005
+LATC6                             00000006
+LATC7                             00000007
+LATD                              00000F8C
+LATD0                             00000000
+LATD1                             00000001
+LATD2                             00000002
+LATD3                             00000003
+LATD4                             00000004
+LATD5                             00000005
+LATD6                             00000006
+LATD7                             00000007
+LATE                              00000F8D
+LATE0                             00000000
+LATE1                             00000001
+LATE2                             00000002
+LED_01                            00000C62
+LED_10                            00000C6E
+LED_11                            00000C7A
+LFIOFS                            00000000
+LOOP1                             0000008C
+LOOP_LOSER_LEFT                   000006F2
+LOOP_LOSER_RIGHT                  0000070A
+LVDIE                             00000002
+LVDIF                             00000002
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 49
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LVDIN                             00000005
+LVDIP                             00000002
+MAIN                              00000CC2
+MC1OUT                            00000007
+MC2OUT                            00000006
+MENU_PRINCIPAL                    00000CCA
+MSSP1MD                           00000006
+MSSPMD                            00000006
+N                                 00000004
+NIVEL1                            00000CF8
+NIVEL10                           00001208
+NIVEL2                            00000D18
+NIVEL3                            00000D54
+NIVEL4                            00000DAC
+NIVEL5                            00000E20
+NIVEL6                            00000EB0
+NIVEL7                            00000F5C
+NIVEL8                            00001024
+NIVEL9                            00001108
+NIVEL_SUPERADO                    00000126
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000002
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RI                            00000004
+NOT_T1DONE                        00000003
+NOT_T1SYNC                        00000002
+NOT_T3DONE                        00000003
+NOT_T3SYNC                        00000002
+NOT_TO                            00000003
+NVCFG0                            00000000
+NVCFG1                            00000001
+OERR                              00000001
+OESPP                             00000002
+ON                                00000007
+ON_BLUE                           00000C14
+ON_GREEN                          00000BAC
+ON_ORANGE                         00000BE0
+ON_RED                            00000BC6
+ON_WHITE                          00000BFA
+ON_YELLOW                         00000C2E
+OSC2                              00000006
+OSCCON                            00000FD3
+OSCCON2                           00000FD2
+OSCFIE                            00000007
+OSCFIF                            00000007
+OSCFIP                            00000007
+OSCTUNE                           00000F9B
+OSTS                              00000003
+OV                                00000003
+P                                 00000004
+P1A                               00000002
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 50
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+P1M0                              00000006
+P1M1                              00000007
+P1RSEN                            00000007
+PC                                00000FF9
+PCIE                              00000006
+PCL                               00000FF9
+PCLATH                            00000FFA
+PCLATU                            00000FFB
+PD                                00000002
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEIE_GIEL                         00000006
+PEN                               00000002
+PGC                               00000006
+PGD                               00000007
+PGM                               00000005
+PIDEE                             00000000
+PIDEF                             00000000
+PIE1                              00000F9D
+PIE2                              00000FA0
+PIE3                              00000FA3
+PIR1                              00000F9E
+PIR2                              00000FA1
+PIR3                              00000FA4
+PKTDIS                            00000004
+PLLEN                             00000004
+PLLRDY                            00000007
+PLUSW0                            00000FEB
+PLUSW1                            00000FE3
+PLUSW2                            00000FDB
+PMD0                              00000F7E
+PMD1                              00000F7F
+POR                               00000001
+PORTA                             00000F80
+PORTB                             00000F81
+PORTC                             00000F82
+PORTD                             00000F83
+PORTE                             00000F84
+POSTDEC0                          00000FED
+POSTDEC1                          00000FE5
+POSTDEC2                          00000FDD
+POSTINC0                          00000FEE
+POSTINC1                          00000FE6
+POSTINC2                          00000FDE
+PPB0                              00000000
+PPB1                              00000001
+PPBI                              00000001
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 51
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PPBRST                            00000006
+PR1SEN                            00000007
+PR2                               00000FBB
+PREINC0                           00000FEC
+PREINC1                           00000FE4
+PREINC2                           00000FDC
+PRISD                             00000002
+PROD                              00000FF3
+PRODH                             00000FF4
+PRODL                             00000FF3
+PSA                               00000003
+PSS1AC0                           00000002
+PSS1AC1                           00000003
+PSS1BD0                           00000000
+PSS1BD1                           00000001
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PSTR1CON                          00000FB9
+PUNTAJES                          00000CD4
+PVCFG0                            00000002
+PVCFG1                            00000003
+PWM1CON                           00000FB7
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RA7                               00000007
+RANDOM_REGISTER                   00000C48
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBPU                              00000007
+RC0                               00000000
+RC1                               00000001
+RC1IE                             00000005
+RC1IF                             00000005
+RC1IP                             00000005
+RC2                               00000002
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RCEN                              00000003
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 52
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCIP                              00000005
+RCMT                              00000006
+RCON                              00000FD0
+RCREG                             00000FAE
+RCREG1                            00000FAE
+RCSTA                             00000FAB
+RCSTA1                            00000FAB
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD16                              00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+RECORRIDO_JUEGO                   00000AC2
+RECORRIDO_MENU                    00000AEE
+REGRESA                           00000172
+RESUME                            00000002
+REVISAR_BOTON                     00000B9C
+RI                                00000004
+RS                                LATC, 0, A
+RSEN                              00000001
+RW                                LATC, 1, A
+RX                                00000007
+RX9                               00000006
+RX9D                              00000000
+RXDTP                             00000005
+R_NOT_W                           00000002
+S                                 00000003
+SBCDE                             00000002
+SBOREN                            00000006
+SCIE                              00000005
+SCKP                              00000004
+SCS0                              00000000
+SCS1                              00000001
+SDAHT                             00000003
+SE0                               00000005
+SEN                               00000000
+SENDB                             00000003
+SEND_DATA                         00000158
+SHOW_HIGHSCORE                    00000852
+SHOW_MAIN_MENU                    000001AA
+SHOW_PUNTAJE                      00000984
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 53
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SHOW_SCORES_MENU                  000009FE
+SHOW_TIMES_OVER                   0000092A
+SIDL                              00000005
+SLRA                              00000000
+SLRB                              00000001
+SLRC                              00000002
+SLRCON                            00000F7A
+SLRD                              00000003
+SLRE                              00000004
+SMP                               00000007
+SOFIE                             00000006
+SOFIF                             00000006
+SOSCEN                            00000003
+SOSCGO                            00000003
+SOSCRUN                           00000006
+SP0                               00000000
+SP1                               00000001
+SP2                               00000002
+SP3                               00000003
+SP4                               00000004
+SPBRG                             00000FAF
+SPBRG1                            00000FAF
+SPBRGH                            00000FB0
+SPBRGH1                           00000FB0
+SPEN                              00000007
+SPLLMULT                          00000007
+SPP0                              00000000
+SPP1                              00000001
+SPP2                              00000002
+SPP3                              00000003
+SPP4                              00000004
+SPP5                              00000005
+SPP6                              00000006
+SPP7                              00000007
+SRCLK0                            00000004
+SRCLK1                            00000005
+SRCLK2                            00000006
+SRCON0                            00000F58
+SRCON1                            00000F57
+SREN                              00000005
+SRLEN                             00000007
+SRNQEN                            00000002
+SRPR                              00000000
+SRPS                              00000001
+SRQEN                             00000003
+SRRC1E                            00000000
+SRRC2E                            00000001
+SRRCKE                            00000002
+SRRPE                             00000003
+SRSC1E                            00000004
+SRSC2E                            00000005
+SRSCKE                            00000006
+SRSPE                             00000007
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 54
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SSP1ADD                           00000FC8
+SSP1ADD0                          00000000
+SSP1ADD1                          00000001
+SSP1ADD2                          00000002
+SSP1ADD3                          00000003
+SSP1ADD4                          00000004
+SSP1ADD5                          00000005
+SSP1ADD6                          00000006
+SSP1ADD7                          00000007
+SSP1BUF                           00000FC9
+SSP1CON1                          00000FC6
+SSP1CON2                          00000FC5
+SSP1CON3                          00000FCB
+SSP1IE                            00000003
+SSP1IF                            00000003
+SSP1IP                            00000003
+SSP1MD                            00000006
+SSP1MSK                           00000FCA
+SSP1MSK0                          00000000
+SSP1MSK1                          00000001
+SSP1MSK2                          00000002
+SSP1MSK3                          00000003
+SSP1MSK4                          00000004
+SSP1MSK5                          00000005
+SSP1MSK6                          00000006
+SSP1MSK7                          00000007
+SSP1STAT                          00000FC7
+SSPADD                            00000FC8
+SSPBUF                            00000FC9
+SSPCON                            00000FC6
+SSPCON1                           00000FC6
+SSPCON2                           00000FC5
+SSPCON3                           00000FCB
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPIP                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000FCA
+SSPOV                             00000006
+SSPSTAT                           00000FC7
+STALLIE                           00000005
+STALLIF                           00000005
+STATUS                            00000FD8
+STCON                             00000FB5
+STEN                              00000007
+STIE                              00000007
+STIF                              00000007
+STIP                              00000007
+STKFUL                            00000007
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 55
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+STKOVF                            00000007
+STKPTR                            00000FFC
+STKUNF                            00000006
+STLOCK                            00000003
+STMD                              00000004
+STOP                              0000010A
+STOP_PUNTAJES                     00000CDC
+STOR                              00000001
+STR1A                             00000000
+STR1B                             00000001
+STR1C                             00000002
+STR1D                             00000003
+STR1SYNC                          00000004
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+STSRC                             00000004
+STUD                              00000006
+SUSPND                            00000001
+SWDTE                             00000000
+SWDTEN                            00000000
+SYNC                              00000004
+T08BIT                            00000006
+T0CKI                             00000004
+T0CON                             00000FD5
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0IP                              00000002
+T0PS0                             00000000
+T0PS1                             00000001
+T0PS2                             00000002
+T0SE                              00000004
+T13CKI                            00000000
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000FCD
+T1DONE                            00000003
+T1GCON                            00000FCC
+T1GGO                             00000003
+T1GGO_NOT_DONE                    00000003
+T1GGO_NOT_T1DONE                  00000003
+T1GPOL                            00000006
+T1GSPM                            00000004
+T1GSS0                            00000000
+T1GSS1                            00000001
+T1GTM                             00000005
+T1GVAL                            00000002
+T1OSCEN                           00000003
+T1OSI                             00000001
+T1OSO                             00000000
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 56
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T1RD16                            00000001
+T1SOSCEN                          00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000FBA
+T2OUTPS0                          00000003
+T2OUTPS1                          00000004
+T2OUTPS2                          00000005
+T2OUTPS3                          00000006
+T3CKPS0                           00000004
+T3CKPS1                           00000005
+T3CON                             00000FB1
+T3DONE                            00000003
+T3GCON                            00000FB4
+T3GGO                             00000003
+T3GGO_NOT_DONE                    00000003
+T3GGO_NOT_T3DONE                  00000003
+T3GPOL                            00000006
+T3GSPM                            00000004
+T3GSS0                            00000000
+T3GSS1                            00000001
+T3GTM                             00000005
+T3GVAL                            00000002
+T3OSCEN                           00000003
+T3RD16                            00000001
+T3SOSCEN                          00000003
+T3SYNC                            00000002
+TABLAT                            00000FF5
+TBLPTR                            00000FF6
+TBLPTRH                           00000FF7
+TBLPTRL                           00000FF6
+TBLPTRU                           00000FF8
+TGEN                              00000004
+TIMER_5s                          000000C8
+TIME_OUT                          000000F6
+TMR0                              00000FD6
+TMR0H                             00000FD7
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR0IP                            00000002
+TMR0L                             00000FD6
+TMR0ON                            00000007
+TMR1                              00000FCE
+TMR1CS0                           00000006
+TMR1CS1                           00000007
+TMR1GE                            00000007
+TMR1GIE                           00000000
+TMR1GIF                           00000000
+TMR1GIP                           00000000
+TMR1H                             00000FCF
+TMR1IE                            00000000
+TMR1IF                            00000000
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 57
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TMR1IP                            00000000
+TMR1L                             00000FCE
+TMR1MD                            00000000
+TMR1ON                            00000000
+TMR2                              00000FBC
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2IP                            00000001
+TMR2MD                            00000001
+TMR2ON                            00000002
+TMR3                              00000FB2
+TMR3CS0                           00000006
+TMR3CS1                           00000007
+TMR3GE                            00000007
+TMR3GIE                           00000001
+TMR3GIF                           00000001
+TMR3GIP                           00000001
+TMR3H                             00000FB3
+TMR3IE                            00000001
+TMR3IF                            00000001
+TMR3IP                            00000001
+TMR3L                             00000FB2
+TMR3MD                            00000002
+TMR3ON                            00000000
+TO                                00000003
+TOS                               00000FFD
+TOSH                              00000FFE
+TOSL                              00000FFD
+TOSU                              00000FFF
+TRIGEN                            00000000
+TRIGSEL                           00000007
+TRISA                             00000F92
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000F93
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000F94
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 58
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000F95
+TRISD0                            00000000
+TRISD1                            00000001
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000F96
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRMT                              00000001
+TRNIE                             00000003
+TRNIF                             00000003
+TSEN                              00000003
+TSRNG                             00000002
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TUN5                              00000005
+TUN6                              00000006
+TX                                00000006
+TX1IE                             00000004
+TX1IF                             00000004
+TX1IP                             00000004
+TX9                               00000006
+TX9D                              00000000
+TXCKP                             00000004
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXIP                              00000004
+TXREG                             00000FAD
+TXREG1                            00000FAD
+TXSTA                             00000FAC
+TXSTA1                            00000FAC
+UA                                00000001
+UADDR                             00000F63
+UART1MD                           00000006
+UARTMD                            00000006
+UCFG                              00000F62
+UCON                              00000F60
+UEIE                              00000F66
+UEIR                              00000F67
+UEP0                              00000F6A
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 59
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+UEP1                              00000F6B
+UEP10                             00000F74
+UEP11                             00000F75
+UEP12                             00000F76
+UEP13                             00000F77
+UEP14                             00000F78
+UEP15                             00000F79
+UEP2                              00000F6C
+UEP3                              00000F6D
+UEP4                              00000F6E
+UEP5                              00000F6F
+UEP6                              00000F70
+UEP7                              00000F71
+UEP8                              00000F72
+UEP9                              00000F73
+UERRIE                            00000001
+UERRIF                            00000001
+UFRM                              00000F68
+UFRMH                             00000F69
+UFRML                             00000F68
+UIE                               00000F64
+UIR                               00000F65
+UOEMON                            00000006
+UPUEN                             00000004
+URSTIE                            00000000
+URSTIF                            00000000
+USBEN                             00000003
+USBIE                             00000002
+USBIF                             00000002
+USBIP                             00000002
+USBMD                             00000005
+USTAT                             00000F61
+UTEYE                             00000007
+UTRDIS                            00000003
+VDIRMAG                           00000007
+VREFCON0                          00000F7D
+VREFCON1                          00000F7C
+VREFCON2                          00000F7B
+VREFM                             00000002
+VREFP                             00000003
+VREGCON                           00000F5A
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000FD1
+WIN_ANIMATION_LOOP                00000768
+WPUB                              00000F85
+WPUB0                             00000000
+WPUB1                             00000001
+WPUB2                             00000002
+WPUB3                             00000003
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 60
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPUB7                             00000007
+WPUE3                             00000007
+WR                                00000001
+WREG                              00000FE8
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+Z                                 00000002
+_17                               00000023
+_256                              00000003
+_256_1                            00000020
+_256_2                            00000021
+_26                               00000004
+_5                                00000022
+_BOREN_NOSLP_2L                   000000FD
+_BOREN_OFF_2L                     000000F9
+_BOREN_ON_2L                      000000FB
+_BOREN_SBORDIS_2L                 000000FF
+_BORV_190_2L                      000000FF
+_BORV_220_2L                      000000F7
+_BORV_250_2L                      000000EF
+_BORV_285_2L                      000000E7
+_CCP2MX_RB3_3H                    000000FE
+_CCP2MX_RC1_3H                    000000FF
+_CFGPLLEN_OFF_1L                  000000FD
+_CFGPLLEN_ON_1L                   000000FF
+_CONFIG1H                         00300001
+_CONFIG1L                         00300000
+_CONFIG2H                         00300003
+_CONFIG2L                         00300002
+_CONFIG3H                         00300005
+_CONFIG4L                         00300006
+_CONFIG5H                         00300009
+_CONFIG5L                         00300008
+_CONFIG6H                         0030000B
+_CONFIG6L                         0030000A
+_CONFIG7H                         0030000D
+_CONFIG7L                         0030000C
+_CP0_OFF_5L                       000000FF
+_CP0_ON_5L                        000000FE
+_CP1_OFF_5L                       000000FF
+_CP1_ON_5L                        000000FD
+_CP2_OFF_5L                       000000FF
+_CP2_ON_5L                        000000FB
+_CP3_OFF_5L                       000000FF
+_CP3_ON_5L                        000000F7
+_CPB_OFF_5H                       000000FF
+_CPB_ON_5H                        000000BF
+_CPD_OFF_5H                       000000FF
+_CPD_ON_5H                        0000007F
+_CPUDIV_CLKDIV2_1L                000000EF
+_CPUDIV_CLKDIV3_1L                000000F7
+_CPUDIV_CLKDIV6_1L                000000FF
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 61
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CPUDIV_NOCLKDIV_1L               000000E7
+_DEBUG_OFF_4L                     000000FF
+_DEBUG_ON_4L                      0000007F
+_DEVID1                           003FFFFE
+_DEVID2                           003FFFFF
+_EBTR0_OFF_7L                     000000FF
+_EBTR0_ON_7L                      000000FE
+_EBTR1_OFF_7L                     000000FF
+_EBTR1_ON_7L                      000000FD
+_EBTR2_OFF_7L                     000000FF
+_EBTR2_ON_7L                      000000FB
+_EBTR3_OFF_7L                     000000FF
+_EBTR3_ON_7L                      000000F7
+_EBTRB_OFF_7H                     000000FF
+_EBTRB_ON_7H                      000000BF
+_FCMEN_OFF_1H                     000000BF
+_FCMEN_ON_1H                      000000FF
+_FOSC_ECHCLKO_1H                  000000F4
+_FOSC_ECHIO_1H                    000000F5
+_FOSC_ECLCLKO_1H                  000000FC
+_FOSC_ECLIO_1H                    000000FD
+_FOSC_ECMCLKO_1H                  000000FA
+_FOSC_ECMIO_1H                    000000FB
+_FOSC_HSH_1H                      000000F2
+_FOSC_HSM_1H                      000000F3
+_FOSC_INTOSCCLKO_1H               000000F9
+_FOSC_INTOSCIO_1H                 000000F8
+_FOSC_LP_1H                       000000F0
+_FOSC_RCCLKO_1H                   000000F6
+_FOSC_RCIO_1H                     000000F7
+_FOSC_XT_1H                       000000F1
+_ICPRT_OFF_4L                     000000DF
+_ICPRT_ON_4L                      000000FF
+_IDLOC0                           00200000
+_IDLOC1                           00200001
+_IDLOC2                           00200002
+_IDLOC3                           00200003
+_IDLOC4                           00200004
+_IDLOC5                           00200005
+_IDLOC6                           00200006
+_IDLOC7                           00200007
+_IESO_OFF_1H                      0000007F
+_IESO_ON_1H                       000000FF
+_LOADING_CHARS_GANAR              000002E4
+_LOADING_CHARS_PERDER             00000414
+_LOADING_CHARS_TIEMPO             00000274
+_LOSING_PIXELS                    00000422
+_LS48MHZ_SYS24X4_1L               000000DF
+_LS48MHZ_SYS48X8_1L               000000FF
+_LVP_OFF_4L                       000000FB
+_LVP_ON_4L                        000000FF
+_MCLRE_OFF_3H                     0000007F
+_MCLRE_ON_3H                      000000FF
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 62
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_PBADEN_OFF_3H                    000000FD
+_PBADEN_ON_3H                     000000FF
+_PCLKEN_OFF_1H                    000000DF
+_PCLKEN_ON_1H                     000000FF
+_PLLSEL_PLL3X_1L                  000000FF
+_PLLSEL_PLL4X_1L                  000000FE
+_SAD_PIXELS                       00000282
+_SDOMX_RB3_3H                     000000FF
+_SDOMX_RC7_3H                     000000BF
+_STVREN_OFF_4L                    000000FE
+_STVREN_ON_4L                     000000FF
+_T3CMX_RB5_3H                     000000EF
+_T3CMX_RC0_3H                     000000FF
+_WDTEN_NOSLP_2H                   000000FD
+_WDTEN_OFF_2H                     000000FC
+_WDTEN_ON_2H                      000000FF
+_WDTEN_SWON_2H                    000000FE
+_WDTPS_1024_2H                    000000EB
+_WDTPS_128_2H                     000000DF
+_WDTPS_16384_2H                   000000FB
+_WDTPS_16_2H                      000000D3
+_WDTPS_1_2H                       000000C3
+_WDTPS_2048_2H                    000000EF
+_WDTPS_256_2H                     000000E3
+_WDTPS_2_2H                       000000C7
+_WDTPS_32768_2H                   000000FF
+_WDTPS_32_2H                      000000D7
+_WDTPS_4096_2H                    000000F3
+_WDTPS_4_2H                       000000CB
+_WDTPS_512_2H                     000000E7
+_WDTPS_64_2H                      000000DB
+_WDTPS_8192_2H                    000000F7
+_WDTPS_8_2H                       000000CF
+_WINNER_PIXELS                    000002F2
+_WRITING_LOSER_ANIM               000005A4
+_WRITING_WINNER_ANIM              00000720
+_WRT0_OFF_6L                      000000FF
+_WRT0_ON_6L                       000000FE
+_WRT1_OFF_6L                      000000FF
+_WRT1_ON_6L                       000000FD
+_WRT2_OFF_6L                      000000FF
+_WRT2_ON_6L                       000000FB
+_WRT3_OFF_6L                      000000FF
+_WRT3_ON_6L                       000000F7
+_WRTB_OFF_6H                      000000FF
+_WRTB_ON_6H                       000000BF
+_WRTC_OFF_6H                      000000FF
+_WRTC_ON_6H                       000000DF
+_WRTD_OFF_6H                      000000FF
+_WRTD_ON_6H                       0000007F
+_XINST_OFF_4L                     000000BF
+_XINST_ON_4L                      000000FF
+__18F45K50                        00000001
+MPASM 5.87                          MAIN.ASM   10-24-2021  16:17:24         PAGE 63
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_nLPBOR_OFF_2L                    000000FF
+_nLPBOR_ON_2L                     000000BF
+_nPWRTEN_OFF_2L                   000000FF
+_nPWRTEN_ON_2L                    000000FE
+bit_led_amarillo                  boton_presionado, 1, A
+bit_led_azul                      boton_presionado, 0, A
+bit_led_blanco                    boton_presionado, 3, A
+bit_led_naranja                   boton_presionado, 2, A
+boton_esperado                    00000007
+boton_presionado                  00000006
+configFlag                        TRISD, 7, A
+correcto                          trayectoria, 1, A
+dataLCD                           LATD, A
+encender_led                      0000000B
+espera                            000000D8
+fila1                             PORTB, 0, A
+fila2                             PORTB, 1, A
+flag                              PORTD, 7, A
+led_amarillo                      LATA, 1, A
+led_azul                          LATA, 0, A
+led_blanco                        LATA, 3, A
+led_naranja                       LATA, 2, A
+led_rojo                          LATA, 4, A
+led_verde                         LATA, 5, A
+loop1                             00000066
+loop2                             00000076
+para                              trayectoria, 2, A
+perdio                            trayectoria, 0, A
+puntaje                           00000005
+register_loser                    00000008
+sec1                              00000011
+sec10                             0000001A
+sec2                              00000012
+sec3                              00000013
+sec4                              00000014
+sec5                              00000015
+sec6                              00000016
+sec7                              00000017
+sec8                              00000018
+sec9                              00000019
+shifter                           00000009
+trayectoria                       0000000A
+var1                              00000000
+var2                              00000001
+var3                              00000002
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+
