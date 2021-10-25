@@ -1,5 +1,3 @@
-;#include "delays.asm"
-    
 INSTRUCTION_WRITE
     bcf	    RS			; RS -> 0
     bcf	    RW			; RW -> 0
@@ -41,7 +39,7 @@ CONFIGURE_LCD
     call    DELAY_100ms
     movlw   b'00111000'		; 8-bit, 2 lines, 5x7.
     call    INSTRUCTION_WRITE
-    movlw   b'00001111'		; Display on, cursor on, blynk on.
+    movlw   b'00001100'		; Display on, cursor off, blink off.
     call    INSTRUCTION_WRITE
     call    DELAY_100ms
     movlw   b'00011100'		; Increment cursor position, display shift.
@@ -49,90 +47,4 @@ CONFIGURE_LCD
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
     call    DELAY_100ms
-    return
-
-SHOW_MAIN_MENU
-    movlw   b'00000001'		; Clear display and return to home position.
-    call    INSTRUCTION_WRITE
-    call    DELAY_100ms
-    movlw   'W'			
-    call    DATA_WRITE    
-    movlw   '-'			
-    call    DATA_WRITE
-    movlw   '-'			
-    call    DATA_WRITE
-    movlw   '>'			
-    call    DATA_WRITE
-    
-    ;SPACE
-    movlw   0x05	
-    bsf     WREG, 7, A		
-    call    INSTRUCTION_WRITE
-    
-    movlw   'N'			
-    call    DATA_WRITE
-    movlw   'E'			
-    call    DATA_WRITE
-    movlw   'W'			
-    call    DATA_WRITE
-    
-    ;SPACE
-    movlw   0x09
-    bsf	WREG, 7, A		
-    call    INSTRUCTION_WRITE
-    
-    movlw   'G'			
-    call    DATA_WRITE
-    movlw   'A'			
-    call    DATA_WRITE
-    movlw   'M'			
-    call    DATA_WRITE
-    movlw   'E'			
-    call    DATA_WRITE
-    
-    ;SECOND LINE
-    movlw   0x40
-    bsf	WREG, 7, A		
-    call    INSTRUCTION_WRITE
-    
-    movlw   'B'			
-    call    DATA_WRITE    
-    movlw   '-'			
-    call    DATA_WRITE
-    movlw   '-'			
-    call    DATA_WRITE
-    movlw   '>'			
-    call    DATA_WRITE
-    
-    ;SPACE
-    movlw   0x45	
-    bsf	WREG, 7, A		
-    call    INSTRUCTION_WRITE
-    
-    movlw   'H'			
-    call    DATA_WRITE
-    movlw   'I'			
-    call    DATA_WRITE
-    movlw   'G'			
-    call    DATA_WRITE
-    movlw   'H'			
-    call    DATA_WRITE
-    
-    ;SPACE
-    movlw   0x4A
-    bsf	WREG, 7, A		
-    call    INSTRUCTION_WRITE
-    
-    movlw   'S'			
-    call    DATA_WRITE
-    movlw   'C'			
-    call    DATA_WRITE
-    movlw   'O'			
-    call    DATA_WRITE
-    movlw   'R'			
-    call    DATA_WRITE
-    movlw   'E'			
-    call    DATA_WRITE
-    movlw   'S'			
-    call    DATA_WRITE
     return

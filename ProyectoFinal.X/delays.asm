@@ -1,5 +1,3 @@
-;#include "inicializacion.asm"
-    
 DELAY_100us
     movlw   .33
     movwf   var1

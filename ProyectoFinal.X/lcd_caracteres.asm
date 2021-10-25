@@ -1,5 +1,3 @@
-;#include "lcd_subrutinas.asm"
-    
 _LOADING_CHARS_TIEMPO
     ; write custom characters
     movlw .0
@@ -453,8 +451,7 @@ _WRITING_LOSER_ANIM ; writing the chars into the lcd display
     movwf register_loser, A
  
 LOOP_LOSER_LEFT
-    call DELAY_100us
-    call DELAY_100us
+    call DELAY_100ms
     movlw b'00011000' ; set move display to the left
     call INSTRUCTION_WRITE
     incfsz register_loser, 1, A
@@ -463,8 +460,7 @@ LOOP_LOSER_LEFT
     movwf register_loser, A
  
 LOOP_LOSER_RIGHT
-    call DELAY_100us
-    call DELAY_100us
+    call DELAY_100ms
     movlw b'00011100' ; set move display to the left
     call INSTRUCTION_WRITE
     incfsz register_loser, 1, A
@@ -501,12 +497,9 @@ _WRITING_WINNER_ANIM
     movlw   'P'			
     call    DATA_WRITE    
     
-    movlw   .5 ;Repeat animation 5 times
+    movlw   .2 ;Repeat animation 5 times
     movwf   var3
 WIN_ANIMATION_LOOP
-    movlw   b'00000001'		; Clear display and return to home position.
-    call    INSTRUCTION_WRITE
-    call    DELAY_100ms
    ;0  
     movlw   0x02
     bsf	    WREG, 7, A		
@@ -514,7 +507,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .0			
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -523,7 +516,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .0			
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     ;1   
@@ -533,7 +526,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .1		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -542,7 +535,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .1		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     ;2   
     movlw   0x02
@@ -551,7 +544,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .2		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -560,7 +553,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .2		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     ;3
     movlw   0x02
@@ -569,7 +562,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .3		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -578,7 +571,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .3		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     ;4
     movlw   0x02
@@ -587,7 +580,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .4		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -596,7 +589,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .4		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     ;5
     movlw   0x02
@@ -605,7 +598,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .5		
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -614,7 +607,7 @@ WIN_ANIMATION_LOOP
     
     movlw   .5	
     call    DATA_WRITE
-    call    DELAY_100us
+    call    DELAY_100ms
     
     decfsz  var3
     goto    WIN_ANIMATION_LOOP
@@ -688,7 +681,7 @@ SHOW_HIGHSCORE
     movlw   '0'			
     call    DATA_WRITE      
     movf    puntaje, W, A
-    call    DATA_WRITE     
+    call    DATA_WRITE 
     movlw   '<'			
     call    DATA_WRITE    
     movlw   '-'			
@@ -766,7 +759,7 @@ SHOW_PUNTAJE
    
        
     ;SECOND LINE
-    movlw   0x42
+    movlw   0x44
     bsf	    WREG, 7, A		
     call    INSTRUCTION_WRITE
     
@@ -780,10 +773,6 @@ SHOW_PUNTAJE
     call    DATA_WRITE       
     movf    puntaje, W, A
     call    DATA_WRITE 
-    movlw   '0'			
-    call    DATA_WRITE
-    movlw   '0'			
-    call    DATA_WRITE
     movlw   '<'			
     call    DATA_WRITE    
     movlw   '-'			
@@ -865,4 +854,91 @@ SHOW_SCORES_MENU
     call    DATA_WRITE    
     movlw   '0'			
     call    DATA_WRITE    
- return
+    return
+ 
+ 
+SHOW_MAIN_MENU
+    movlw   b'00000001'		; Clear display and return to home position.
+    call    INSTRUCTION_WRITE
+    call    DELAY_100ms
+    movlw   'S'			
+    call    DATA_WRITE    
+    movlw   '-'			
+    call    DATA_WRITE
+    movlw   '-'			
+    call    DATA_WRITE
+    movlw   '>'			
+    call    DATA_WRITE
+    
+    ;SPACE
+    movlw   0x05	
+    bsf     WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    
+    movlw   'N'			
+    call    DATA_WRITE
+    movlw   'E'			
+    call    DATA_WRITE
+    movlw   'W'			
+    call    DATA_WRITE
+    
+    ;SPACE
+    movlw   0x09
+    bsf	WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    
+    movlw   'G'			
+    call    DATA_WRITE
+    movlw   'A'			
+    call    DATA_WRITE
+    movlw   'M'			
+    call    DATA_WRITE
+    movlw   'E'			
+    call    DATA_WRITE
+    
+    ;SECOND LINE
+    movlw   0x40
+    bsf	WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    
+    movlw   'H'			
+    call    DATA_WRITE    
+    movlw   '-'			
+    call    DATA_WRITE
+    movlw   '-'			
+    call    DATA_WRITE
+    movlw   '>'			
+    call    DATA_WRITE
+    
+    ;SPACE
+    movlw   0x45	
+    bsf	WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    
+    movlw   'H'			
+    call    DATA_WRITE
+    movlw   'I'			
+    call    DATA_WRITE
+    movlw   'G'			
+    call    DATA_WRITE
+    movlw   'H'			
+    call    DATA_WRITE
+    
+    ;SPACE
+    movlw   0x4A
+    bsf	WREG, 7, A		
+    call    INSTRUCTION_WRITE
+    
+    movlw   'S'			
+    call    DATA_WRITE
+    movlw   'C'			
+    call    DATA_WRITE
+    movlw   'O'			
+    call    DATA_WRITE
+    movlw   'R'			
+    call    DATA_WRITE
+    movlw   'E'			
+    call    DATA_WRITE
+    movlw   'S'			
+    call    DATA_WRITE
+    return

@@ -1,5 +1,3 @@
-;#include "teclado_subrutinas.asm"
-    
 ON_GREEN
     bsf	    led_verde
     call    DELAY_100ms

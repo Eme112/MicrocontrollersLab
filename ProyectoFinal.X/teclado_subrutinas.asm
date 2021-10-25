@@ -1,5 +1,3 @@
-;#include "lcd_caracteres.asm"
-    
 RECORRIDO_JUEGO
     movlw   b'11111011'			; ACTIVAR COLUMNA 1 (verde, naranja).
     movwf   LATB, A
@@ -85,14 +83,14 @@ BOTON_START_MENU
     btfss   fila1			; Revisar si sigue presionado el boton.
     goto    BOTON_START_MENU		; Si aun no se suleta, esperar.
     call    DELAY_20ms			; Antirebote.
-    call    ON_WHITE
+    call    ON_GREEN
     goto    JUEGO
     
 BOTON_HIGHSCORE
     btfss   fila1			; Revisar si sigue presionado el boton.
     goto    BOTON_HIGHSCORE		; Si aun no se suleta, esperar.
     call    DELAY_20ms			; Antirebote.
-    call    ON_BLUE
+    call    ON_RED
     goto    PUNTAJES    
     
 REVISAR_BOTON
