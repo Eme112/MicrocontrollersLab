@@ -88,7 +88,8 @@ STOP
     call    _LOADING_CHARS_PERDER
     call    _WRITING_LOSER_ANIM
     call    DELAY_1s
-    ; TODO: Imprimir puntaje obtenido.
+HIGHSCORE
+    ; TODO: Imprimir puntaje obtenido si no se hace HIGHSCORE.
     call    SHOW_HIGHSCORE
     call    DELAY_1s
     ; TODO: Guardar en la EEPROM si fue highscore.
@@ -99,7 +100,6 @@ NIVEL_SUPERADO
     call    ON_GREEN
     call    _LOADING_CHARS_GANAR
     call    _WRITING_WINNER_ANIM
-    call    DELAY_1s
     call    SHOW_PUNTAJE
     call    DELAY_1s
     return

@@ -633,5 +633,7 @@ NIVEL10
     movlw   'A'
     movwf   puntaje, A
     call    NIVEL_SUPERADO
+
+    goto    HIGHSCORE
     
   end

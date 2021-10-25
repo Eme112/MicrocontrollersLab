@@ -617,7 +617,7 @@ SHOW_HIGHSCORE
     movlw   b'00000001'		; Clear display and return to home position.
     call    INSTRUCTION_WRITE
     call    DELAY_100ms
-    movlw   '!'			
+    movlw   ' '			
     call    DATA_WRITE   
     movlw   'N'			
     call    DATA_WRITE    
