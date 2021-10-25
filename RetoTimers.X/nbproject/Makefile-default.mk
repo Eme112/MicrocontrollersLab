@@ -57,17 +57,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=Ejercicio1.asm
+SOURCEFILES_QUOTED_IF_SPACED=EjercicioProyectoFinal.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Ejercicio1.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/Ejercicio1.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/EjercicioProyectoFinal.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/EjercicioProyectoFinal.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/Ejercicio1.o
+OBJECTFILES=${OBJECTDIR}/EjercicioProyectoFinal.o
 
 # Source Files
-SOURCEFILES=Ejercicio1.asm
+SOURCEFILES=EjercicioProyectoFinal.asm
 
 
 
@@ -95,22 +95,22 @@ MP_LINKER_DEBUG_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/Ejercicio1.o: Ejercicio1.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/EjercicioProyectoFinal.o: EjercicioProyectoFinal.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Ejercicio1.o.d 
-	@${RM} ${OBJECTDIR}/Ejercicio1.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Ejercicio1.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG  -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Ejercicio1.lst\" -e\"${OBJECTDIR}/Ejercicio1.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Ejercicio1.o\" \"Ejercicio1.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/Ejercicio1.o"
-	@${FIXDEPS} "${OBJECTDIR}/Ejercicio1.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/EjercicioProyectoFinal.o.d 
+	@${RM} ${OBJECTDIR}/EjercicioProyectoFinal.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/EjercicioProyectoFinal.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG  -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/EjercicioProyectoFinal.lst\" -e\"${OBJECTDIR}/EjercicioProyectoFinal.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/EjercicioProyectoFinal.o\" \"EjercicioProyectoFinal.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/EjercicioProyectoFinal.o"
+	@${FIXDEPS} "${OBJECTDIR}/EjercicioProyectoFinal.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/Ejercicio1.o: Ejercicio1.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/EjercicioProyectoFinal.o: EjercicioProyectoFinal.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/Ejercicio1.o.d 
-	@${RM} ${OBJECTDIR}/Ejercicio1.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/Ejercicio1.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/Ejercicio1.lst\" -e\"${OBJECTDIR}/Ejercicio1.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/Ejercicio1.o\" \"Ejercicio1.asm\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/Ejercicio1.o"
-	@${FIXDEPS} "${OBJECTDIR}/Ejercicio1.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/EjercicioProyectoFinal.o.d 
+	@${RM} ${OBJECTDIR}/EjercicioProyectoFinal.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/EjercicioProyectoFinal.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION)  -l\"${OBJECTDIR}/EjercicioProyectoFinal.lst\" -e\"${OBJECTDIR}/EjercicioProyectoFinal.err\" $(ASM_OPTIONS)    -o\"${OBJECTDIR}/EjercicioProyectoFinal.o\" \"EjercicioProyectoFinal.asm\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/EjercicioProyectoFinal.o"
+	@${FIXDEPS} "${OBJECTDIR}/EjercicioProyectoFinal.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 

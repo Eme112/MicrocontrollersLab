@@ -1,10 +1,10 @@
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  1
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00001      #include "p18f45k50.inc"    
+                      00001 #include "p18f45k50.inc"
                       00001         LIST
                       00002 
                       00003 ;==========================================================================
@@ -15,40 +15,92 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00008 ;==========================================================================
                       00009 
                       02340         LIST
-                      00002     org 0x00
-000000 EF?? F???      00003     goto CONFIGURACION_TIMER1
-                      00004     
-000004                00005 CONFIGURACION_TIMER1
-                      00006     org 0x20
-000020 0E32           00007     movlw b'00110010'           ; Configuracion de TIMER1.
-000022 6ECD           00008     movwf T1CON, A              ; Instruction clock, 1:8, no S.O., 16-bit, stop.
-000024 0ED4           00009     movlw b'11010100'
-000026 6ECE           00010     movwf TMR1L, A              ; Forza que inicien en 212 los 8 bits menos sign.
-000028 0E7F           00011     movlw b'01111111'
-00002A 6ECF           00012     movwf TMR1H, A              ; Forza que inicien en 32512 los 8 bits mas sign.
-00002C 9ECC           00013     bcf T1GCON, 7, A            ; Timer1 cuenta normal.
-00002E 80CD           00014     bsf T1CON, 0, A             ; Activa conteo.
-000030 EC?? F???      00015     call RETARDO1ms
-                      00016     
-000034                00017 RETARDO1ms
-000034 EC?? F???      00018     call TIMER1_WAIT            ; 264,250us approx.
-000038 EC?? F???      00019     call TIMER1_WAIT            ; 264,250us approx.
-00003C EC?? F???      00020     call TIMER1_WAIT            ; 264,250us approx.
-000040 EC?? F???      00021     call TIMER1_WAIT            ; 264,250us approx.
-000044 0012           00022     return
-                      00023     
-000046                00024 TIMER1_WAIT
-000046 A09E           00025     btfss PIR1, 0, A            ; Revisa si se desbordo la bandera.
-000048 EF?? F???      00026     goto TIMER1_WAIT
-00004C 909E           00027     bcf PIR1, 0, A              ; Apagar bandera.
-00004E 0ED3           00028     movlw b'11010011'
-000050 6ECE           00029     movwf TMR1L, A              ; Reset.
-000052 0E7F           00030     movlw b'01111111'
-000054 6ECF           00031     movwf TMR1H, A              ; Reset.
-000056 0012           00032     return
-                      00033     
-                      00034    end
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  2
+                      00002     processor 18f45k50  ; (opcional).
+                      00003     org 0x00
+000000 EF?? F???      00004     goto CONFIGURA
+                      00005     
+                      00006 
+000004                00007 CONFIGURA    
+                      00008     ; DEFINICION DE REGISTROS VARIABLES.
+  00000021            00009 boton_esperado EQU 0x21
+  00000023            00010 sim_portB      EQU 0X23 ; para la sim servira como el registro de portB del teclado         
+                      00011     ; DEFINICION REGISTROS PARA RANDOMIZER
+  00000022            00012 shifter        EQU 0X22
+                      00013 #define boton PORTB, 5, A              
+                      00014                
+                      00015  
+                      00016 ;  CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
+000004 68BB           00017    setf    PR2, A
+000006 0E04           00018    movlw   b'00000100'  ; TMR2 ON, 1:1 , NO POST
+000008 6EBA           00019    movwf   T2CON 
+                      00020 
+00000A 010F           00021    movlb   .15
+00000C 6B5C           00022    clrf    ANSELB, BANKED                       ; REGB -> DIGITAL.
+00000E 6893           00023    setf    TRISB,A                              ; entrada simulando el boton start.
+000010 9EF1           00024    bcf     INTCON2, 7, A        ; ENABLE PULL-UPs.
+000012 8A85           00025    bsf     WPUB, 5, A           ; ENABLE PULL-UP RB5.
+000014 6B5B           00026    clrf    ANSELA, BANKED                       ; REGA -> DIGITAL.
+000016 6A92           00027    clrf    TRISA,A; todas salidas para leds y comprobar aleatoriedad, 
+                      00028 
+                      00029  
+000018                00030 start                   ; para la simulacion de que se presione un boton
+000018 BA81           00031         btfsc boton     ;checa si se presiono el boton start/stop
+00001A EF?? F???      00032         goto start 
+00001E EC?? F???      00033         call RANDOM_REGISTER
+000022 C021 FF89      00034         movff boton_esperado, LATA
+000026 EF?? F???      00035         goto start  
+                      00036     
+00002A                00037 RANDOM_REGISTER         ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
+00002A AA81           00038         btfss   boton
+00002C EF?? F???      00039         goto    RANDOM_REGISTER
+000030 6A21           00040         clrf    boton_esperado
+000032 0000           00041         nop
+000034 0000           00042         nop
+000036 6A22           00043         clrf    shifter
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000038 50BC           00044         movf    TMR2, W, A
+00003A 0000           00045         nop
+00003C B0E8           00046         btfsc   WREG, 0, A
+00003E 8022           00047         bsf     shifter, 0, A
+000040 B2E8           00048         btfsc   WREG, 1, A
+000042 8222           00049         bsf     shifter, 1, A
+                      00050 
+000044                00051 DECODER ; PONE boton_esperado EN LA MISMA CONFIG QUE boton_presionado
+000044 5022           00052         movf shifter , W, A 
+000046 50E8           00053         movf WREG,W,A
+000048 A4D8           00054         btfss STATUS, Z, A              ; checa si es 00
+00004A EF?? F???      00055         goto LED_01
+00004E 8021           00056         bsf boton_esperado, 0, A        ; significa que 00 -> led azul es el esperado "0001"
+000050 0012           00057         return
+                      00058 
+000052                00059 LED_01
+000052 0801           00060         sublw .1
+000054 50E8           00061         movf WREG,W,A
+000056 A4D8           00062         btfss STATUS, 2 , A             ; checa si restando 1 se vuelve 0
+000058 EF?? F???      00063         goto LED_10
+00005C 8221           00064         bsf boton_esperado, 1 , A       ; significa que 01 -> led amar es el esperado "0010"
+00005E 0012           00065         return
+                      00066 
+000060                00067 LED_10 
+000060 C022 FFE8      00068         movff shifter, WREG
+000064 0802           00069         sublw .2
+000066 50E8           00070         movf WREG,W,A
+000068 A4D8           00071         btfss STATUS, 2 , A             ; checa si restando 1 se vuelve 0
+00006A EF?? F???      00072         goto LED_11
+00006E 8421           00073         bsf boton_esperado, 2 , A       ; significa que 01 -> led naranj es el esperado "0100"
+000070 0012           00074         return
+                      00075 
+000072                00076 LED_11 
+000072 8221           00077         bsf boton_esperado, 1 , A       ; significa que 11 -> led blanco es el esperado "1000"
+000074 0012           00078         return
+                      00079 
+                      00080   end
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  3
 
 
 SYMBOL TABLE
@@ -107,7 +159,7 @@ AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
 AN2                               00000002
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  3
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  4
 
 
 SYMBOL TABLE
@@ -166,7 +218,7 @@ BRG12                             00000004
 BRG13                             00000005
 BRG14                             00000006
 BRG15                             00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  4
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  5
 
 
 SYMBOL TABLE
@@ -225,7 +277,7 @@ CCP1ASE                           00000007
 CCP1CON                           00000FBD
 CCP1IE                            00000002
 CCP1IF                            00000002
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  5
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  6
 
 
 SYMBOL TABLE
@@ -277,14 +329,14 @@ CMP1MD                            00000003
 CMP2MD                            00000004
 COE                               00000005
 CON                               00000007
-CONFIGURACION_TIMER1              00000004
+CONFIGURA                         00000004
 COUT1                             00000006
 COUT2                             00000006
 CPOL                              00000004
 CRC16EE                           00000002
 CRC16EF                           00000002
 CRC5EE                            00000001
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  6
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  7
 
 
 SYMBOL TABLE
@@ -327,6 +379,7 @@ DDRB                              TRISB
 DDRC                              TRISC
 DDRD                              TRISD
 DDRE                              TRISE
+DECODER                           00000044
 DFN8EE                            00000003
 DFN8EF                            00000003
 DHEN                              00000000
@@ -342,13 +395,13 @@ ECCP1ASE                          00000007
 ECCP1CON                          00000FBD
 ECCP1DEL                          00000FB7
 ECCP2CON                          00000F97
-EDG1POL                           00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  7
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  8
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+EDG1POL                           00000004
 EDG1SEL0                          00000002
 EDG1SEL1                          00000003
 EDG1STAT                          00000000
@@ -401,13 +454,13 @@ FSR2                              00000002
 FSR2H                             00000FDA
 FSR2L                             00000FD9
 FVREN                             00000007
-FVRS0                             00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  8
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE  9
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+FVRS0                             00000004
 FVRS1                             00000005
 FVRST                             00000006
 GCEN                              00000007
@@ -460,13 +513,13 @@ INTCON2                           00000FF1
 INTCON3                           00000FF0
 INTEDG0                           00000006
 INTEDG1                           00000005
-INTEDG2                           00000004
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE  9
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 10
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+INTEDG2                           00000004
 INTSRC                            00000005
 IOCB                              00000F86
 IOCB4                             00000004
@@ -519,13 +572,13 @@ LATB5                             00000005
 LATB6                             00000006
 LATB7                             00000007
 LATC                              00000F8B
-LATC0                             00000000
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 10
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 11
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+LATC0                             00000000
 LATC1                             00000001
 LATC2                             00000002
 LATC4                             00000004
@@ -545,6 +598,9 @@ LATE                              00000F8D
 LATE0                             00000000
 LATE1                             00000001
 LATE2                             00000002
+LED_01                            00000052
+LED_10                            00000060
+LED_11                            00000072
 LFIOFS                            00000000
 LVDIE                             00000002
 LVDIF                             00000002
@@ -575,16 +631,16 @@ OSC2                              00000006
 OSCCON                            00000FD3
 OSCCON2                           00000FD2
 OSCFIE                            00000007
-OSCFIF                            00000007
-OSCFIP                            00000007
-OSCTUNE                           00000F9B
-OSTS                              00000003
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 11
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 12
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+OSCFIF                            00000007
+OSCFIP                            00000007
+OSCTUNE                           00000F9B
+OSTS                              00000003
 OV                                00000003
 P                                 00000004
 P1A                               00000002
@@ -634,16 +690,16 @@ PORTD                             00000F83
 PORTE                             00000F84
 POSTDEC0                          00000FED
 POSTDEC1                          00000FE5
-POSTDEC2                          00000FDD
-POSTINC0                          00000FEE
-POSTINC1                          00000FE6
-POSTINC2                          00000FDE
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 12
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 13
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+POSTDEC2                          00000FDD
+POSTINC0                          00000FEE
+POSTINC1                          00000FE6
+POSTINC2                          00000FDE
 PPB0                              00000000
 PPB1                              00000001
 PPBI                              00000001
@@ -678,6 +734,7 @@ RA4                               00000004
 RA5                               00000005
 RA6                               00000006
 RA7                               00000007
+RANDOM_REGISTER                   0000002A
 RB0                               00000000
 RB1                               00000001
 RB2                               00000002
@@ -692,17 +749,17 @@ RC1                               00000001
 RC1IE                             00000005
 RC1IF                             00000005
 RC1IP                             00000005
-RC2                               00000002
-RC4                               00000004
-RC5                               00000005
-RC6                               00000006
-RC7                               00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 13
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 14
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+RC2                               00000002
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
 RCEN                              00000003
 RCIDL                             00000006
 RCIE                              00000005
@@ -729,7 +786,6 @@ RE1                               00000001
 RE2                               00000002
 RE3                               00000003
 RESUME                            00000002
-RETARDO1ms                        00000034
 RI                                00000004
 RSEN                              00000001
 RX                                00000007
@@ -752,16 +808,16 @@ SIDL                              00000005
 SLRA                              00000000
 SLRB                              00000001
 SLRC                              00000002
-SLRCON                            00000F7A
-SLRD                              00000003
-SLRE                              00000004
-SMP                               00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 14
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 15
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SLRCON                            00000F7A
+SLRD                              00000003
+SLRE                              00000004
+SMP                               00000007
 SOFIE                             00000006
 SOFIF                             00000006
 SOSCEN                            00000003
@@ -811,16 +867,16 @@ SSP1ADD1                          00000001
 SSP1ADD2                          00000002
 SSP1ADD3                          00000003
 SSP1ADD4                          00000004
-SSP1ADD5                          00000005
-SSP1ADD6                          00000006
-SSP1ADD7                          00000007
-SSP1BUF                           00000FC9
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 15
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 16
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SSP1ADD5                          00000005
+SSP1ADD6                          00000006
+SSP1ADD7                          00000007
+SSP1BUF                           00000FC9
 SSP1CON1                          00000FC6
 SSP1CON2                          00000FC5
 SSP1CON3                          00000FCB
@@ -870,16 +926,16 @@ STKUNF                            00000006
 STLOCK                            00000003
 STMD                              00000004
 STOR                              00000001
-STR1A                             00000000
-STR1B                             00000001
-STR1C                             00000002
-STR1D                             00000003
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 16
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 17
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+STR1A                             00000000
+STR1B                             00000001
+STR1C                             00000002
+STR1D                             00000003
 STR1SYNC                          00000004
 STRA                              00000000
 STRB                              00000001
@@ -929,16 +985,16 @@ T2CKPS1                           00000001
 T2CON                             00000FBA
 T2OUTPS0                          00000003
 T2OUTPS1                          00000004
-T2OUTPS2                          00000005
-T2OUTPS3                          00000006
-T3CKPS0                           00000004
-T3CKPS1                           00000005
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 17
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 18
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+T2OUTPS2                          00000005
+T2OUTPS3                          00000006
+T3CKPS0                           00000004
+T3CKPS1                           00000005
 T3CON                             00000FB1
 T3DONE                            00000003
 T3GCON                            00000FB4
@@ -961,7 +1017,6 @@ TBLPTRH                           00000FF7
 TBLPTRL                           00000FF6
 TBLPTRU                           00000FF8
 TGEN                              00000004
-TIMER1_WAIT                       00000046
 TMR0                              00000FD6
 TMR0H                             00000FD7
 TMR0IE                            00000005
@@ -989,15 +1044,15 @@ TMR2IF                            00000001
 TMR2IP                            00000001
 TMR2MD                            00000001
 TMR2ON                            00000002
-TMR3                              00000FB2
-TMR3CS0                           00000006
-TMR3CS1                           00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 18
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 19
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TMR3                              00000FB2
+TMR3CS0                           00000006
+TMR3CS1                           00000007
 TMR3GE                            00000007
 TMR3GIE                           00000001
 TMR3GIF                           00000001
@@ -1048,15 +1103,15 @@ TRISD1                            00000001
 TRISD2                            00000002
 TRISD3                            00000003
 TRISD4                            00000004
-TRISD5                            00000005
-TRISD6                            00000006
-TRISD7                            00000007
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 19
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 20
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
 TRISE                             00000F96
 TRISE0                            00000000
 TRISE1                            00000001
@@ -1107,15 +1162,15 @@ UEP15                             00000F79
 UEP2                              00000F6C
 UEP3                              00000F6D
 UEP4                              00000F6E
-UEP5                              00000F6F
-UEP6                              00000F70
-UEP7                              00000F71
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 20
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 21
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+UEP5                              00000F6F
+UEP6                              00000F70
+UEP7                              00000F71
 UEP8                              00000F72
 UEP9                              00000F73
 UERRIE                            00000001
@@ -1166,15 +1221,15 @@ Z                                 00000002
 _BOREN_NOSLP_2L                   000000FD
 _BOREN_OFF_2L                     000000F9
 _BOREN_ON_2L                      000000FB
-_BOREN_SBORDIS_2L                 000000FF
-_BORV_190_2L                      000000FF
-_BORV_220_2L                      000000F7
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 21
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 22
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_BOREN_SBORDIS_2L                 000000FF
+_BORV_190_2L                      000000FF
+_BORV_220_2L                      000000F7
 _BORV_250_2L                      000000EF
 _BORV_285_2L                      000000E7
 _CCP2MX_RB3_3H                    000000FE
@@ -1225,15 +1280,15 @@ _EBTRB_OFF_7H                     000000FF
 _EBTRB_ON_7H                      000000BF
 _FCMEN_OFF_1H                     000000BF
 _FCMEN_ON_1H                      000000FF
-_FOSC_ECHCLKO_1H                  000000F4
-_FOSC_ECHIO_1H                    000000F5
-_FOSC_ECLCLKO_1H                  000000FC
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 22
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 23
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_FOSC_ECHCLKO_1H                  000000F4
+_FOSC_ECHIO_1H                    000000F5
+_FOSC_ECLCLKO_1H                  000000FC
 _FOSC_ECLIO_1H                    000000FD
 _FOSC_ECMCLKO_1H                  000000FA
 _FOSC_ECMIO_1H                    000000FB
@@ -1284,15 +1339,15 @@ _WDTPS_128_2H                     000000DF
 _WDTPS_16384_2H                   000000FB
 _WDTPS_16_2H                      000000D3
 _WDTPS_1_2H                       000000C3
-_WDTPS_2048_2H                    000000EF
-_WDTPS_256_2H                     000000E3
-_WDTPS_2_2H                       000000C7
-MPASM 5.87                    EJERCICIO1.ASM   10-8-2021  16:46:38         PAGE 23
+MPASM 5.87        EJERCICIOPROYECTOFINAL.ASM   10-25-2021  0:39:48         PAGE 24
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_WDTPS_2048_2H                    000000EF
+_WDTPS_256_2H                     000000E3
+_WDTPS_2_2H                       000000C7
 _WDTPS_32768_2H                   000000FF
 _WDTPS_32_2H                      000000D7
 _WDTPS_4096_2H                    000000F3
@@ -1322,6 +1377,11 @@ _nLPBOR_OFF_2L                    000000FF
 _nLPBOR_ON_2L                     000000BF
 _nPWRTEN_OFF_2L                   000000FF
 _nPWRTEN_ON_2L                    000000FE
+boton                             PORTB, 5, A
+boton_esperado                    00000021
+shifter                           00000022
+sim_portB                         00000023
+start                             00000018
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
