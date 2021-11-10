@@ -1,4 +1,4 @@
-     #include "p18f45k50.inc"
+    #include "p18f45k50.inc"
     org 0x00
          goto START	
     org 0x08
@@ -12,6 +12,7 @@ counter	    EQU 0x10
 _256	    EQU 0x11
 _26	    EQU 0x12
 direction   EQU	0x13
+LEDs	    EQU 0x14
    
 HIGH_INT ; High priority interruptions.
     call    RUTINA_ANTIREBOTE
@@ -30,16 +31,16 @@ RESET_COUNTER
     
 LOW_INT
     bcf	    INTCON, TMR0IF, A	    ; Clear flag TMR0.
-    movlw   b'00001011'
-    movwf   TMR0H		    ; For a 500ms delay.
-    movlw   b'11011100'
-    movwf   TMR0L		    ; For a 500ms delay.
+    movlw   .12
+    movwf   TMR0L		    ; For a 250ms delay.
     
     ; Rotation direction depends on the bit 0 of the direction register.
     btfss   direction, 0, A
-    rrncf   LATA, A
+    rlncf   LEDs, F, A
     btfsc   direction, 0, A
-    rlncf   LATA, A
+    rrncf   LEDs, F, A
+    
+    movff   LEDs, LATA
     
     retfie
     
@@ -50,25 +51,25 @@ CONFIG_PORTS
     setf    TRISB, A	    	    ; PORTB input.
     clrf    TRISA, A		    ; PORTA output.
     movlw   b'00000001'
-    movwf   LATA, A		    ; Ouput -> 0000 0001
+    movwf   LEDs, A		    ; Ouput -> 0000 0001
+    movwf   LATA, A
     return
     
 CONFIG_INT
-    movlw   b'01000000'
-    movwf   T0CON, A		    ; Pre-esc. 1:2
-    movlw   b'00001011'
-    movwf   TMR0H		    ; For a 500ms delay.
-    movlw   b'11011100'
-    movwf   TMR0L		    ; For a 500ms delay.
-    
-    bsf	    INTCON, 5, A	    ; Enable interruptions TMR0.
-    bcf	    INTCON, 2, A	    ; Clear flag.
-    bcf	    INTCON2, 2, A	    ; Low priority interruption.
-    
     movlw   b'11010000'		    ; Priority, INT0 enable, flag off.
     movwf   INTCON, A
     bsf	    RCON, 7, A		    ; Enables dual priority mode
     bsf	    INTCON2, INTEDG0, A	    ; INT0 works on rising edge (when button is released).
+    
+    movlw   b'01000111'
+    movwf   T0CON, A		    ; Pre-esc. 1:2
+    movlw   .12
+    movwf   TMR0L		    ; For a 250ms delay.
+    clrf    TMR0H		    ; For a 500ms delay.
+    
+    bsf	    INTCON, 5, A	    ; Enable interruptions TMR0.
+    bcf	    INTCON, 2, A	    ; Clear flag.
+    bcf	    INTCON2, 2, A	    ; Low priority interruption.
     
     return
     
