@@ -60,6 +60,8 @@ JUEGO
     movwf   puntaje, A
     call    SHOW_PUNTAJE
 NIVEL1
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec1
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -77,6 +79,8 @@ NIVEL1
     call    NIVEL_SUPERADO
     
 NIVEL2
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec2
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -103,6 +107,8 @@ NIVEL2
     call    NIVEL_SUPERADO
     
 NIVEL3
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec3
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -138,6 +144,8 @@ NIVEL3
     call    NIVEL_SUPERADO
     
 NIVEL4
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec4
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -182,6 +190,8 @@ NIVEL4
     call    NIVEL_SUPERADO
     
 NIVEL5
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec5
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -235,6 +245,8 @@ NIVEL5
     call    NIVEL_SUPERADO
     
 NIVEL6
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec6
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -297,6 +309,8 @@ NIVEL6
     call    NIVEL_SUPERADO
     
 NIVEL7
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec7
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -368,6 +382,8 @@ NIVEL7
     call    NIVEL_SUPERADO
     
 NIVEL8
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec8
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -448,6 +464,8 @@ NIVEL8
     call    NIVEL_SUPERADO
     
 NIVEL9
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec9
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA
@@ -537,6 +555,8 @@ NIVEL9
     call    NIVEL_SUPERADO
     
 NIVEL10
+    call    RANDOM_REGISTER
+    movff   sec_aleatoria, sec10
     ; MOSTRAR SECUENCIA.
     movff   sec1, encender_led		; Mostrarle la secuencia al usuario
     call    ENCENDER_SECUENCIA

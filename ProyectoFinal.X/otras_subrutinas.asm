@@ -66,31 +66,32 @@ RANDOM_REGISTER ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
     bsf	    shifter, 0, A
     btfsc   WREG, 1, A
     bsf	    shifter, 1, A
-  
-DECODER ; PONE boton_esperado EN LA MISMA CONFIG QUE boton_presionado
-    clrf    boton_esperado
+DECODER ; PONE sec_aleatoria EN LA MISMA CONFIG QUE boton_presionado
+    clrf    sec_aleatoria
     movf    shifter, W, A 
     btfss   STATUS, 2, A		; checa si es 00
     goto    LED_01
-    bsf	    boton_esperado, 0, A	; significa que 00 -> led azul es el esperado "0001"
+    bsf	    sec_aleatoria, 0, A		; significa que 00 -> led azul es el esperado "0001"
     return
     
 LED_01
+    movf    shifter, W, A 
     sublw   .1
-    btfss   STATUS, 1, A		; checa si restando 1 se vuelve 0
+    btfss   STATUS, 2, A		; checa si restando 1 se vuelve 0
     goto    LED_10
-    bsf	    boton_esperado, 1, A	; significa que 01 -> led amar es el esperado "0010"
+    bsf	    sec_aleatoria, 1, A	; significa que 01 -> led amar es el esperado "0010"
     return
     
 LED_10 
-    sublw   .1
-    btfss   STATUS, 1, A		; checa si restando 1 se vuelve 0
+    movf    shifter, W, A 
+    sublw   .2
+    btfss   STATUS, 2, A		; checa si restando 1 se vuelve 0
     goto    LED_11
-    bsf	    boton_esperado, 2, A	; significa que 01 -> led naranj es el esperado "0100"
+    bsf	    sec_aleatoria, 2, A	; significa que 01 -> led naranj es el esperado "0100"
     return
 
 LED_11 
-    bsf	    boton_esperado, 3, A	; significa que 11 -> led blanco es el esperado "1000"
+    bsf	    sec_aleatoria, 3, A	; significa que 11 -> led blanco es el esperado "1000"
     return
 
 ENCENDER_SECUENCIA 

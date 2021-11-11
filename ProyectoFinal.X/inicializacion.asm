@@ -21,6 +21,7 @@ register_loser	    EQU 0x08
 shifter		    EQU 0x09
 trayectoria	    EQU 0x0A
 encender_led	    EQU 0x0B
+sec_aleatoria	    EQU 0x0C
 sec1		    EQU 0x11
 sec2		    EQU 0x12
 sec3		    EQU 0x13
@@ -76,7 +77,7 @@ CONFIGURA
     clrf    LATA				; Limpiar la salida A.
     clrf    LATC				; Limpiar la salida C.
     clrf    LATD				; Limpiar la salida D.
-    clrf    PR2, A				; CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
+    setf    PR2, A				; CONFIGURA E INICIA TIMER2 PARA EL NUM ALEATORIO
     movlw   b'00000100'				; TMR2 ON, 1:1 , NO POST
     movwf   T2CON
     movlw   '0'
