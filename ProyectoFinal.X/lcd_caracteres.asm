@@ -507,7 +507,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .0			
     call    DATA_WRITE
-    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -526,8 +525,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .1		
     call    DATA_WRITE
-    call    DELAY_100ms
-    
     
     movlw   0x0D
     bsf	    WREG, 7, A		
@@ -544,8 +541,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .2		
     call    DATA_WRITE
-    call    DELAY_100ms
-    
     
     movlw   0x0D
     bsf	    WREG, 7, A		
@@ -562,7 +557,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .3		
     call    DATA_WRITE
-    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -580,7 +574,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .4		
     call    DATA_WRITE
-    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -598,7 +591,6 @@ WIN_ANIMATION_LOOP
     
     movlw   .5		
     call    DATA_WRITE
-    call    DELAY_100ms
     
     
     movlw   0x0D
@@ -804,10 +796,9 @@ SHOW_SCORES_MENU
     movlw   '0'			
     call    DATA_WRITE
     ;acceder EEPROM3
-    movlw .3
+    movlw   .3
     movwf   EEADR, A
-    movlw   b'00000001' ;habilitar lectura
-    movwf   EECON1, A
+    bsf	    EECON1, 0, A ;habilitar lectura
     movf    EEDATA, A
     call    DATA_WRITE
     movlw   '-'			
@@ -817,6 +808,7 @@ SHOW_SCORES_MENU
     ;acceder EEPROM2
     movlw   .2
     movwf   EEADR, A
+    bsf	    EECON1, 0, A ;habilitar lectura
     movf    EEDATA, A
     call    DATA_WRITE
     movlw   '-'			
@@ -826,8 +818,8 @@ SHOW_SCORES_MENU
      ;acceder EEPROM1 
     movlw   .1
     movwf   EEADR, A
+    bsf	    EECON1, 0, A ;habilitar lectura
     movf    EEDATA, A
-    bcf	    EECON1, 0 , A ; se inhabilita la lectura
     call    DATA_WRITE
     
     ;SECOND LINE
@@ -862,10 +854,14 @@ SHOW_SCORES_MENU
     call    DATA_WRITE    
     movlw   '>'			
     call    DATA_WRITE    
-    movlw   '1'			
-    call    DATA_WRITE    
     movlw   '0'			
     call    DATA_WRITE    
+    movlw   .0
+    movwf   EEADR, A
+    bsf	    EECON1, 0, A ;habilitar lectura
+    movf    EEDATA, A
+    bcf	    EECON1, 0 , A ; se inhabilita la lectura
+    call    DATA_WRITE
     return
  
  

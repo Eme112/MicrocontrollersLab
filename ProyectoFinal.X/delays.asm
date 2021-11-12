@@ -83,19 +83,13 @@ TIME_OUT
     call    DELAY_1s
 GAME_OVER
     call    ON_RED
-    call    DELAY_1s
-    call    WRITE_EEPROM_GAME
 STOP
     call    _LOADING_CHARS_PERDER
     call    _WRITING_LOSER_ANIM
-    call    DELAY_1s
+    call    WRITE_EEPROM_GAME
 HIGHSCORE
-    ; TODO: Imprimir puntaje obtenido si no se hace HIGHSCORE.
-    call    SHOW_HIGHSCORE
-    call    DELAY_1s
-    ; TODO: Guardar en la EEPROM si fue highscore.
+    call    VERIFICAR_HIGHSCORE
     bsf	    perdio
-    call    DELAY_1s
     return
 NIVEL_SUPERADO
     call    ON_GREEN
