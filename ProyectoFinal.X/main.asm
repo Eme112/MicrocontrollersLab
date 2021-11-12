@@ -4,6 +4,7 @@
 #include "lcd_caracteres.asm"
 #include "teclado_subrutinas.asm"
 #include "otras_subrutinas.asm"
+#include "eeprom_subrutinas.asm"
 
 ; TODO: Quitar esto para la ultima entrega. 
 CARGAR_SECUENCIA

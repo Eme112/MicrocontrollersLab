@@ -36,7 +36,8 @@ _256_1		    EQU 0x20
 _256_2		    EQU 0x21
 _5		    EQU 0x22
 _17		    EQU 0x23
-
+temp_eeprom1	    EQU 0x24
+temp_eeprom2	    EQU 0x25
 
 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
     #define led_azul		LATA, 0, A

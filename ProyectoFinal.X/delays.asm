@@ -84,6 +84,7 @@ TIME_OUT
 GAME_OVER
     call    ON_RED
     call    DELAY_1s
+    call    WRITE_EEPROM_GAME
 STOP
     call    _LOADING_CHARS_PERDER
     call    _WRITING_LOSER_ANIM

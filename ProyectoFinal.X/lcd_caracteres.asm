@@ -803,20 +803,32 @@ SHOW_SCORES_MENU
     call    DATA_WRITE
     movlw   '0'			
     call    DATA_WRITE
-    movlw   '4'			
+    ;acceder EEPROM3
+    movlw .3
+    movwf   EEADR, A
+    movlw   b'00000001' ;habilitar lectura
+    movwf   EECON1, A
+    movf    EEDATA, A
     call    DATA_WRITE
     movlw   '-'			
     call    DATA_WRITE
     movlw   '0'			
     call    DATA_WRITE
-    movlw   '6'			
+    ;acceder EEPROM2
+    movlw   .2
+    movwf   EEADR, A
+    movf    EEDATA, A
     call    DATA_WRITE
     movlw   '-'			
-    call    DATA_WRITE
-    movlw   '1'			
     call    DATA_WRITE
     movlw   '0'			
     call    DATA_WRITE 
+     ;acceder EEPROM1 
+    movlw   .1
+    movwf   EEADR, A
+    movf    EEDATA, A
+    bcf	    EECON1, 0 , A ; se inhabilita la lectura
+    call    DATA_WRITE
     
     ;SECOND LINE
     movlw   0x40
