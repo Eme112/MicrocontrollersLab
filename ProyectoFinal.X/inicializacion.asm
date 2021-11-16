@@ -22,6 +22,7 @@ shifter		    EQU 0x09
 trayectoria	    EQU 0x0A
 encender_led	    EQU 0x0B
 sec_aleatoria	    EQU 0x0C
+puntaje_apoyo	    EQU 0x0D
 sec1		    EQU 0x11
 sec2		    EQU 0x12
 sec3		    EQU 0x13

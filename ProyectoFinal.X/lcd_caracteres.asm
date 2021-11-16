@@ -670,10 +670,10 @@ SHOW_HIGHSCORE
     call    DATA_WRITE    
     movlw   '>'			
     call    DATA_WRITE    
-    movlw   '0'			
-    call    DATA_WRITE      
-    movf    puntaje, W, A
-    call    DATA_WRITE 
+    
+    movff   puntaje, puntaje_apoyo
+    call    PRINT_SCORE
+    
     movlw   '<'			
     call    DATA_WRITE    
     movlw   '-'			
@@ -751,7 +751,7 @@ SHOW_PUNTAJE
    
        
     ;SECOND LINE
-    movlw   0x44
+    movlw   0x43
     bsf	    WREG, 7, A		
     call    INSTRUCTION_WRITE
     
@@ -763,8 +763,10 @@ SHOW_PUNTAJE
     call    DATA_WRITE       
     movlw   '>'			
     call    DATA_WRITE       
-    movf    puntaje, W, A
-    call    DATA_WRITE 
+    
+    movff   puntaje, puntaje_apoyo
+    call    PRINT_SCORE
+    
     movlw   '<'			
     call    DATA_WRITE    
     movlw   '-'			
@@ -793,34 +795,39 @@ SHOW_SCORES_MENU
     call    DATA_WRITE   
     movlw   ':'			
     call    DATA_WRITE
-    movlw   '0'			
-    call    DATA_WRITE
+    
     ;acceder EEPROM3
     movlw   .3
     movwf   EEADR, A
     bsf	    EECON1, 0, A ;habilitar lectura
-    movf    EEDATA, A
-    call    DATA_WRITE
+    movf    EEDATA, W, A
+    
+    movwf   puntaje_apoyo, A
+    call    PRINT_SCORE
+    
     movlw   '-'			
     call    DATA_WRITE
-    movlw   '0'			
-    call    DATA_WRITE
+    
     ;acceder EEPROM2
     movlw   .2
     movwf   EEADR, A
     bsf	    EECON1, 0, A ;habilitar lectura
-    movf    EEDATA, A
-    call    DATA_WRITE
+    movf    EEDATA, W, A
+    
+    movwf   puntaje_apoyo, A
+    call    PRINT_SCORE
+    
     movlw   '-'			
     call    DATA_WRITE
-    movlw   '0'			
-    call    DATA_WRITE 
-     ;acceder EEPROM1 
+
+    ;acceder EEPROM1 
     movlw   .1
     movwf   EEADR, A
     bsf	    EECON1, 0, A ;habilitar lectura
-    movf    EEDATA, A
-    call    DATA_WRITE
+    movf    EEDATA, W, A
+    
+    movwf   puntaje_apoyo, A
+    call    PRINT_SCORE
     
     ;SECOND LINE
     movlw   0x40
@@ -854,14 +861,15 @@ SHOW_SCORES_MENU
     call    DATA_WRITE    
     movlw   '>'			
     call    DATA_WRITE    
-    movlw   '0'			
-    call    DATA_WRITE    
+     
     movlw   .0
     movwf   EEADR, A
     bsf	    EECON1, 0, A ;habilitar lectura
-    movf    EEDATA, A
+    movf    EEDATA, W, A
     bcf	    EECON1, 0 , A ; se inhabilita la lectura
-    call    DATA_WRITE
+    
+    movwf   puntaje_apoyo, A
+    call    PRINT_SCORE
     return
  
  
@@ -948,5 +956,22 @@ SHOW_MAIN_MENU
     movlw   'E'			
     call    DATA_WRITE
     movlw   'S'			
+    call    DATA_WRITE
+    return
+
+PRINT_SCORE
+    movf    puntaje_apoyo, W, A
+    sublw   'A'
+    btfss   STATUS, Z, A		; Checa si restando 'A' se vuelve 0.
+    goto    PRINT_LESS_10		; If not 'A'.
+    movlw   '1'				; If it is 'A'.
+    call    DATA_WRITE      
+    movlw   '0'	
+    call    DATA_WRITE
+    return
+PRINT_LESS_10
+    movlw   '0'			
+    call    DATA_WRITE      
+    movf    puntaje_apoyo, W, A
     call    DATA_WRITE
     return
