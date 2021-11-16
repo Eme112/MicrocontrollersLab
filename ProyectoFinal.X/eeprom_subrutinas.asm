@@ -61,7 +61,7 @@ waitwrite
     bcf EECON1 ,2 ,A ; cuando termine disables write
     clrf EEDATA ,A ; limpiar para verificaciones posteriores
     return
-   
+    
 ; otra que escriba en el highscore
 ACTUALIZAR_HIGHSCORE
     movlw .0
@@ -70,28 +70,40 @@ ACTUALIZAR_HIGHSCORE
     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
     ; checa si se copio el valor correcto
     movf  puntaje, W, A
+    bcf EECON1, 7, A	; clear EEPGD control bit
     bsf  EECON1 , 0, A ; habilita lectura del .0 recien agregado
     subwf EEDATA, W, A ; resta lectura - puntaje para verificar
     btfss STATUS, 2, A ; checa si la resta da 0 == iguales
     goto ACTUALIZAR_HIGHSCORE ; si no son iguales , reintenta escritura
+    clrf EEDATA,A
     return
     
 VERIFICAR_HIGHSCORE
     movlw   .0
     movwf   EEADR, A
-    bsf	    EECON1, 0, A ;habilitar lectura
-    movf    EEDATA, A
-    bcf	    EECON1, 0 , A ; se inhabilita la lectura
-    ;----------------------------------------------------
-    ;NO FUNCIONA PORQUE PUNTAJE Y HIGHSCORE ESTAN EN ASCII
-    ;----------------------------------------------------
+    bcf EECON1, 7, A	; clear EEPGD control bit
+    bsf  EECON1 , 0, A	; habilita lectura del .0 recien agregado
+    movf    EEDATA,W,  A	 ; en este punto el highscore esta en wreg
     subwf puntaje, W, A ; resta puntaje - highscore
-    btfss STATUS, 4, A ; checa si la resta da negativo
+    btfsc STATUS, 4, A ; checa si la resta da negativo, si + == new hs, si - == no actualizar
     return
-    btfsc STATUS, 2, A ; checa si la resta da igual a 0
+    call ACTUALIZAR_HIGHSCORE
+    call SHOW_HIGHSCORE
+    call DELAY_1s
     return
     
-    ;NEW HIGHSCORE
-    call    SHOW_HIGHSCORE
-    call    ACTUALIZAR_HIGHSCORE
-    call    DELAY_1s
+BORRAR_EEPROM
+    movlw .0
+    movwf EEADR, A
+    movwf EEDATA, A ; pasamos al 0x00
+    call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+    movlw .1
+    movwf EEADR, A ; pasamos el 0x01
+    call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+    movlw .2
+    movwf EEADR, A ; pasamos el 0x02
+    call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+    movlw .3
+    movwf EEADR, A ; pasamos el 0x03
+    call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+    return

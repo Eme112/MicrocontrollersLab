@@ -1,5 +1,5 @@
 MPLINK 5.09, LINKER
-Linker Map File - Created Mon Nov 15 18:05:12 2021
+Linker Map File - Created Mon Nov 15 18:48:29 2021
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -8,7 +8,7 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
                    .cinit    romdata   0x000004    program   0x000002
                    .org_1       code   0x000008    program   0x000002
                    .org_2       code   0x000018    program   0x000002
-                   .org_3       code   0x000030    program   0x0013d2
+                   .org_3       code   0x000030    program   0x0013ca
 
 
 
@@ -18,8 +18,8 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
                             0x000000    0x000005      
                             0x000008    0x000009      
                             0x000018    0x000019      
-                            0x000030    0x001401      
-            5084 out of 33048 program addresses used, program memory utilization is 15%
+                            0x000030    0x0013f9      
+            5076 out of 33048 program addresses used, program memory utilization is 15%
 
 
 
@@ -27,7 +27,8 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
      ACTUALIZAR_HIGHSCORE   0x000ce8    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
-     ANTIRREBOTE_PUNTAJES   0x000d6c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+     ANTIRREBOTE_PUNTAJES   0x000d64    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+            BORRAR_EEPROM   0x000d24    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
            BOTON_AMARILLO   0x000b34    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
                BOTON_AZUL   0x000b1c    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
              BOTON_BLANCO   0x000b04    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
@@ -35,7 +36,6 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
             BOTON_NARANJA   0x000aec    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
          BOTON_START_MENU   0x000b4c    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
          BOTON_START_STOP   0x000ada    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
-         CARGAR_SECUENCIA   0x000d22    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
                 CONFIGURA   0x000030    program     static C:\MicrochipProjects\ProyectoFinal.X\inicializacion.asm
             CONFIGURE_LCD   0x000172    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_subrutinas.asm
                 DATA_READ   0x000140    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_subrutinas.asm
@@ -52,25 +52,25 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
                 GAME_OVER   0x000102    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
                 HIGHSCORE   0x000112    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
         INSTRUCTION_WRITE   0x000130    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_subrutinas.asm
-                    JUEGO   0x000d7a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                    JUEGO   0x000d72    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
                    LED_01   0x000c36    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                    LED_10   0x000c44    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                    LED_11   0x000c52    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                     LOOP1   0x00008c    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
           LOOP_LOSER_LEFT   0x000618    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
          LOOP_LOSER_RIGHT   0x00062c    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
-                     MAIN   0x000d4c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-           MENU_PRINCIPAL   0x000d54    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL1   0x000d82    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                  NIVEL10   0x0012da    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL2   0x000daa    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL3   0x000dee    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL4   0x000e4e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL5   0x000eca    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL6   0x000f62    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL7   0x001016    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL8   0x0010e6    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL9   0x0011d2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                     MAIN   0x000d48    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+           MENU_PRINCIPAL   0x000d4c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL1   0x000d7a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                  NIVEL10   0x0012d2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL2   0x000da2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL3   0x000de6    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL4   0x000e46    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL5   0x000ec2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL6   0x000f5a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL7   0x00100e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL8   0x0010de    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL9   0x0011ca    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
            NIVEL_SUPERADO   0x00011a    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
                   ON_BLUE   0x000be8    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                  ON_GREEN   0x000b80    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
@@ -78,7 +78,7 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
                    ON_RED   0x000b9a    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                  ON_WHITE   0x000bce    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
                 ON_YELLOW   0x000c02    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
-                 PUNTAJES   0x000d5e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                 PUNTAJES   0x000d56    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
           RANDOM_REGISTER   0x000c1c    program     static C:\MicrochipProjects\ProyectoFinal.X\otras_subrutinas.asm
           RECORRIDO_JUEGO   0x000a96    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
            RECORRIDO_MENU   0x000ac2    program     static C:\MicrochipProjects\ProyectoFinal.X\teclado_subrutinas.asm
@@ -91,10 +91,10 @@ Linker Map File - Created Mon Nov 15 18:05:12 2021
          SHOW_SCORES_MENU   0x0008ee    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
           SHOW_TIMES_OVER   0x000826    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
                      STOP   0x000106    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
-            STOP_PUNTAJES   0x000d66    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+            STOP_PUNTAJES   0x000d5e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
                  TIMER_5s   0x0000c8    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
                  TIME_OUT   0x0000f6    program     static C:\MicrochipProjects\ProyectoFinal.X\delays.asm
-      VERIFICAR_HIGHSCORE   0x000d02    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
+      VERIFICAR_HIGHSCORE   0x000d06    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
        WIN_ANIMATION_LOOP   0x000686    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
         WRITE_EEPROM_GAME   0x000c70    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
      _LOADING_CHARS_GANAR   0x00020a    program     static C:\MicrochipProjects\ProyectoFinal.X\lcd_caracteres.asm
@@ -188,23 +188,23 @@ protocolo_escritura_eeprom   0x000cd0    program     static C:\MicrochipProjects
 protocolo_escritura_eeprom   0x000cd0    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
                 waitwrite   0x000cdc    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
      ACTUALIZAR_HIGHSCORE   0x000ce8    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
-      VERIFICAR_HIGHSCORE   0x000d02    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
-         CARGAR_SECUENCIA   0x000d22    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                     MAIN   0x000d4c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-           MENU_PRINCIPAL   0x000d54    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                 PUNTAJES   0x000d5e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-            STOP_PUNTAJES   0x000d66    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-     ANTIRREBOTE_PUNTAJES   0x000d6c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                    JUEGO   0x000d7a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL1   0x000d82    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL2   0x000daa    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL3   0x000dee    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL4   0x000e4e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL5   0x000eca    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL6   0x000f62    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL7   0x001016    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL8   0x0010e6    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                   NIVEL9   0x0011d2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
-                  NIVEL10   0x0012da    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+      VERIFICAR_HIGHSCORE   0x000d06    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
+            BORRAR_EEPROM   0x000d24    program     static C:\MicrochipProjects\ProyectoFinal.X\eeprom_subrutinas.asm
+                     MAIN   0x000d48    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+           MENU_PRINCIPAL   0x000d4c    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                 PUNTAJES   0x000d56    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+            STOP_PUNTAJES   0x000d5e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+     ANTIRREBOTE_PUNTAJES   0x000d64    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                    JUEGO   0x000d72    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL1   0x000d7a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL2   0x000da2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL3   0x000de6    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL4   0x000e46    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL5   0x000ec2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL6   0x000f5a    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL7   0x00100e    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL8   0x0010de    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                   NIVEL9   0x0011ca    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
+                  NIVEL10   0x0012d2    program     static C:\MicrochipProjects\ProyectoFinal.X\main.asm
 
 

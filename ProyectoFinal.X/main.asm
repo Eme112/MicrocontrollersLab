@@ -6,34 +6,11 @@
 #include "otras_subrutinas.asm"
 #include "eeprom_subrutinas.asm"
 
-; TODO: Quitar esto para la ultima entrega. 
-CARGAR_SECUENCIA
-    movlw   b'00000001'			; azul
-    movwf   sec1, A 
-    movlw   b'00000010'			; amarillo
-    movwf   sec2, A
-    movlw   b'00000001'			; azul
-    movwf   sec3, A
-    movlw   b'00001000'			; blanco
-    movwf   sec4, A
-    movlw   b'00001000'			; blanco
-    movwf   sec5, A
-    movlw   b'00000010'			; amarillo
-    movwf   sec6, A
-    movlw   b'00000001'			; azul
-    movwf   sec7, A
-    movlw   b'00000100'			; naranja
-    movwf   sec8, A
-    movlw   b'00000100'			; naranja
-    movwf   sec9, A
-    movlw   b'00001000'			; blanco
-    movwf   sec10, A
-    return
-
 MAIN
+    ; Borrar EEPROM (Utilizar solo en caso de ser necesario).
+    ; call    BORRAR_EEPROM
     ; CONFIGURACION BASICA DE LCD.
     call    CONFIGURE_LCD
-    call    CARGAR_SECUENCIA		; TODO: Quitar esto para la ultima entrega.
 MENU_PRINCIPAL
     clrf    trayectoria
     ; IMPRIMIR MENU PRINCIPAL.

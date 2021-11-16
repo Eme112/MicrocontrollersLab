@@ -1,4 +1,4 @@
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  1
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000025            00040 temp_eeprom2        EQU 0x25
                       00041 
                       00042 ; DEFINICION DE LEDS Y BIT REPRESENTATIVO DE CADA COLOR.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  2
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00005E EF?? F???      00089     goto    MAIN
                       00002 #include "delays.asm"
 000062                00001 DELAY_100us
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  3
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000BA 2E20           00052     decfsz  _256_1              
 0000BC EF?? F???      00053     goto    DELAY_1s_LOOP2              ; (3)*256
 0000C0 2E23           00054     decfsz  _17         
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  4
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000132 928B           00003     bcf     RW                  ; RW -> 0
 000134 EF?? F???      00004     goto    SEND_DATA
 000138                00005 DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  5
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00019E EC?? F???      00005     call INSTRUCTION_WRITE
 0001A2 EC?? F???      00006     call _SAD_PIXELS
 0001A6 0012           00007     return
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  6
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000224 0E00           00058     movlw b'00000'
 000226 EC?? F???      00059     call DATA_WRITE
 00022A 0E00           00060     movlw b'00000'
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  7
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0002BA 0E04           00111     movlw b'00100'
 0002BC EC?? F???      00112     call DATA_WRITE
 0002C0 0E04           00113     movlw b'00100'
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  8
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000348                00164 _LOSING_PIXELS
                       00165     ; first square .0 char
 000348 0E03           00166     movlw b'00011'
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE  9
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0003D8 0E1C           00217     movlw b'11100'
 0003DA EC?? F???      00218     call DATA_WRITE
 0003DE 0E1C           00219     movlw b'11100'
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 10
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00046A EC?? F???      00270     call DATA_WRITE
 00046E 0E11           00271     movlw b'10001'
 000470 EC?? F???      00272     call DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 11
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00323     ; one space
 0004F4 0E06           00324     movlw   0x06 ; Move cursor to 0x05.
 0004F6 8EE8           00325     bsf    WREG, 7, A 
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 12
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00056A EC?? F???      00376     call    DATA_WRITE
 00056E 0E05           00377     movlw   .5 ; Write sixth square.
 000570 EC?? F???      00378     call    DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 13
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -765,7 +765,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0005E4 EC?? F???      00429     call    DATA_WRITE
 0005E8 0E45           00430     movlw   'E' ; Write a 'E'.
 0005EA EC?? F???      00431     call    DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 14
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -824,7 +824,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000658 EC?? F???      00482     call    DATA_WRITE    
 00065C 0E56           00483     movlw   'V'                 
 00065E EC?? F???      00484     call    DATA_WRITE    
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 15
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -883,7 +883,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0006C2 EC?? F???      00535     call    DELAY_100ms
                       00536     
                       00537     ;2   
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 16
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -942,7 +942,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000726 0E02           00588     movlw   0x02
 000728 8EE8           00589     bsf     WREG, 7, A          
 00072A EC?? F???      00590     call    INSTRUCTION_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 17
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1001,7 +1001,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00079A EC?? F???      00641     call    DATA_WRITE
 00079E 0E43           00642     movlw   'C'                 
 0007A0 EC?? F???      00643     call    DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 18
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1060,7 +1060,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000826 0E01           00694     movlw   b'00000001'         ; Clear display and return to home position.
 000828 EC?? F???      00695     call    INSTRUCTION_WRITE
 00082C EC?? F???      00696     call    DELAY_100ms
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 19
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1119,7 +1119,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0008A2 0E45           00747     movlw   'E'                 
 0008A4 EC?? F???      00748     call    DATA_WRITE
 0008A8 0E3A           00749     movlw   ':'                 
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 20
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1178,7 +1178,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00092A 6EA9           00800     movwf   EEADR, A
 00092C 80A6           00801     bsf     EECON1, 0, A ;habilitar lectura
 00092E 50A8           00802     movf    EEDATA, A
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 21
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1237,7 +1237,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0009AA 0E2D           00853     movlw   '-'                 
 0009AC EC?? F???      00854     call    DATA_WRITE    
 0009B0 0E3E           00855     movlw   '>'                 
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 22
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 22
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1296,7 +1296,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00906     
                       00907     ;SECOND LINE
 000A28 0E40           00908     movlw   0x40
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 23
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1355,7 +1355,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000AA0 A281           00006     btfss   fila2                       ; Revisar si se presiona el boton naranja.
 000AA2 EC?? F???      00007     call    BOTON_NARANJA
 000AA6 0EF7           00008     movlw   b'11110111'                 ; ACTIVAR COLUMNA 2 (blanco, azul).
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 24
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1414,7 +1414,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000B16 EC?? F???      00059     call    REVISAR_BOTON
 000B1A 0012           00060     return
 000B1C                00061 BOTON_AZUL
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 25
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1473,7 +1473,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000B92 EC?? F???      00007     call    DELAY_100ms
 000B96 9A89           00008     bcf     led_verde
 000B98 0012           00009     return
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 26
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1532,7 +1532,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00060     
                       00061     
 000C1C                00062 RANDOM_REGISTER ; REGRESA CON UN NUEVO VALOR EN REGISTRO SHIFTER 00,01,10,11
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 27
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 27
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1591,7 +1591,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000C74 80A6           00005     bsf EECON1, 0, A ;habilitar lectura
 000C76 CFA8 F024      00006     movff EEDATA, temp_eeprom1 ; se guarda la part mas reciente en una var temp
 000C7A 0E02           00007     movlw .2
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 28
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 28
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1650,7 +1650,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000CDC                00058 waitwrite
 000CDC B2A6           00059     btfsc EECON1,WR,A ; checa antiflag
 000CDE EF?? F???      00060     goto waitwrite
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 29
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 29
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1659,7 +1659,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000CE2 94A6           00061     bcf EECON1 ,2 ,A ; cuando termine disables write
 000CE4 6AA8           00062     clrf EEDATA ,A ; limpiar para verificaciones posteriores
 000CE6 0012           00063     return
-                      00064    
+                      00064     
                       00065 ; otra que escriba en el highscore
 000CE8                00066 ACTUALIZAR_HIGHSCORE
 000CE8 0E00           00067     movlw .0
@@ -1668,763 +1668,746 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000CF0 EC?? F???      00070     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
                       00071     ; checa si se copio el valor correcto
 000CF4 5005           00072     movf  puntaje, W, A
-000CF6 80A6           00073     bsf  EECON1 , 0, A ; habilita lectura del .0 recien agregado
-000CF8 5CA8           00074     subwf EEDATA, W, A ; resta lectura - puntaje para verificar
-000CFA A4D8           00075     btfss STATUS, 2, A ; checa si la resta da 0 == iguales
-000CFC EF?? F???      00076     goto ACTUALIZAR_HIGHSCORE ; si no son iguales , reintenta escritura
-000D00 0012           00077     return
-                      00078     
-000D02                00079 VERIFICAR_HIGHSCORE
-000D02 0E00           00080     movlw   .0
-000D04 6EA9           00081     movwf   EEADR, A
-000D06 80A6           00082     bsf     EECON1, 0, A ;habilitar lectura
-000D08 50A8           00083     movf    EEDATA, A
-000D0A 90A6           00084     bcf     EECON1, 0 , A ; se inhabilita la lectura
-                      00085     ;----------------------------------------------------
-                      00086     ;NO FUNCIONA PORQUE PUNTAJE Y HIGHSCORE ESTAN EN ASCII
-                      00087     ;----------------------------------------------------
-000D0C 5C05           00088     subwf puntaje, W, A ; resta puntaje - highscore
-000D0E A8D8           00089     btfss STATUS, 4, A ; checa si la resta da negativo
-000D10 0012           00090     return
-000D12 B4D8           00091     btfsc STATUS, 2, A ; checa si la resta da igual a 0
-000D14 0012           00092     return
-                      00093     
-                      00094     ;NEW HIGHSCORE
-000D16 EC?? F???      00095     call    SHOW_HIGHSCORE
-000D1A EC?? F???      00096     call    ACTUALIZAR_HIGHSCORE
-000D1E EC?? F???      00097     call    DELAY_1s
+000CF6 9EA6           00073     bcf EECON1, 7, A    ; clear EEPGD control bit
+000CF8 80A6           00074     bsf  EECON1 , 0, A ; habilita lectura del .0 recien agregado
+000CFA 5CA8           00075     subwf EEDATA, W, A ; resta lectura - puntaje para verificar
+000CFC A4D8           00076     btfss STATUS, 2, A ; checa si la resta da 0 == iguales
+000CFE EF?? F???      00077     goto ACTUALIZAR_HIGHSCORE ; si no son iguales , reintenta escritura
+000D02 6AA8           00078     clrf EEDATA,A
+000D04 0012           00079     return
+                      00080     
+000D06                00081 VERIFICAR_HIGHSCORE
+000D06 0E00           00082     movlw   .0
+000D08 6EA9           00083     movwf   EEADR, A
+000D0A 9EA6           00084     bcf EECON1, 7, A    ; clear EEPGD control bit
+000D0C 80A6           00085     bsf  EECON1 , 0, A  ; habilita lectura del .0 recien agregado
+000D0E 50A8           00086     movf    EEDATA,W,  A         ; en este punto el highscore esta en wreg
+000D10 5C05           00087     subwf puntaje, W, A ; resta puntaje - highscore
+000D12 B8D8           00088     btfsc STATUS, 4, A ; checa si la resta da negativo, si + == new hs, si - == no actualizar
+000D14 0012           00089     return
+000D16 EC?? F???      00090     call ACTUALIZAR_HIGHSCORE
+000D1A EC?? F???      00091     call SHOW_HIGHSCORE
+000D1E EC?? F???      00092     call DELAY_1s
+000D22 0012           00093     return
+                      00094     
+000D24                00095 BORRAR_EEPROM
+000D24 0E00           00096     movlw .0
+000D26 6EA9           00097     movwf EEADR, A
+000D28 6EA8           00098     movwf EEDATA, A ; pasamos al 0x00
+000D2A EC?? F???      00099     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+000D2E 0E01           00100     movlw .1
+000D30 6EA9           00101     movwf EEADR, A ; pasamos el 0x01
+000D32 EC?? F???      00102     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+000D36 0E02           00103     movlw .2
+000D38 6EA9           00104     movwf EEADR, A ; pasamos el 0x02
+000D3A EC?? F???      00105     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+000D3E 0E03           00106     movlw .3
+000D40 6EA9           00107     movwf EEADR, A ; pasamos el 0x03
+000D42 EC?? F???      00108     call  protocolo_escritura_eeprom ; se realiza el protocolo y se escribe
+000D46 0012           00109     return
                       00008 
-                      00009 ; TODO: Quitar esto para la ultima entrega. 
-000D22                00010 CARGAR_SECUENCIA
-000D22 0E01           00011     movlw   b'00000001'                 ; azul
-000D24 6E11           00012     movwf   sec1, A 
-000D26 0E02           00013     movlw   b'00000010'                 ; amarillo
-000D28 6E12           00014     movwf   sec2, A
-000D2A 0E01           00015     movlw   b'00000001'                 ; azul
-000D2C 6E13           00016     movwf   sec3, A
-000D2E 0E08           00017     movlw   b'00001000'                 ; blanco
-000D30 6E14           00018     movwf   sec4, A
-000D32 0E08           00019     movlw   b'00001000'                 ; blanco
-000D34 6E15           00020     movwf   sec5, A
-000D36 0E02           00021     movlw   b'00000010'                 ; amarillo
-000D38 6E16           00022     movwf   sec6, A
-000D3A 0E01           00023     movlw   b'00000001'                 ; azul
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 30
+000D48                00009 MAIN
+                      00010     ; Borrar EEPROM (Utilizar solo en caso de ser necesario).
+                      00011     ; call    BORRAR_EEPROM
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 30
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000D3C 6E17           00024     movwf   sec7, A
-000D3E 0E04           00025     movlw   b'00000100'                 ; naranja
-000D40 6E18           00026     movwf   sec8, A
-000D42 0E04           00027     movlw   b'00000100'                 ; naranja
-000D44 6E19           00028     movwf   sec9, A
-000D46 0E08           00029     movlw   b'00001000'                 ; blanco
-000D48 6E1A           00030     movwf   sec10, A
-000D4A 0012           00031     return
-                      00032 
-000D4C                00033 MAIN
-                      00034     ; CONFIGURACION BASICA DE LCD.
-000D4C EC?? F???      00035     call    CONFIGURE_LCD
-000D50 EC?? F???      00036     call    CARGAR_SECUENCIA            ; TODO: Quitar esto para la ultima entrega.
-000D54                00037 MENU_PRINCIPAL
-000D54 6A0A           00038     clrf    trayectoria
-                      00039     ; IMPRIMIR MENU PRINCIPAL.
-000D56 EC?? F???      00040     call    SHOW_MAIN_MENU
-                      00041     ; REVISAR SI SE PRESIONAN BOTONES DE START/STOP O HIGHSCORE.
-000D5A EF?? F???      00042     goto    RECORRIDO_MENU
-                      00043     
-000D5E                00044 PUNTAJES
-                      00045     ; TODO: Mostrar puntajes (proxima entrega).
-000D5E EC?? F???      00046     call    SHOW_SCORES_MENU
-                      00047     ; REVISAR SI SE PRESIONA START/STOP PARA REGRESAR A MENU PRINCIPAL.
-000D62 0EFB           00048     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
-000D64 6E8A           00049     movwf   LATB, A
-000D66                00050 STOP_PUNTAJES
-000D66 B081           00051     btfsc   fila1                       ; Revisar si se presiona el boton de START/STOP.
-000D68 EF?? F???      00052     goto    STOP_PUNTAJES
-000D6C                00053 ANTIRREBOTE_PUNTAJES
-000D6C A081           00054     btfss   fila1                       ; Revisar si sigue presionado el boton de START/STOP.
-000D6E EF?? F???      00055     goto    ANTIRREBOTE_PUNTAJES
-000D72 EC?? F???      00056     call    DELAY_20ms
-000D76 EF?? F???      00057     goto    MENU_PRINCIPAL
+                      00012     ; CONFIGURACION BASICA DE LCD.
+000D48 EC?? F???      00013     call    CONFIGURE_LCD
+000D4C                00014 MENU_PRINCIPAL
+000D4C 6A0A           00015     clrf    trayectoria
+                      00016     ; IMPRIMIR MENU PRINCIPAL.
+000D4E EC?? F???      00017     call    SHOW_MAIN_MENU
+                      00018     ; REVISAR SI SE PRESIONAN BOTONES DE START/STOP O HIGHSCORE.
+000D52 EF?? F???      00019     goto    RECORRIDO_MENU
+                      00020     
+000D56                00021 PUNTAJES
+                      00022     ; TODO: Mostrar puntajes (proxima entrega).
+000D56 EC?? F???      00023     call    SHOW_SCORES_MENU
+                      00024     ; REVISAR SI SE PRESIONA START/STOP PARA REGRESAR A MENU PRINCIPAL.
+000D5A 0EFB           00025     movlw   b'11111011'                 ; ACTIVAR COLUMNA 1 (verde, naranja).
+000D5C 6E8A           00026     movwf   LATB, A
+000D5E                00027 STOP_PUNTAJES
+000D5E B081           00028     btfsc   fila1                       ; Revisar si se presiona el boton de START/STOP.
+000D60 EF?? F???      00029     goto    STOP_PUNTAJES
+000D64                00030 ANTIRREBOTE_PUNTAJES
+000D64 A081           00031     btfss   fila1                       ; Revisar si sigue presionado el boton de START/STOP.
+000D66 EF?? F???      00032     goto    ANTIRREBOTE_PUNTAJES
+000D6A EC?? F???      00033     call    DELAY_20ms
+000D6E EF?? F???      00034     goto    MENU_PRINCIPAL
+                      00035     
+000D72                00036 JUEGO
+000D72 0E30           00037     movlw   '0'
+000D74 6E05           00038     movwf   puntaje, A
+000D76 EC?? F???      00039     call    SHOW_PUNTAJE
+000D7A                00040 NIVEL1
+000D7A EC?? F???      00041     call    RANDOM_REGISTER
+000D7E C00C F011      00042     movff   sec_aleatoria, sec1
+                      00043     ; MOSTRAR SECUENCIA.
+000D82 C011 F00B      00044     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000D86 EC?? F???      00045     call    ENCENDER_SECUENCIA
+                      00046     
+                      00047     ; SECUENCIA 1.
+000D8A C011 F007      00048     movff   sec1, boton_esperado
+000D8E EC?? F???      00049     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000D92 B00A           00050     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000D94 EF?? F???      00051     goto    MENU_PRINCIPAL
+000D98 6A0A           00052     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00053     
+                      00054     ; NIVEL SUPERADO.
+000D9A 0E31           00055     movlw   '1'
+000D9C 6E05           00056     movwf   puntaje, A
+000D9E EC?? F???      00057     call    NIVEL_SUPERADO
                       00058     
-000D7A                00059 JUEGO
-000D7A 0E30           00060     movlw   '0'
-000D7C 6E05           00061     movwf   puntaje, A
-000D7E EC?? F???      00062     call    SHOW_PUNTAJE
-000D82                00063 NIVEL1
-000D82 EC?? F???      00064     call    RANDOM_REGISTER
-000D86 C00C F011      00065     movff   sec_aleatoria, sec1
-                      00066     ; MOSTRAR SECUENCIA.
-000D8A C011 F00B      00067     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000D8E EC?? F???      00068     call    ENCENDER_SECUENCIA
-                      00069     
-                      00070     ; SECUENCIA 1.
-000D92 C011 F007      00071     movff   sec1, boton_esperado
-000D96 EC?? F???      00072     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000D9A B00A           00073     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000D9C EF?? F???      00074     goto    MENU_PRINCIPAL
-000DA0 6A0A           00075     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00076     
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 31
+000DA2                00059 NIVEL2
+000DA2 EC?? F???      00060     call    RANDOM_REGISTER
+000DA6 C00C F012      00061     movff   sec_aleatoria, sec2
+                      00062     ; MOSTRAR SECUENCIA.
+000DAA C011 F00B      00063     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000DAE EC?? F???      00064     call    ENCENDER_SECUENCIA
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 31
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00077     ; NIVEL SUPERADO.
-000DA2 0E31           00078     movlw   '1'
-000DA4 6E05           00079     movwf   puntaje, A
-000DA6 EC?? F???      00080     call    NIVEL_SUPERADO
+000DB2 EC?? F???      00065     call    DELAY_100ms
+000DB6 C012 F00B      00066     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000DBA EC?? F???      00067     call    ENCENDER_SECUENCIA
+                      00068     
+                      00069     ; SECUENCIA 1.
+000DBE C011 F007      00070     movff   sec1, boton_esperado
+000DC2 EC?? F???      00071     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000DC6 B00A           00072     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000DC8 EF?? F???      00073     goto    MENU_PRINCIPAL
+000DCC 6A0A           00074     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00075     ; SECUENCIA 2.
+000DCE C012 F007      00076     movff   sec2, boton_esperado
+000DD2 EC?? F???      00077     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000DD6 B00A           00078     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000DD8 EF?? F???      00079     goto    MENU_PRINCIPAL
+000DDC 6A0A           00080     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
                       00081     
-000DAA                00082 NIVEL2
-000DAA EC?? F???      00083     call    RANDOM_REGISTER
-000DAE C00C F012      00084     movff   sec_aleatoria, sec2
-                      00085     ; MOSTRAR SECUENCIA.
-000DB2 C011 F00B      00086     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000DB6 EC?? F???      00087     call    ENCENDER_SECUENCIA
-000DBA EC?? F???      00088     call    DELAY_100ms
-000DBE C012 F00B      00089     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-000DC2 EC?? F???      00090     call    ENCENDER_SECUENCIA
-                      00091     
-                      00092     ; SECUENCIA 1.
-000DC6 C011 F007      00093     movff   sec1, boton_esperado
-000DCA EC?? F???      00094     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000DCE B00A           00095     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000DD0 EF?? F???      00096     goto    MENU_PRINCIPAL
-000DD4 6A0A           00097     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00098     ; SECUENCIA 2.
-000DD6 C012 F007      00099     movff   sec2, boton_esperado
-000DDA EC?? F???      00100     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000DDE B00A           00101     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000DE0 EF?? F???      00102     goto    MENU_PRINCIPAL
-000DE4 6A0A           00103     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00104     
-                      00105     ; NIVEL SUPERADO.
-000DE6 0E32           00106     movlw   '2'
-000DE8 6E05           00107     movwf   puntaje, A
-000DEA EC?? F???      00108     call    NIVEL_SUPERADO
-                      00109     
-000DEE                00110 NIVEL3
-000DEE EC?? F???      00111     call    RANDOM_REGISTER
-000DF2 C00C F013      00112     movff   sec_aleatoria, sec3
-                      00113     ; MOSTRAR SECUENCIA.
-000DF6 C011 F00B      00114     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000DFA EC?? F???      00115     call    ENCENDER_SECUENCIA
-000DFE EC?? F???      00116     call    DELAY_100ms
-000E02 C012 F00B      00117     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-000E06 EC?? F???      00118     call    ENCENDER_SECUENCIA
-000E0A EC?? F???      00119     call    DELAY_100ms
-000E0E C013 F00B      00120     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-000E12 EC?? F???      00121     call    ENCENDER_SECUENCIA
-                      00122     
-                      00123     ; SECUENCIA 1.
-000E16 C011 F007      00124     movff   sec1, boton_esperado
-000E1A EC?? F???      00125     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000E1E B00A           00126     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000E20 EF?? F???      00127     goto    MENU_PRINCIPAL
-000E24 6A0A           00128     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00129     ; SECUENCIA 2.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 32
+                      00082     ; NIVEL SUPERADO.
+000DDE 0E32           00083     movlw   '2'
+000DE0 6E05           00084     movwf   puntaje, A
+000DE2 EC?? F???      00085     call    NIVEL_SUPERADO
+                      00086     
+000DE6                00087 NIVEL3
+000DE6 EC?? F???      00088     call    RANDOM_REGISTER
+000DEA C00C F013      00089     movff   sec_aleatoria, sec3
+                      00090     ; MOSTRAR SECUENCIA.
+000DEE C011 F00B      00091     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000DF2 EC?? F???      00092     call    ENCENDER_SECUENCIA
+000DF6 EC?? F???      00093     call    DELAY_100ms
+000DFA C012 F00B      00094     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000DFE EC?? F???      00095     call    ENCENDER_SECUENCIA
+000E02 EC?? F???      00096     call    DELAY_100ms
+000E06 C013 F00B      00097     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000E0A EC?? F???      00098     call    ENCENDER_SECUENCIA
+                      00099     
+                      00100     ; SECUENCIA 1.
+000E0E C011 F007      00101     movff   sec1, boton_esperado
+000E12 EC?? F???      00102     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E16 B00A           00103     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E18 EF?? F???      00104     goto    MENU_PRINCIPAL
+000E1C 6A0A           00105     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00106     ; SECUENCIA 2.
+000E1E C012 F007      00107     movff   sec2, boton_esperado
+000E22 EC?? F???      00108     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E26 B00A           00109     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E28 EF?? F???      00110     goto    MENU_PRINCIPAL
+000E2C 6A0A           00111     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00112     ; SECUENCIA 3.
+000E2E C013 F007      00113     movff   sec3, boton_esperado
+000E32 EC?? F???      00114     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E36 B00A           00115     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E38 EF?? F???      00116     goto    MENU_PRINCIPAL
+000E3C 6A0A           00117     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 32
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000E26 C012 F007      00130     movff   sec2, boton_esperado
-000E2A EC?? F???      00131     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000E2E B00A           00132     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000E30 EF?? F???      00133     goto    MENU_PRINCIPAL
-000E34 6A0A           00134     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00135     ; SECUENCIA 3.
-000E36 C013 F007      00136     movff   sec3, boton_esperado
-000E3A EC?? F???      00137     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000E3E B00A           00138     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000E40 EF?? F???      00139     goto    MENU_PRINCIPAL
-000E44 6A0A           00140     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00141     
-                      00142     ; NIVEL SUPERADO.
-000E46 0E33           00143     movlw   '3'
-000E48 6E05           00144     movwf   puntaje, A
-000E4A EC?? F???      00145     call    NIVEL_SUPERADO
-                      00146     
-000E4E                00147 NIVEL4
-000E4E EC?? F???      00148     call    RANDOM_REGISTER
-000E52 C00C F014      00149     movff   sec_aleatoria, sec4
-                      00150     ; MOSTRAR SECUENCIA.
-000E56 C011 F00B      00151     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000E5A EC?? F???      00152     call    ENCENDER_SECUENCIA
-000E5E EC?? F???      00153     call    DELAY_100ms
-000E62 C012 F00B      00154     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-000E66 EC?? F???      00155     call    ENCENDER_SECUENCIA
-000E6A EC?? F???      00156     call    DELAY_100ms
-000E6E C013 F00B      00157     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-000E72 EC?? F???      00158     call    ENCENDER_SECUENCIA
-000E76 EC?? F???      00159     call    DELAY_100ms
-000E7A C014 F00B      00160     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-000E7E EC?? F???      00161     call    ENCENDER_SECUENCIA
-                      00162     
-                      00163     ; SECUENCIA 1.
-000E82 C011 F007      00164     movff   sec1, boton_esperado
-000E86 EC?? F???      00165     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000E8A B00A           00166     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000E8C EF?? F???      00167     goto    MENU_PRINCIPAL
-000E90 6A0A           00168     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00169     ; SECUENCIA 2.
-000E92 C012 F007      00170     movff   sec2, boton_esperado
-000E96 EC?? F???      00171     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000E9A B00A           00172     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000E9C EF?? F???      00173     goto    MENU_PRINCIPAL
-000EA0 6A0A           00174     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00175     ; SECUENCIA 3.
-000EA2 C013 F007      00176     movff   sec3, boton_esperado
-000EA6 EC?? F???      00177     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000EAA B00A           00178     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000EAC EF?? F???      00179     goto    MENU_PRINCIPAL
-000EB0 6A0A           00180     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00181     ; SECUENCIA 4.
-000EB2 C014 F007      00182     movff   sec4, boton_esperado
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 33
+                      00118     
+                      00119     ; NIVEL SUPERADO.
+000E3E 0E33           00120     movlw   '3'
+000E40 6E05           00121     movwf   puntaje, A
+000E42 EC?? F???      00122     call    NIVEL_SUPERADO
+                      00123     
+000E46                00124 NIVEL4
+000E46 EC?? F???      00125     call    RANDOM_REGISTER
+000E4A C00C F014      00126     movff   sec_aleatoria, sec4
+                      00127     ; MOSTRAR SECUENCIA.
+000E4E C011 F00B      00128     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000E52 EC?? F???      00129     call    ENCENDER_SECUENCIA
+000E56 EC?? F???      00130     call    DELAY_100ms
+000E5A C012 F00B      00131     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000E5E EC?? F???      00132     call    ENCENDER_SECUENCIA
+000E62 EC?? F???      00133     call    DELAY_100ms
+000E66 C013 F00B      00134     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000E6A EC?? F???      00135     call    ENCENDER_SECUENCIA
+000E6E EC?? F???      00136     call    DELAY_100ms
+000E72 C014 F00B      00137     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000E76 EC?? F???      00138     call    ENCENDER_SECUENCIA
+                      00139     
+                      00140     ; SECUENCIA 1.
+000E7A C011 F007      00141     movff   sec1, boton_esperado
+000E7E EC?? F???      00142     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E82 B00A           00143     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E84 EF?? F???      00144     goto    MENU_PRINCIPAL
+000E88 6A0A           00145     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00146     ; SECUENCIA 2.
+000E8A C012 F007      00147     movff   sec2, boton_esperado
+000E8E EC?? F???      00148     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000E92 B00A           00149     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000E94 EF?? F???      00150     goto    MENU_PRINCIPAL
+000E98 6A0A           00151     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00152     ; SECUENCIA 3.
+000E9A C013 F007      00153     movff   sec3, boton_esperado
+000E9E EC?? F???      00154     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000EA2 B00A           00155     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000EA4 EF?? F???      00156     goto    MENU_PRINCIPAL
+000EA8 6A0A           00157     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00158     ; SECUENCIA 4.
+000EAA C014 F007      00159     movff   sec4, boton_esperado
+000EAE EC?? F???      00160     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000EB2 B00A           00161     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000EB4 EF?? F???      00162     goto    MENU_PRINCIPAL
+000EB8 6A0A           00163     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00164     
+                      00165     ; NIVEL SUPERADO.
+000EBA 0E34           00166     movlw   '4'
+000EBC 6E05           00167     movwf   puntaje, A
+000EBE EC?? F???      00168     call    NIVEL_SUPERADO
+                      00169     
+000EC2                00170 NIVEL5
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 33
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000EB6 EC?? F???      00183     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000EBA B00A           00184     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000EBC EF?? F???      00185     goto    MENU_PRINCIPAL
-000EC0 6A0A           00186     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00187     
-                      00188     ; NIVEL SUPERADO.
-000EC2 0E34           00189     movlw   '4'
-000EC4 6E05           00190     movwf   puntaje, A
-000EC6 EC?? F???      00191     call    NIVEL_SUPERADO
-                      00192     
-000ECA                00193 NIVEL5
-000ECA EC?? F???      00194     call    RANDOM_REGISTER
-000ECE C00C F015      00195     movff   sec_aleatoria, sec5
-                      00196     ; MOSTRAR SECUENCIA.
-000ED2 C011 F00B      00197     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000ED6 EC?? F???      00198     call    ENCENDER_SECUENCIA
-000EDA EC?? F???      00199     call    DELAY_100ms
-000EDE C012 F00B      00200     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-000EE2 EC?? F???      00201     call    ENCENDER_SECUENCIA
-000EE6 EC?? F???      00202     call    DELAY_100ms
-000EEA C013 F00B      00203     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-000EEE EC?? F???      00204     call    ENCENDER_SECUENCIA
-000EF2 EC?? F???      00205     call    DELAY_100ms
-000EF6 C014 F00B      00206     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-000EFA EC?? F???      00207     call    ENCENDER_SECUENCIA
-000EFE EC?? F???      00208     call    DELAY_100ms
-000F02 C015 F00B      00209     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-000F06 EC?? F???      00210     call    ENCENDER_SECUENCIA
-                      00211     
-                      00212     ; SECUENCIA 1.
-000F0A C011 F007      00213     movff   sec1, boton_esperado
-000F0E EC?? F???      00214     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000F12 B00A           00215     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000F14 EF?? F???      00216     goto    MENU_PRINCIPAL
-000F18 6A0A           00217     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00218     ; SECUENCIA 2.
-000F1A C012 F007      00219     movff   sec2, boton_esperado
-000F1E EC?? F???      00220     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000F22 B00A           00221     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000F24 EF?? F???      00222     goto    MENU_PRINCIPAL
-000F28 6A0A           00223     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00224     ; SECUENCIA 3.
-000F2A C013 F007      00225     movff   sec3, boton_esperado
-000F2E EC?? F???      00226     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000F32 B00A           00227     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000F34 EF?? F???      00228     goto    MENU_PRINCIPAL
-000F38 6A0A           00229     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00230     ; SECUENCIA 4.
-000F3A C014 F007      00231     movff   sec4, boton_esperado
-000F3E EC?? F???      00232     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000F42 B00A           00233     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000F44 EF?? F???      00234     goto    MENU_PRINCIPAL
-000F48 6A0A           00235     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 34
+000EC2 EC?? F???      00171     call    RANDOM_REGISTER
+000EC6 C00C F015      00172     movff   sec_aleatoria, sec5
+                      00173     ; MOSTRAR SECUENCIA.
+000ECA C011 F00B      00174     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000ECE EC?? F???      00175     call    ENCENDER_SECUENCIA
+000ED2 EC?? F???      00176     call    DELAY_100ms
+000ED6 C012 F00B      00177     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000EDA EC?? F???      00178     call    ENCENDER_SECUENCIA
+000EDE EC?? F???      00179     call    DELAY_100ms
+000EE2 C013 F00B      00180     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000EE6 EC?? F???      00181     call    ENCENDER_SECUENCIA
+000EEA EC?? F???      00182     call    DELAY_100ms
+000EEE C014 F00B      00183     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000EF2 EC?? F???      00184     call    ENCENDER_SECUENCIA
+000EF6 EC?? F???      00185     call    DELAY_100ms
+000EFA C015 F00B      00186     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+000EFE EC?? F???      00187     call    ENCENDER_SECUENCIA
+                      00188     
+                      00189     ; SECUENCIA 1.
+000F02 C011 F007      00190     movff   sec1, boton_esperado
+000F06 EC?? F???      00191     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F0A B00A           00192     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F0C EF?? F???      00193     goto    MENU_PRINCIPAL
+000F10 6A0A           00194     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00195     ; SECUENCIA 2.
+000F12 C012 F007      00196     movff   sec2, boton_esperado
+000F16 EC?? F???      00197     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F1A B00A           00198     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F1C EF?? F???      00199     goto    MENU_PRINCIPAL
+000F20 6A0A           00200     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00201     ; SECUENCIA 3.
+000F22 C013 F007      00202     movff   sec3, boton_esperado
+000F26 EC?? F???      00203     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F2A B00A           00204     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F2C EF?? F???      00205     goto    MENU_PRINCIPAL
+000F30 6A0A           00206     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00207     ; SECUENCIA 4.
+000F32 C014 F007      00208     movff   sec4, boton_esperado
+000F36 EC?? F???      00209     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F3A B00A           00210     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F3C EF?? F???      00211     goto    MENU_PRINCIPAL
+000F40 6A0A           00212     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00213     ; SECUENCIA 5.
+000F42 C015 F007      00214     movff   sec5, boton_esperado
+000F46 EC?? F???      00215     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000F4A B00A           00216     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000F4C EF?? F???      00217     goto    MENU_PRINCIPAL
+000F50 6A0A           00218     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00219     
+                      00220     ; NIVEL SUPERADO.
+000F52 0E35           00221     movlw   '5'
+000F54 6E05           00222     movwf   puntaje, A
+000F56 EC?? F???      00223     call    NIVEL_SUPERADO
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 34
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00236     ; SECUENCIA 5.
-000F4A C015 F007      00237     movff   sec5, boton_esperado
-000F4E EC?? F???      00238     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000F52 B00A           00239     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000F54 EF?? F???      00240     goto    MENU_PRINCIPAL
-000F58 6A0A           00241     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00242     
-                      00243     ; NIVEL SUPERADO.
-000F5A 0E35           00244     movlw   '5'
-000F5C 6E05           00245     movwf   puntaje, A
-000F5E EC?? F???      00246     call    NIVEL_SUPERADO
-                      00247     
-000F62                00248 NIVEL6
-000F62 EC?? F???      00249     call    RANDOM_REGISTER
-000F66 C00C F016      00250     movff   sec_aleatoria, sec6
-                      00251     ; MOSTRAR SECUENCIA.
-000F6A C011 F00B      00252     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-000F6E EC?? F???      00253     call    ENCENDER_SECUENCIA
-000F72 EC?? F???      00254     call    DELAY_100ms
-000F76 C012 F00B      00255     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-000F7A EC?? F???      00256     call    ENCENDER_SECUENCIA
-000F7E EC?? F???      00257     call    DELAY_100ms
-000F82 C013 F00B      00258     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-000F86 EC?? F???      00259     call    ENCENDER_SECUENCIA
-000F8A EC?? F???      00260     call    DELAY_100ms
-000F8E C014 F00B      00261     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-000F92 EC?? F???      00262     call    ENCENDER_SECUENCIA
-000F96 EC?? F???      00263     call    DELAY_100ms
-000F9A C015 F00B      00264     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-000F9E EC?? F???      00265     call    ENCENDER_SECUENCIA
-000FA2 EC?? F???      00266     call    DELAY_100ms
-000FA6 C016 F00B      00267     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
-000FAA EC?? F???      00268     call    ENCENDER_SECUENCIA
-                      00269     
-                      00270     ; SECUENCIA 1.
-000FAE C011 F007      00271     movff   sec1, boton_esperado
-000FB2 EC?? F???      00272     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000FB6 B00A           00273     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000FB8 EF?? F???      00274     goto    MENU_PRINCIPAL
-000FBC 6A0A           00275     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00276     ; SECUENCIA 2.
-000FBE C012 F007      00277     movff   sec2, boton_esperado
-000FC2 EC?? F???      00278     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000FC6 B00A           00279     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000FC8 EF?? F???      00280     goto    MENU_PRINCIPAL
-000FCC 6A0A           00281     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00282     ; SECUENCIA 3.
-000FCE C013 F007      00283     movff   sec3, boton_esperado
-000FD2 EC?? F???      00284     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000FD6 B00A           00285     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000FD8 EF?? F???      00286     goto    MENU_PRINCIPAL
-000FDC 6A0A           00287     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00288     ; SECUENCIA 4.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 35
+                      00224     
+000F5A                00225 NIVEL6
+000F5A EC?? F???      00226     call    RANDOM_REGISTER
+000F5E C00C F016      00227     movff   sec_aleatoria, sec6
+                      00228     ; MOSTRAR SECUENCIA.
+000F62 C011 F00B      00229     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+000F66 EC?? F???      00230     call    ENCENDER_SECUENCIA
+000F6A EC?? F???      00231     call    DELAY_100ms
+000F6E C012 F00B      00232     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+000F72 EC?? F???      00233     call    ENCENDER_SECUENCIA
+000F76 EC?? F???      00234     call    DELAY_100ms
+000F7A C013 F00B      00235     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+000F7E EC?? F???      00236     call    ENCENDER_SECUENCIA
+000F82 EC?? F???      00237     call    DELAY_100ms
+000F86 C014 F00B      00238     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+000F8A EC?? F???      00239     call    ENCENDER_SECUENCIA
+000F8E EC?? F???      00240     call    DELAY_100ms
+000F92 C015 F00B      00241     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+000F96 EC?? F???      00242     call    ENCENDER_SECUENCIA
+000F9A EC?? F???      00243     call    DELAY_100ms
+000F9E C016 F00B      00244     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+000FA2 EC?? F???      00245     call    ENCENDER_SECUENCIA
+                      00246     
+                      00247     ; SECUENCIA 1.
+000FA6 C011 F007      00248     movff   sec1, boton_esperado
+000FAA EC?? F???      00249     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FAE B00A           00250     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FB0 EF?? F???      00251     goto    MENU_PRINCIPAL
+000FB4 6A0A           00252     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00253     ; SECUENCIA 2.
+000FB6 C012 F007      00254     movff   sec2, boton_esperado
+000FBA EC?? F???      00255     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FBE B00A           00256     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FC0 EF?? F???      00257     goto    MENU_PRINCIPAL
+000FC4 6A0A           00258     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00259     ; SECUENCIA 3.
+000FC6 C013 F007      00260     movff   sec3, boton_esperado
+000FCA EC?? F???      00261     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FCE B00A           00262     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FD0 EF?? F???      00263     goto    MENU_PRINCIPAL
+000FD4 6A0A           00264     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00265     ; SECUENCIA 4.
+000FD6 C014 F007      00266     movff   sec4, boton_esperado
+000FDA EC?? F???      00267     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FDE B00A           00268     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FE0 EF?? F???      00269     goto    MENU_PRINCIPAL
+000FE4 6A0A           00270     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00271     ; SECUENCIA 5.
+000FE6 C015 F007      00272     movff   sec5, boton_esperado
+000FEA EC?? F???      00273     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FEE B00A           00274     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+000FF0 EF?? F???      00275     goto    MENU_PRINCIPAL
+000FF4 6A0A           00276     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 35
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-000FDE C014 F007      00289     movff   sec4, boton_esperado
-000FE2 EC?? F???      00290     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000FE6 B00A           00291     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000FE8 EF?? F???      00292     goto    MENU_PRINCIPAL
-000FEC 6A0A           00293     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00294     ; SECUENCIA 5.
-000FEE C015 F007      00295     movff   sec5, boton_esperado
-000FF2 EC?? F???      00296     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-000FF6 B00A           00297     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-000FF8 EF?? F???      00298     goto    MENU_PRINCIPAL
-000FFC 6A0A           00299     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00300     ; SECUENCIA 6.
-000FFE C016 F007      00301     movff   sec6, boton_esperado
-001002 EC?? F???      00302     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001006 B00A           00303     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001008 EF?? F???      00304     goto    MENU_PRINCIPAL
-00100C 6A0A           00305     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00306     
-                      00307     ; NIVEL SUPERADO.
-00100E 0E36           00308     movlw   '6'
-001010 6E05           00309     movwf   puntaje, A
-001012 EC?? F???      00310     call    NIVEL_SUPERADO
-                      00311     
-001016                00312 NIVEL7
-001016 EC?? F???      00313     call    RANDOM_REGISTER
-00101A C00C F017      00314     movff   sec_aleatoria, sec7
-                      00315     ; MOSTRAR SECUENCIA.
-00101E C011 F00B      00316     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-001022 EC?? F???      00317     call    ENCENDER_SECUENCIA
-001026 EC?? F???      00318     call    DELAY_100ms
-00102A C012 F00B      00319     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-00102E EC?? F???      00320     call    ENCENDER_SECUENCIA
-001032 EC?? F???      00321     call    DELAY_100ms
-001036 C013 F00B      00322     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-00103A EC?? F???      00323     call    ENCENDER_SECUENCIA
-00103E EC?? F???      00324     call    DELAY_100ms
-001042 C014 F00B      00325     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-001046 EC?? F???      00326     call    ENCENDER_SECUENCIA
-00104A EC?? F???      00327     call    DELAY_100ms
-00104E C015 F00B      00328     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-001052 EC?? F???      00329     call    ENCENDER_SECUENCIA
-001056 EC?? F???      00330     call    DELAY_100ms
-00105A C016 F00B      00331     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
-00105E EC?? F???      00332     call    ENCENDER_SECUENCIA
-001062 EC?? F???      00333     call    DELAY_100ms
-001066 C017 F00B      00334     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
-00106A EC?? F???      00335     call    ENCENDER_SECUENCIA
-                      00336     
-                      00337     ; SECUENCIA 1.
-00106E C011 F007      00338     movff   sec1, boton_esperado
-001072 EC?? F???      00339     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001076 B00A           00340     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001078 EF?? F???      00341     goto    MENU_PRINCIPAL
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 36
+                      00277     ; SECUENCIA 6.
+000FF6 C016 F007      00278     movff   sec6, boton_esperado
+000FFA EC?? F???      00279     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+000FFE B00A           00280     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001000 EF?? F???      00281     goto    MENU_PRINCIPAL
+001004 6A0A           00282     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00283     
+                      00284     ; NIVEL SUPERADO.
+001006 0E36           00285     movlw   '6'
+001008 6E05           00286     movwf   puntaje, A
+00100A EC?? F???      00287     call    NIVEL_SUPERADO
+                      00288     
+00100E                00289 NIVEL7
+00100E EC?? F???      00290     call    RANDOM_REGISTER
+001012 C00C F017      00291     movff   sec_aleatoria, sec7
+                      00292     ; MOSTRAR SECUENCIA.
+001016 C011 F00B      00293     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+00101A EC?? F???      00294     call    ENCENDER_SECUENCIA
+00101E EC?? F???      00295     call    DELAY_100ms
+001022 C012 F00B      00296     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+001026 EC?? F???      00297     call    ENCENDER_SECUENCIA
+00102A EC?? F???      00298     call    DELAY_100ms
+00102E C013 F00B      00299     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+001032 EC?? F???      00300     call    ENCENDER_SECUENCIA
+001036 EC?? F???      00301     call    DELAY_100ms
+00103A C014 F00B      00302     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+00103E EC?? F???      00303     call    ENCENDER_SECUENCIA
+001042 EC?? F???      00304     call    DELAY_100ms
+001046 C015 F00B      00305     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+00104A EC?? F???      00306     call    ENCENDER_SECUENCIA
+00104E EC?? F???      00307     call    DELAY_100ms
+001052 C016 F00B      00308     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001056 EC?? F???      00309     call    ENCENDER_SECUENCIA
+00105A EC?? F???      00310     call    DELAY_100ms
+00105E C017 F00B      00311     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001062 EC?? F???      00312     call    ENCENDER_SECUENCIA
+                      00313     
+                      00314     ; SECUENCIA 1.
+001066 C011 F007      00315     movff   sec1, boton_esperado
+00106A EC?? F???      00316     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00106E B00A           00317     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001070 EF?? F???      00318     goto    MENU_PRINCIPAL
+001074 6A0A           00319     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00320     ; SECUENCIA 2.
+001076 C012 F007      00321     movff   sec2, boton_esperado
+00107A EC?? F???      00322     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00107E B00A           00323     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001080 EF?? F???      00324     goto    MENU_PRINCIPAL
+001084 6A0A           00325     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00326     ; SECUENCIA 3.
+001086 C013 F007      00327     movff   sec3, boton_esperado
+00108A EC?? F???      00328     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00108E B00A           00329     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 36
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00107C 6A0A           00342     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00343     ; SECUENCIA 2.
-00107E C012 F007      00344     movff   sec2, boton_esperado
-001082 EC?? F???      00345     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001086 B00A           00346     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001088 EF?? F???      00347     goto    MENU_PRINCIPAL
-00108C 6A0A           00348     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00349     ; SECUENCIA 3.
-00108E C013 F007      00350     movff   sec3, boton_esperado
-001092 EC?? F???      00351     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001096 B00A           00352     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001098 EF?? F???      00353     goto    MENU_PRINCIPAL
-00109C 6A0A           00354     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00355     ; SECUENCIA 4.
-00109E C014 F007      00356     movff   sec4, boton_esperado
-0010A2 EC?? F???      00357     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0010A6 B00A           00358     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0010A8 EF?? F???      00359     goto    MENU_PRINCIPAL
-0010AC 6A0A           00360     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00361     ; SECUENCIA 5.
-0010AE C015 F007      00362     movff   sec5, boton_esperado
-0010B2 EC?? F???      00363     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0010B6 B00A           00364     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0010B8 EF?? F???      00365     goto    MENU_PRINCIPAL
-0010BC 6A0A           00366     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00367     ; SECUENCIA 6.
-0010BE C016 F007      00368     movff   sec6, boton_esperado
-0010C2 EC?? F???      00369     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0010C6 B00A           00370     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0010C8 EF?? F???      00371     goto    MENU_PRINCIPAL
-0010CC 6A0A           00372     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00373     ; SECUENCIA 7.
-0010CE C017 F007      00374     movff   sec7, boton_esperado
-0010D2 EC?? F???      00375     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0010D6 B00A           00376     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0010D8 EF?? F???      00377     goto    MENU_PRINCIPAL
-0010DC 6A0A           00378     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00379     
-                      00380     ; NIVEL SUPERADO.
-0010DE 0E37           00381     movlw   '7'
-0010E0 6E05           00382     movwf   puntaje, A
-0010E2 EC?? F???      00383     call    NIVEL_SUPERADO
-                      00384     
-0010E6                00385 NIVEL8
-0010E6 EC?? F???      00386     call    RANDOM_REGISTER
-0010EA C00C F018      00387     movff   sec_aleatoria, sec8
-                      00388     ; MOSTRAR SECUENCIA.
-0010EE C011 F00B      00389     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-0010F2 EC?? F???      00390     call    ENCENDER_SECUENCIA
-0010F6 EC?? F???      00391     call    DELAY_100ms
-0010FA C012 F00B      00392     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-0010FE EC?? F???      00393     call    ENCENDER_SECUENCIA
-001102 EC?? F???      00394     call    DELAY_100ms
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 37
+001090 EF?? F???      00330     goto    MENU_PRINCIPAL
+001094 6A0A           00331     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00332     ; SECUENCIA 4.
+001096 C014 F007      00333     movff   sec4, boton_esperado
+00109A EC?? F???      00334     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00109E B00A           00335     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010A0 EF?? F???      00336     goto    MENU_PRINCIPAL
+0010A4 6A0A           00337     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00338     ; SECUENCIA 5.
+0010A6 C015 F007      00339     movff   sec5, boton_esperado
+0010AA EC?? F???      00340     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010AE B00A           00341     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010B0 EF?? F???      00342     goto    MENU_PRINCIPAL
+0010B4 6A0A           00343     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00344     ; SECUENCIA 6.
+0010B6 C016 F007      00345     movff   sec6, boton_esperado
+0010BA EC?? F???      00346     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010BE B00A           00347     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010C0 EF?? F???      00348     goto    MENU_PRINCIPAL
+0010C4 6A0A           00349     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00350     ; SECUENCIA 7.
+0010C6 C017 F007      00351     movff   sec7, boton_esperado
+0010CA EC?? F???      00352     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0010CE B00A           00353     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0010D0 EF?? F???      00354     goto    MENU_PRINCIPAL
+0010D4 6A0A           00355     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00356     
+                      00357     ; NIVEL SUPERADO.
+0010D6 0E37           00358     movlw   '7'
+0010D8 6E05           00359     movwf   puntaje, A
+0010DA EC?? F???      00360     call    NIVEL_SUPERADO
+                      00361     
+0010DE                00362 NIVEL8
+0010DE EC?? F???      00363     call    RANDOM_REGISTER
+0010E2 C00C F018      00364     movff   sec_aleatoria, sec8
+                      00365     ; MOSTRAR SECUENCIA.
+0010E6 C011 F00B      00366     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+0010EA EC?? F???      00367     call    ENCENDER_SECUENCIA
+0010EE EC?? F???      00368     call    DELAY_100ms
+0010F2 C012 F00B      00369     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+0010F6 EC?? F???      00370     call    ENCENDER_SECUENCIA
+0010FA EC?? F???      00371     call    DELAY_100ms
+0010FE C013 F00B      00372     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+001102 EC?? F???      00373     call    ENCENDER_SECUENCIA
+001106 EC?? F???      00374     call    DELAY_100ms
+00110A C014 F00B      00375     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+00110E EC?? F???      00376     call    ENCENDER_SECUENCIA
+001112 EC?? F???      00377     call    DELAY_100ms
+001116 C015 F00B      00378     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+00111A EC?? F???      00379     call    ENCENDER_SECUENCIA
+00111E EC?? F???      00380     call    DELAY_100ms
+001122 C016 F00B      00381     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001126 EC?? F???      00382     call    ENCENDER_SECUENCIA
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 37
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-001106 C013 F00B      00395     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-00110A EC?? F???      00396     call    ENCENDER_SECUENCIA
-00110E EC?? F???      00397     call    DELAY_100ms
-001112 C014 F00B      00398     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-001116 EC?? F???      00399     call    ENCENDER_SECUENCIA
-00111A EC?? F???      00400     call    DELAY_100ms
-00111E C015 F00B      00401     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-001122 EC?? F???      00402     call    ENCENDER_SECUENCIA
-001126 EC?? F???      00403     call    DELAY_100ms
-00112A C016 F00B      00404     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
-00112E EC?? F???      00405     call    ENCENDER_SECUENCIA
-001132 EC?? F???      00406     call    DELAY_100ms
-001136 C017 F00B      00407     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
-00113A EC?? F???      00408     call    ENCENDER_SECUENCIA
-00113E EC?? F???      00409     call    DELAY_100ms
-001142 C018 F00B      00410     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
-001146 EC?? F???      00411     call    ENCENDER_SECUENCIA
-                      00412     
-                      00413     ; SECUENCIA 1.
-00114A C011 F007      00414     movff   sec1, boton_esperado
-00114E EC?? F???      00415     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001152 B00A           00416     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001154 EF?? F???      00417     goto    MENU_PRINCIPAL
-001158 6A0A           00418     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00419     ; SECUENCIA 2.
-00115A C012 F007      00420     movff   sec2, boton_esperado
-00115E EC?? F???      00421     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001162 B00A           00422     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001164 EF?? F???      00423     goto    MENU_PRINCIPAL
-001168 6A0A           00424     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00425     ; SECUENCIA 3.
-00116A C013 F007      00426     movff   sec3, boton_esperado
-00116E EC?? F???      00427     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001172 B00A           00428     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001174 EF?? F???      00429     goto    MENU_PRINCIPAL
-001178 6A0A           00430     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00431     ; SECUENCIA 4.
-00117A C014 F007      00432     movff   sec4, boton_esperado
-00117E EC?? F???      00433     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001182 B00A           00434     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001184 EF?? F???      00435     goto    MENU_PRINCIPAL
-001188 6A0A           00436     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00437     ; SECUENCIA 5.
-00118A C015 F007      00438     movff   sec5, boton_esperado
-00118E EC?? F???      00439     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-001192 B00A           00440     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001194 EF?? F???      00441     goto    MENU_PRINCIPAL
-001198 6A0A           00442     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00443     ; SECUENCIA 6.
-00119A C016 F007      00444     movff   sec6, boton_esperado
-00119E EC?? F???      00445     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0011A2 B00A           00446     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0011A4 EF?? F???      00447     goto    MENU_PRINCIPAL
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 38
+00112A EC?? F???      00383     call    DELAY_100ms
+00112E C017 F00B      00384     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001132 EC?? F???      00385     call    ENCENDER_SECUENCIA
+001136 EC?? F???      00386     call    DELAY_100ms
+00113A C018 F00B      00387     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+00113E EC?? F???      00388     call    ENCENDER_SECUENCIA
+                      00389     
+                      00390     ; SECUENCIA 1.
+001142 C011 F007      00391     movff   sec1, boton_esperado
+001146 EC?? F???      00392     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00114A B00A           00393     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00114C EF?? F???      00394     goto    MENU_PRINCIPAL
+001150 6A0A           00395     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00396     ; SECUENCIA 2.
+001152 C012 F007      00397     movff   sec2, boton_esperado
+001156 EC?? F???      00398     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00115A B00A           00399     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00115C EF?? F???      00400     goto    MENU_PRINCIPAL
+001160 6A0A           00401     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00402     ; SECUENCIA 3.
+001162 C013 F007      00403     movff   sec3, boton_esperado
+001166 EC?? F???      00404     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00116A B00A           00405     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00116C EF?? F???      00406     goto    MENU_PRINCIPAL
+001170 6A0A           00407     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00408     ; SECUENCIA 4.
+001172 C014 F007      00409     movff   sec4, boton_esperado
+001176 EC?? F???      00410     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00117A B00A           00411     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00117C EF?? F???      00412     goto    MENU_PRINCIPAL
+001180 6A0A           00413     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00414     ; SECUENCIA 5.
+001182 C015 F007      00415     movff   sec5, boton_esperado
+001186 EC?? F???      00416     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00118A B00A           00417     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00118C EF?? F???      00418     goto    MENU_PRINCIPAL
+001190 6A0A           00419     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00420     ; SECUENCIA 6.
+001192 C016 F007      00421     movff   sec6, boton_esperado
+001196 EC?? F???      00422     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+00119A B00A           00423     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+00119C EF?? F???      00424     goto    MENU_PRINCIPAL
+0011A0 6A0A           00425     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00426     ; SECUENCIA 7.
+0011A2 C017 F007      00427     movff   sec7, boton_esperado
+0011A6 EC?? F???      00428     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011AA B00A           00429     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0011AC EF?? F???      00430     goto    MENU_PRINCIPAL
+0011B0 6A0A           00431     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00432     ; SECUENCIA 8.
+0011B2 C018 F007      00433     movff   sec8, boton_esperado
+0011B6 EC?? F???      00434     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0011BA B00A           00435     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 38
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0011A8 6A0A           00448     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00449     ; SECUENCIA 7.
-0011AA C017 F007      00450     movff   sec7, boton_esperado
-0011AE EC?? F???      00451     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0011B2 B00A           00452     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0011B4 EF?? F???      00453     goto    MENU_PRINCIPAL
-0011B8 6A0A           00454     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00455     ; SECUENCIA 8.
-0011BA C018 F007      00456     movff   sec8, boton_esperado
-0011BE EC?? F???      00457     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0011C2 B00A           00458     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0011C4 EF?? F???      00459     goto    MENU_PRINCIPAL
-0011C8 6A0A           00460     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00461     
-                      00462     ; NIVEL SUPERADO.
-0011CA 0E38           00463     movlw   '8'
-0011CC 6E05           00464     movwf   puntaje, A
-0011CE EC?? F???      00465     call    NIVEL_SUPERADO
-                      00466     
-0011D2                00467 NIVEL9
-0011D2 EC?? F???      00468     call    RANDOM_REGISTER
-0011D6 C00C F019      00469     movff   sec_aleatoria, sec9
-                      00470     ; MOSTRAR SECUENCIA.
-0011DA C011 F00B      00471     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-0011DE EC?? F???      00472     call    ENCENDER_SECUENCIA
-0011E2 EC?? F???      00473     call    DELAY_100ms
-0011E6 C012 F00B      00474     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-0011EA EC?? F???      00475     call    ENCENDER_SECUENCIA
-0011EE EC?? F???      00476     call    DELAY_100ms
-0011F2 C013 F00B      00477     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-0011F6 EC?? F???      00478     call    ENCENDER_SECUENCIA
-0011FA EC?? F???      00479     call    DELAY_100ms
-0011FE C014 F00B      00480     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-001202 EC?? F???      00481     call    ENCENDER_SECUENCIA
-001206 EC?? F???      00482     call    DELAY_100ms
-00120A C015 F00B      00483     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-00120E EC?? F???      00484     call    ENCENDER_SECUENCIA
-001212 EC?? F???      00485     call    DELAY_100ms
-001216 C016 F00B      00486     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
-00121A EC?? F???      00487     call    ENCENDER_SECUENCIA
-00121E EC?? F???      00488     call    DELAY_100ms
-001222 C017 F00B      00489     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
-001226 EC?? F???      00490     call    ENCENDER_SECUENCIA
-00122A EC?? F???      00491     call    DELAY_100ms
-00122E C018 F00B      00492     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
-001232 EC?? F???      00493     call    ENCENDER_SECUENCIA
-001236 EC?? F???      00494     call    DELAY_100ms
-00123A C019 F00B      00495     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
-00123E EC?? F???      00496     call    ENCENDER_SECUENCIA
-                      00497     
-                      00498     ; SECUENCIA 1.
-001242 C011 F007      00499     movff   sec1, boton_esperado
-001246 EC?? F???      00500     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 39
+0011BC EF?? F???      00436     goto    MENU_PRINCIPAL
+0011C0 6A0A           00437     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00438     
+                      00439     ; NIVEL SUPERADO.
+0011C2 0E38           00440     movlw   '8'
+0011C4 6E05           00441     movwf   puntaje, A
+0011C6 EC?? F???      00442     call    NIVEL_SUPERADO
+                      00443     
+0011CA                00444 NIVEL9
+0011CA EC?? F???      00445     call    RANDOM_REGISTER
+0011CE C00C F019      00446     movff   sec_aleatoria, sec9
+                      00447     ; MOSTRAR SECUENCIA.
+0011D2 C011 F00B      00448     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+0011D6 EC?? F???      00449     call    ENCENDER_SECUENCIA
+0011DA EC?? F???      00450     call    DELAY_100ms
+0011DE C012 F00B      00451     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+0011E2 EC?? F???      00452     call    ENCENDER_SECUENCIA
+0011E6 EC?? F???      00453     call    DELAY_100ms
+0011EA C013 F00B      00454     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+0011EE EC?? F???      00455     call    ENCENDER_SECUENCIA
+0011F2 EC?? F???      00456     call    DELAY_100ms
+0011F6 C014 F00B      00457     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+0011FA EC?? F???      00458     call    ENCENDER_SECUENCIA
+0011FE EC?? F???      00459     call    DELAY_100ms
+001202 C015 F00B      00460     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+001206 EC?? F???      00461     call    ENCENDER_SECUENCIA
+00120A EC?? F???      00462     call    DELAY_100ms
+00120E C016 F00B      00463     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+001212 EC?? F???      00464     call    ENCENDER_SECUENCIA
+001216 EC?? F???      00465     call    DELAY_100ms
+00121A C017 F00B      00466     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+00121E EC?? F???      00467     call    ENCENDER_SECUENCIA
+001222 EC?? F???      00468     call    DELAY_100ms
+001226 C018 F00B      00469     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+00122A EC?? F???      00470     call    ENCENDER_SECUENCIA
+00122E EC?? F???      00471     call    DELAY_100ms
+001232 C019 F00B      00472     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
+001236 EC?? F???      00473     call    ENCENDER_SECUENCIA
+                      00474     
+                      00475     ; SECUENCIA 1.
+00123A C011 F007      00476     movff   sec1, boton_esperado
+00123E EC?? F???      00477     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001242 B00A           00478     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001244 EF?? F???      00479     goto    MENU_PRINCIPAL
+001248 6A0A           00480     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00481     ; SECUENCIA 2.
+00124A C012 F007      00482     movff   sec2, boton_esperado
+00124E EC?? F???      00483     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001252 B00A           00484     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001254 EF?? F???      00485     goto    MENU_PRINCIPAL
+001258 6A0A           00486     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00487     ; SECUENCIA 3.
+00125A C013 F007      00488     movff   sec3, boton_esperado
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 39
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00124A B00A           00501     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00124C EF?? F???      00502     goto    MENU_PRINCIPAL
-001250 6A0A           00503     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00504     ; SECUENCIA 2.
-001252 C012 F007      00505     movff   sec2, boton_esperado
-001256 EC?? F???      00506     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00125A B00A           00507     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00125C EF?? F???      00508     goto    MENU_PRINCIPAL
-001260 6A0A           00509     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00510     ; SECUENCIA 3.
-001262 C013 F007      00511     movff   sec3, boton_esperado
-001266 EC?? F???      00512     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00126A B00A           00513     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00126C EF?? F???      00514     goto    MENU_PRINCIPAL
-001270 6A0A           00515     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00516     ; SECUENCIA 4.
-001272 C014 F007      00517     movff   sec4, boton_esperado
-001276 EC?? F???      00518     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00127A B00A           00519     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00127C EF?? F???      00520     goto    MENU_PRINCIPAL
-001280 6A0A           00521     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00522     ; SECUENCIA 5.
-001282 C015 F007      00523     movff   sec5, boton_esperado
-001286 EC?? F???      00524     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00128A B00A           00525     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00128C EF?? F???      00526     goto    MENU_PRINCIPAL
-001290 6A0A           00527     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00528     ; SECUENCIA 6.
-001292 C016 F007      00529     movff   sec6, boton_esperado
-001296 EC?? F???      00530     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00129A B00A           00531     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-00129C EF?? F???      00532     goto    MENU_PRINCIPAL
-0012A0 6A0A           00533     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00534     ; SECUENCIA 7.
-0012A2 C017 F007      00535     movff   sec7, boton_esperado
-0012A6 EC?? F???      00536     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0012AA B00A           00537     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0012AC EF?? F???      00538     goto    MENU_PRINCIPAL
-0012B0 6A0A           00539     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00540     ; SECUENCIA 8.
-0012B2 C018 F007      00541     movff   sec8, boton_esperado
-0012B6 EC?? F???      00542     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0012BA B00A           00543     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0012BC EF?? F???      00544     goto    MENU_PRINCIPAL
-0012C0 6A0A           00545     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00546     ; SECUENCIA 9.
-0012C2 C019 F007      00547     movff   sec9, boton_esperado
-0012C6 EC?? F???      00548     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0012CA B00A           00549     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0012CC EF?? F???      00550     goto    MENU_PRINCIPAL
-0012D0 6A0A           00551     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00552     
-                      00553     ; NIVEL SUPERADO.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 40
+00125E EC?? F???      00489     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001262 B00A           00490     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001264 EF?? F???      00491     goto    MENU_PRINCIPAL
+001268 6A0A           00492     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00493     ; SECUENCIA 4.
+00126A C014 F007      00494     movff   sec4, boton_esperado
+00126E EC?? F???      00495     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001272 B00A           00496     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001274 EF?? F???      00497     goto    MENU_PRINCIPAL
+001278 6A0A           00498     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00499     ; SECUENCIA 5.
+00127A C015 F007      00500     movff   sec5, boton_esperado
+00127E EC?? F???      00501     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001282 B00A           00502     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001284 EF?? F???      00503     goto    MENU_PRINCIPAL
+001288 6A0A           00504     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00505     ; SECUENCIA 6.
+00128A C016 F007      00506     movff   sec6, boton_esperado
+00128E EC?? F???      00507     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001292 B00A           00508     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001294 EF?? F???      00509     goto    MENU_PRINCIPAL
+001298 6A0A           00510     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00511     ; SECUENCIA 7.
+00129A C017 F007      00512     movff   sec7, boton_esperado
+00129E EC?? F???      00513     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012A2 B00A           00514     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012A4 EF?? F???      00515     goto    MENU_PRINCIPAL
+0012A8 6A0A           00516     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00517     ; SECUENCIA 8.
+0012AA C018 F007      00518     movff   sec8, boton_esperado
+0012AE EC?? F???      00519     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012B2 B00A           00520     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012B4 EF?? F???      00521     goto    MENU_PRINCIPAL
+0012B8 6A0A           00522     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00523     ; SECUENCIA 9.
+0012BA C019 F007      00524     movff   sec9, boton_esperado
+0012BE EC?? F???      00525     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0012C2 B00A           00526     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0012C4 EF?? F???      00527     goto    MENU_PRINCIPAL
+0012C8 6A0A           00528     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00529     
+                      00530     ; NIVEL SUPERADO.
+0012CA 0E39           00531     movlw   '9'
+0012CC 6E05           00532     movwf   puntaje, A
+0012CE EC?? F???      00533     call    NIVEL_SUPERADO
+                      00534     
+0012D2                00535 NIVEL10
+0012D2 EC?? F???      00536     call    RANDOM_REGISTER
+0012D6 C00C F01A      00537     movff   sec_aleatoria, sec10
+                      00538     ; MOSTRAR SECUENCIA.
+0012DA C011 F00B      00539     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
+0012DE EC?? F???      00540     call    ENCENDER_SECUENCIA
+0012E2 EC?? F???      00541     call    DELAY_100ms
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 40
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0012D2 0E39           00554     movlw   '9'
-0012D4 6E05           00555     movwf   puntaje, A
-0012D6 EC?? F???      00556     call    NIVEL_SUPERADO
-                      00557     
-0012DA                00558 NIVEL10
-0012DA EC?? F???      00559     call    RANDOM_REGISTER
-0012DE C00C F01A      00560     movff   sec_aleatoria, sec10
-                      00561     ; MOSTRAR SECUENCIA.
-0012E2 C011 F00B      00562     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
-0012E6 EC?? F???      00563     call    ENCENDER_SECUENCIA
-0012EA EC?? F???      00564     call    DELAY_100ms
-0012EE C012 F00B      00565     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
-0012F2 EC?? F???      00566     call    ENCENDER_SECUENCIA
-0012F6 EC?? F???      00567     call    DELAY_100ms
-0012FA C013 F00B      00568     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
-0012FE EC?? F???      00569     call    ENCENDER_SECUENCIA
-001302 EC?? F???      00570     call    DELAY_100ms
-001306 C014 F00B      00571     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
-00130A EC?? F???      00572     call    ENCENDER_SECUENCIA
-00130E EC?? F???      00573     call    DELAY_100ms
-001312 C015 F00B      00574     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-001316 EC?? F???      00575     call    ENCENDER_SECUENCIA
-00131A EC?? F???      00576     call    DELAY_100ms
-00131E C016 F00B      00577     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
-001322 EC?? F???      00578     call    ENCENDER_SECUENCIA
-001326 EC?? F???      00579     call    DELAY_100ms
-00132A C017 F00B      00580     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
-00132E EC?? F???      00581     call    ENCENDER_SECUENCIA
-001332 EC?? F???      00582     call    DELAY_100ms
-001336 C018 F00B      00583     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
-00133A EC?? F???      00584     call    ENCENDER_SECUENCIA
-00133E EC?? F???      00585     call    DELAY_100ms
-001342 C019 F00B      00586     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
-001346 EC?? F???      00587     call    ENCENDER_SECUENCIA
-00134A EC?? F???      00588     call    DELAY_100ms
-00134E C01A F00B      00589     movff   sec10, encender_led         ; Mostrarle la secuencia al usuario
-001352 EC?? F???      00590     call    ENCENDER_SECUENCIA
-                      00591     
-                      00592     ; SECUENCIA 1.
-001356 C011 F007      00593     movff   sec1, boton_esperado
-00135A EC?? F???      00594     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00135E B00A           00595     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001360 EF?? F???      00596     goto    MENU_PRINCIPAL
-001364 6A0A           00597     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00598     ; SECUENCIA 2.
-001366 C012 F007      00599     movff   sec2, boton_esperado
-00136A EC?? F???      00600     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00136E B00A           00601     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001370 EF?? F???      00602     goto    MENU_PRINCIPAL
-001374 6A0A           00603     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00604     ; SECUENCIA 3.
-001376 C013 F007      00605     movff   sec3, boton_esperado
-00137A EC?? F???      00606     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 41
+0012E6 C012 F00B      00542     movff   sec2, encender_led          ; Mostrarle la secuencia al usuario
+0012EA EC?? F???      00543     call    ENCENDER_SECUENCIA
+0012EE EC?? F???      00544     call    DELAY_100ms
+0012F2 C013 F00B      00545     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
+0012F6 EC?? F???      00546     call    ENCENDER_SECUENCIA
+0012FA EC?? F???      00547     call    DELAY_100ms
+0012FE C014 F00B      00548     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
+001302 EC?? F???      00549     call    ENCENDER_SECUENCIA
+001306 EC?? F???      00550     call    DELAY_100ms
+00130A C015 F00B      00551     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
+00130E EC?? F???      00552     call    ENCENDER_SECUENCIA
+001312 EC?? F???      00553     call    DELAY_100ms
+001316 C016 F00B      00554     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
+00131A EC?? F???      00555     call    ENCENDER_SECUENCIA
+00131E EC?? F???      00556     call    DELAY_100ms
+001322 C017 F00B      00557     movff   sec7, encender_led          ; Mostrarle la secuencia al usuario
+001326 EC?? F???      00558     call    ENCENDER_SECUENCIA
+00132A EC?? F???      00559     call    DELAY_100ms
+00132E C018 F00B      00560     movff   sec8, encender_led          ; Mostrarle la secuencia al usuario
+001332 EC?? F???      00561     call    ENCENDER_SECUENCIA
+001336 EC?? F???      00562     call    DELAY_100ms
+00133A C019 F00B      00563     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
+00133E EC?? F???      00564     call    ENCENDER_SECUENCIA
+001342 EC?? F???      00565     call    DELAY_100ms
+001346 C01A F00B      00566     movff   sec10, encender_led         ; Mostrarle la secuencia al usuario
+00134A EC?? F???      00567     call    ENCENDER_SECUENCIA
+                      00568     
+                      00569     ; SECUENCIA 1.
+00134E C011 F007      00570     movff   sec1, boton_esperado
+001352 EC?? F???      00571     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001356 B00A           00572     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001358 EF?? F???      00573     goto    MENU_PRINCIPAL
+00135C 6A0A           00574     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00575     ; SECUENCIA 2.
+00135E C012 F007      00576     movff   sec2, boton_esperado
+001362 EC?? F???      00577     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001366 B00A           00578     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001368 EF?? F???      00579     goto    MENU_PRINCIPAL
+00136C 6A0A           00580     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00581     ; SECUENCIA 3.
+00136E C013 F007      00582     movff   sec3, boton_esperado
+001372 EC?? F???      00583     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001376 B00A           00584     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001378 EF?? F???      00585     goto    MENU_PRINCIPAL
+00137C 6A0A           00586     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00587     ; SECUENCIA 4.
+00137E C014 F007      00588     movff   sec4, boton_esperado
+001382 EC?? F???      00589     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001386 B00A           00590     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001388 EF?? F???      00591     goto    MENU_PRINCIPAL
+00138C 6A0A           00592     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00593     ; SECUENCIA 5.
+00138E C015 F007      00594     movff   sec5, boton_esperado
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 41
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00137E B00A           00607     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001380 EF?? F???      00608     goto    MENU_PRINCIPAL
-001384 6A0A           00609     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00610     ; SECUENCIA 4.
-001386 C014 F007      00611     movff   sec4, boton_esperado
-00138A EC?? F???      00612     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00138E B00A           00613     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-001390 EF?? F???      00614     goto    MENU_PRINCIPAL
-001394 6A0A           00615     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00616     ; SECUENCIA 5.
-001396 C015 F007      00617     movff   sec5, boton_esperado
-00139A EC?? F???      00618     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-00139E B00A           00619     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013A0 EF?? F???      00620     goto    MENU_PRINCIPAL
-0013A4 6A0A           00621     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00622     ; SECUENCIA 6.
-0013A6 C016 F007      00623     movff   sec6, boton_esperado
-0013AA EC?? F???      00624     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0013AE B00A           00625     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013B0 EF?? F???      00626     goto    MENU_PRINCIPAL
-0013B4 6A0A           00627     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00628     ; SECUENCIA 7.
-0013B6 C017 F007      00629     movff   sec7, boton_esperado
-0013BA EC?? F???      00630     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0013BE B00A           00631     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013C0 EF?? F???      00632     goto    MENU_PRINCIPAL
-0013C4 6A0A           00633     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00634     ; SECUENCIA 8.
-0013C6 C018 F007      00635     movff   sec8, boton_esperado
-0013CA EC?? F???      00636     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0013CE B00A           00637     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013D0 EF?? F???      00638     goto    MENU_PRINCIPAL
-0013D4 6A0A           00639     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00640     ; SECUENCIA 9.
-0013D6 C019 F007      00641     movff   sec9, boton_esperado
-0013DA EC?? F???      00642     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0013DE B00A           00643     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013E0 EF?? F???      00644     goto    MENU_PRINCIPAL
-0013E4 6A0A           00645     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00646     ; SECUENCIA 10.
-0013E6 C01A F007      00647     movff   sec10, boton_esperado
-0013EA EC?? F???      00648     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-0013EE B00A           00649     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0013F0 EF?? F???      00650     goto    MENU_PRINCIPAL
-0013F4 6A0A           00651     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00652     
-                      00653     ; NIVEL SUPERADO.
-0013F6 0E41           00654     movlw   'A'
-0013F8 6E05           00655     movwf   puntaje, A
-0013FA EC?? F???      00656     call    NIVEL_SUPERADO
-                      00657 
-0013FE EF?? F???      00658     goto    HIGHSCORE
-                      00659     
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 42
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00660   end
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 43
+001392 EC?? F???      00595     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+001396 B00A           00596     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+001398 EF?? F???      00597     goto    MENU_PRINCIPAL
+00139C 6A0A           00598     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00599     ; SECUENCIA 6.
+00139E C016 F007      00600     movff   sec6, boton_esperado
+0013A2 EC?? F???      00601     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0013A6 B00A           00602     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0013A8 EF?? F???      00603     goto    MENU_PRINCIPAL
+0013AC 6A0A           00604     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00605     ; SECUENCIA 7.
+0013AE C017 F007      00606     movff   sec7, boton_esperado
+0013B2 EC?? F???      00607     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0013B6 B00A           00608     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0013B8 EF?? F???      00609     goto    MENU_PRINCIPAL
+0013BC 6A0A           00610     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00611     ; SECUENCIA 8.
+0013BE C018 F007      00612     movff   sec8, boton_esperado
+0013C2 EC?? F???      00613     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0013C6 B00A           00614     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0013C8 EF?? F???      00615     goto    MENU_PRINCIPAL
+0013CC 6A0A           00616     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00617     ; SECUENCIA 9.
+0013CE C019 F007      00618     movff   sec9, boton_esperado
+0013D2 EC?? F???      00619     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0013D6 B00A           00620     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0013D8 EF?? F???      00621     goto    MENU_PRINCIPAL
+0013DC 6A0A           00622     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00623     ; SECUENCIA 10.
+0013DE C01A F007      00624     movff   sec10, boton_esperado
+0013E2 EC?? F???      00625     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
+0013E6 B00A           00626     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
+0013E8 EF?? F???      00627     goto    MENU_PRINCIPAL
+0013EC 6A0A           00628     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
+                      00629     
+                      00630     ; NIVEL SUPERADO.
+0013EE 0E41           00631     movlw   'A'
+0013F0 6E05           00632     movwf   puntaje, A
+0013F2 EC?? F???      00633     call    NIVEL_SUPERADO
+                      00634 
+0013F6 EF?? F???      00635     goto    HIGHSCORE
+                      00636     
+                      00637   end
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 42
 
 
 SYMBOL TABLE
@@ -2483,7 +2466,7 @@ ADRESL                            00000FC3
 AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 44
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 43
 
 
 SYMBOL TABLE
@@ -2522,7 +2505,7 @@ ANSELB                            00000F5C
 ANSELC                            00000F5D
 ANSELD                            00000F5E
 ANSELE                            00000F5F
-ANTIRREBOTE_PUNTAJES              00000D6C
+ANTIRREBOTE_PUNTAJES              00000D64
 BANKED                            00000001
 BAUDCON                           00000FB8
 BAUDCON1                          00000FB8
@@ -2536,18 +2519,19 @@ BF                                00000000
 BGVST                             00000006
 BOEN                              00000004
 BOR                               00000000
+BORRAR_EEPROM                     00000D24
 BOTON_AMARILLO                    00000B34
 BOTON_AZUL                        00000B1C
 BOTON_BLANCO                      00000B04
 BOTON_HIGHSCORE                   00000B5E
 BOTON_NARANJA                     00000AEC
-BOTON_START_MENU                  00000B4C
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 45
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 44
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+BOTON_START_MENU                  00000B4C
 BOTON_START_STOP                  00000ADA
 BRG0                              00000000
 BRG1                              00000001
@@ -2600,16 +2584,15 @@ C2OUT                             00000006
 C2POL                             00000004
 C2R                               00000002
 C2RSEL                            00000004
-C2SP                              00000003
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 46
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 45
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+C2SP                              00000003
 C2SYNC                            00000000
 C2TSEL                            00000003
-CARGAR_SECUENCIA                  00000D22
 CCH0                              00000000
 CCH1                              00000001
 CCP1                              00000002
@@ -2660,7 +2643,7 @@ CM2IE                             00000005
 CM2IF                             00000005
 CM2IP                             00000005
 CMP1MD                            00000003
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 47
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 46
 
 
 SYMBOL TABLE
@@ -2719,7 +2702,7 @@ DDRE                              TRISE
 DECODER                           00000C28
 DELAY_100ms                       0000006E
 DELAY_100us                       00000062
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 48
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 47
 
 
 SYMBOL TABLE
@@ -2778,7 +2761,7 @@ FAST                              00000001
 FERR                              00000002
 FLTS                              00000002
 FREE                              00000004
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 49
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 48
 
 
 SYMBOL TABLE
@@ -2837,7 +2820,7 @@ IDLEN                             00000007
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 50
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 49
 
 
 SYMBOL TABLE
@@ -2896,7 +2879,7 @@ IRCF2                             00000006
 IRNG0                             00000000
 IRNG1                             00000001
 IRVST                             00000005
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 51
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 50
 
 
 SYMBOL TABLE
@@ -2908,7 +2891,7 @@ ITRIM2                            00000004
 ITRIM3                            00000005
 ITRIM4                            00000006
 ITRIM5                            00000007
-JUEGO                             00000D7A
+JUEGO                             00000D72
 LATA                              00000F89
 LATA0                             00000000
 LATA1                             00000001
@@ -2955,7 +2938,7 @@ LFIOFS                            00000000
 LOOP1                             0000008C
 LOOP_LOSER_LEFT                   00000618
 LOOP_LOSER_RIGHT                  0000062C
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 52
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 51
 
 
 SYMBOL TABLE
@@ -2965,23 +2948,23 @@ LVDIE                             00000002
 LVDIF                             00000002
 LVDIN                             00000005
 LVDIP                             00000002
-MAIN                              00000D4C
+MAIN                              00000D48
 MC1OUT                            00000007
 MC2OUT                            00000006
-MENU_PRINCIPAL                    00000D54
+MENU_PRINCIPAL                    00000D4C
 MSSP1MD                           00000006
 MSSPMD                            00000006
 N                                 00000004
-NIVEL1                            00000D82
-NIVEL10                           000012DA
-NIVEL2                            00000DAA
-NIVEL3                            00000DEE
-NIVEL4                            00000E4E
-NIVEL5                            00000ECA
-NIVEL6                            00000F62
-NIVEL7                            00001016
-NIVEL8                            000010E6
-NIVEL9                            000011D2
+NIVEL1                            00000D7A
+NIVEL10                           000012D2
+NIVEL2                            00000DA2
+NIVEL3                            00000DE6
+NIVEL4                            00000E46
+NIVEL5                            00000EC2
+NIVEL6                            00000F5A
+NIVEL7                            0000100E
+NIVEL8                            000010DE
+NIVEL9                            000011CA
 NIVEL_SUPERADO                    0000011A
 NOT_BOR                           00000000
 NOT_DONE                          00000001
@@ -3014,7 +2997,7 @@ OSCFIP                            00000007
 OSCTUNE                           00000F9B
 OSTS                              00000003
 OV                                00000003
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 53
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 52
 
 
 SYMBOL TABLE
@@ -3073,7 +3056,7 @@ POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
 PPB0                              00000000
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 54
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 53
 
 
 SYMBOL TABLE
@@ -3101,7 +3084,7 @@ PSSAC1                            00000003
 PSSBD0                            00000000
 PSSBD1                            00000001
 PSTR1CON                          00000FB9
-PUNTAJES                          00000D5E
+PUNTAJES                          00000D56
 PVCFG0                            00000002
 PVCFG1                            00000003
 PWM1CON                           00000FB7
@@ -3132,7 +3115,7 @@ RC2                               00000002
 RC4                               00000004
 RC5                               00000005
 RC6                               00000006
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 55
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 54
 
 
 SYMBOL TABLE
@@ -3191,7 +3174,7 @@ SEN                               00000000
 SENDB                             00000003
 SEND_DATA                         00000148
 SHOW_HIGHSCORE                    0000074E
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 56
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 55
 
 
 SYMBOL TABLE
@@ -3250,7 +3233,7 @@ SRRCKE                            00000002
 SRRPE                             00000003
 SRSC1E                            00000004
 SRSC2E                            00000005
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 57
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 56
 
 
 SYMBOL TABLE
@@ -3309,7 +3292,7 @@ STCON                             00000FB5
 STEN                              00000007
 STIE                              00000007
 STIF                              00000007
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 58
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 57
 
 
 SYMBOL TABLE
@@ -3323,7 +3306,7 @@ STKUNF                            00000006
 STLOCK                            00000003
 STMD                              00000004
 STOP                              00000106
-STOP_PUNTAJES                     00000D66
+STOP_PUNTAJES                     00000D5E
 STOR                              00000001
 STR1A                             00000000
 STR1B                             00000001
@@ -3368,7 +3351,7 @@ T1GSS1                            00000001
 T1GTM                             00000005
 T1GVAL                            00000002
 T1OSCEN                           00000003
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 59
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 58
 
 
 SYMBOL TABLE
@@ -3427,7 +3410,7 @@ TMR1GIE                           00000000
 TMR1GIF                           00000000
 TMR1GIP                           00000000
 TMR1H                             00000FCF
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 60
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 59
 
 
 SYMBOL TABLE
@@ -3486,7 +3469,7 @@ TRISB6                            00000006
 TRISB7                            00000007
 TRISC                             00000F94
 TRISC0                            00000000
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 61
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 60
 
 
 SYMBOL TABLE
@@ -3545,7 +3528,7 @@ UARTMD                            00000006
 UCFG                              00000F62
 UCON                              00000F60
 UEIE                              00000F66
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 62
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 61
 
 
 SYMBOL TABLE
@@ -3588,7 +3571,7 @@ USTAT                             00000F61
 UTEYE                             00000007
 UTRDIS                            00000003
 VDIRMAG                           00000007
-VERIFICAR_HIGHSCORE               00000D02
+VERIFICAR_HIGHSCORE               00000D06
 VREFCON0                          00000F7D
 VREFCON1                          00000F7C
 VREFCON2                          00000F7B
@@ -3604,7 +3587,7 @@ WPUB0                             00000000
 WPUB1                             00000001
 WPUB2                             00000002
 WPUB3                             00000003
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 63
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 62
 
 
 SYMBOL TABLE
@@ -3663,7 +3646,7 @@ _CP3_ON_5L                        000000F7
 _CPB_OFF_5H                       000000FF
 _CPB_ON_5H                        000000BF
 _CPD_OFF_5H                       000000FF
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 64
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 63
 
 
 SYMBOL TABLE
@@ -3722,7 +3705,7 @@ _LOADING_CHARS_TIEMPO             0000019A
 _LOSING_PIXELS                    00000348
 _LS48MHZ_SYS24X4_1L               000000DF
 _LS48MHZ_SYS48X8_1L               000000FF
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 65
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 64
 
 
 SYMBOL TABLE
@@ -3781,7 +3764,7 @@ _WRTB_ON_6H                       000000BF
 _WRTC_OFF_6H                      000000FF
 _WRTC_ON_6H                       000000DF
 _WRTD_OFF_6H                      000000FF
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 66
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 65
 
 
 SYMBOL TABLE
@@ -3840,7 +3823,7 @@ shifter                           00000009
 temp_eeprom1                      00000024
 temp_eeprom2                      00000025
 trayectoria                       0000000A
-MPASM 5.87                          MAIN.ASM   11-15-2021  18:05:11         PAGE 67
+MPASM 5.87                          MAIN.ASM   11-15-2021  18:48:28         PAGE 66
 
 
 SYMBOL TABLE
