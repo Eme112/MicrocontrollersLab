@@ -6,4 +6,5 @@ build/default/production/main.o:  \
 	C:/MicrochipProjects/ProyectoFinal.X/lcd_caracteres.asm  \
 	C:/MicrochipProjects/ProyectoFinal.X/teclado_subrutinas.asm  \
 	C:/MicrochipProjects/ProyectoFinal.X/otras_subrutinas.asm  \
+	C:/MicrochipProjects/ProyectoFinal.X/eeprom_subrutinas.asm  \
 

@@ -909,7 +909,7 @@ SHOW_MAIN_MENU
     bsf	WREG, 7, A		
     call    INSTRUCTION_WRITE
     
-    movlw   'H'			
+    movlw   'P'			
     call    DATA_WRITE    
     movlw   '-'			
     call    DATA_WRITE
@@ -923,13 +923,13 @@ SHOW_MAIN_MENU
     bsf	WREG, 7, A		
     call    INSTRUCTION_WRITE
     
-    movlw   'H'			
+    movlw   'P'			
     call    DATA_WRITE
-    movlw   'I'			
+    movlw   'R'			
     call    DATA_WRITE
-    movlw   'G'			
+    movlw   'E'			
     call    DATA_WRITE
-    movlw   'H'			
+    movlw   'V'			
     call    DATA_WRITE
     
     ;SPACE
