@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/lcd_subrutinas.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/lcd_caracteres.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/main.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/otras_subrutinas.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/inicializacion.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/eeprom_subrutinas.asm</file>
+        </group>
     </open-files>
 </project-private>
