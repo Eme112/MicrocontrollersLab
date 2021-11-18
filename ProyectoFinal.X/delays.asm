@@ -86,8 +86,8 @@ GAME_OVER
 STOP
     call    _LOADING_CHARS_PERDER
     call    _WRITING_LOSER_ANIM
-    call    WRITE_EEPROM_GAME
 HIGHSCORE
+    call    WRITE_EEPROM_GAME
     call    VERIFICAR_HIGHSCORE
     bsf	    perdio
     return
