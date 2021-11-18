@@ -87,6 +87,8 @@ VERIFICAR_HIGHSCORE
     subwf puntaje, W, A ; resta puntaje - highscore
     btfsc STATUS, 4, A ; checa si la resta da negativo, si + == new hs, si - == no actualizar
     return
+    btfsc STATUS, 2, A 
+    return
     call ACTUALIZAR_HIGHSCORE
     call SHOW_HIGHSCORE
     call DELAY_1s
