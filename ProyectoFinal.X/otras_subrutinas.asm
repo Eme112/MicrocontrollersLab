@@ -87,7 +87,7 @@ LED_10
     sublw   .2
     btfss   STATUS, 2, A		; checa si restando 1 se vuelve 0
     goto    LED_11
-    bsf	    sec_aleatoria, 2, A	; significa que 01 -> led naranj es el esperado "0100"
+    bsf	    sec_aleatoria, 2, A	; significa que 10 -> led naranj es el esperado "0100"
     return
 
 LED_11 

@@ -91,6 +91,7 @@ HIGHSCORE
     call    VERIFICAR_HIGHSCORE
     bsf	    perdio
     return
+    
 NIVEL_SUPERADO
     call    ON_GREEN
     call    _LOADING_CHARS_GANAR

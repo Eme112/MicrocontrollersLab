@@ -7,7 +7,9 @@
             <file>file:/C:/MicrochipProjects/ProyectoFinal.X/lcd_caracteres.asm</file>
             <file>file:/C:/MicrochipProjects/ProyectoFinal.X/main.asm</file>
             <file>file:/C:/MicrochipProjects/ProyectoFinal.X/otras_subrutinas.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/teclado_subrutinas.asm</file>
             <file>file:/C:/MicrochipProjects/ProyectoFinal.X/inicializacion.asm</file>
+            <file>file:/C:/MicrochipProjects/ProyectoFinal.X/delays.asm</file>
             <file>file:/C:/MicrochipProjects/ProyectoFinal.X/eeprom_subrutinas.asm</file>
         </group>
     </open-files>
