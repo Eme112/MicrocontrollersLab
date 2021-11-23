@@ -1,4 +1,4 @@
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  1
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000024            00040 temp_eeprom1        EQU 0x24
   00000025            00041 temp_eeprom2        EQU 0x25
                       00042 
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  2
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00005C 940A           00089     bcf     para                                ; Asegura que empieza desactivada la opcion de STOP.
 00005E EF?? F???      00090     goto    MAIN
                       00002 #include "delays.asm"
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  3
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0000BA                00051 DELAY_1s_LOOP2                          
 0000BA 2E20           00052     decfsz  _256_1              
 0000BC EF?? F???      00053     goto    DELAY_1s_LOOP2              ; (3)*256
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  4
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -221,25 +221,26 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000112 EC?? F???      00091     call    VERIFICAR_HIGHSCORE
 000116 800A           00092     bsf     perdio
 000118 0012           00093     return
-00011A                00094 NIVEL_SUPERADO
-00011A EC?? F???      00095     call    ON_GREEN
-00011E EC?? F???      00096     call    _LOADING_CHARS_GANAR
-000122 EC?? F???      00097     call    _WRITING_WINNER_ANIM
-000126 EC?? F???      00098     call    SHOW_PUNTAJE
-00012A EC?? F???      00099     call    DELAY_1s
-00012E 0012           00100     return
-                      00101     
+                      00094     
+00011A                00095 NIVEL_SUPERADO
+00011A EC?? F???      00096     call    ON_GREEN
+00011E EC?? F???      00097     call    _LOADING_CHARS_GANAR
+000122 EC?? F???      00098     call    _WRITING_WINNER_ANIM
+000126 EC?? F???      00099     call    SHOW_PUNTAJE
+00012A EC?? F???      00100     call    DELAY_1s
+00012E 0012           00101     return
+                      00102     
                       00003 #include "lcd_subrutinas.asm"
 000130                00001 INSTRUCTION_WRITE
 000130 908B           00002     bcf     RS                  ; RS -> 0
 000132 928B           00003     bcf     RW                  ; RW -> 0
-000134 EF?? F???      00004     goto    SEND_DATA
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  5
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000134 EF?? F???      00004     goto    SEND_DATA
 000138                00005 DATA_WRITE
 000138 808B           00006     bsf     RS                  ; RS -> 1
 00013A 928B           00007     bcf     RW                  ; RW -> 0
@@ -292,13 +293,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00019A 0E00           00003     movlw .0
 00019C 8CE8           00004     bsf WREG, 6, A ; set CGRAM to address 0 to start loading custom char
 00019E EC?? F???      00005     call INSTRUCTION_WRITE
-0001A2 EC?? F???      00006     call _SAD_PIXELS
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  6
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0001A2 EC?? F???      00006     call _SAD_PIXELS
 0001A6 0012           00007     return
 0001A8                00008 _SAD_PIXELS
                       00009     ; first square .0 char
@@ -351,13 +352,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00021E 0E00           00056     movlw b'00000'
 000220 EC?? F???      00057     call DATA_WRITE
 000224 0E00           00058     movlw b'00000'
-000226 EC?? F???      00059     call DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  7
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000226 EC?? F???      00059     call DATA_WRITE
 00022A 0E00           00060     movlw b'00000'
 00022C EC?? F???      00061     call DATA_WRITE
 000230 0E00           00062     movlw b'00000'
@@ -410,13 +411,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0002B4 0E15           00109     movlw b'10101'
 0002B6 EC?? F???      00110     call DATA_WRITE
 0002BA 0E04           00111     movlw b'00100'
-0002BC EC?? F???      00112     call DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  8
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0002BC EC?? F???      00112     call DATA_WRITE
 0002C0 0E04           00113     movlw b'00100'
 0002C2 EC?? F???      00114     call DATA_WRITE
 0002C6 0E04           00115     movlw b'00100'
@@ -469,13 +470,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000342 EC?? F???      00162     call _LOSING_PIXELS
 000346 0012           00163     return
 000348                00164 _LOSING_PIXELS
-                      00165     ; first square .0 char
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE  9
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00165     ; first square .0 char
 000348 0E03           00166     movlw b'00011'
 00034A EC?? F???      00167     call DATA_WRITE
 00034E 0E0F           00168     movlw b'01111'
@@ -528,13 +529,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0003D4 EC?? F???      00215     call DATA_WRITE
                       00216     ; fourth square .24 char
 0003D8 0E1C           00217     movlw b'11100'
-0003DA EC?? F???      00218     call DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 10
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0003DA EC?? F???      00218     call DATA_WRITE
 0003DE 0E1C           00219     movlw b'11100'
 0003E0 EC?? F???      00220     call DATA_WRITE
 0003E4 0E18           00221     movlw b'11000'
@@ -587,13 +588,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00268     ; seventh square .48 char
 000468 0E10           00269     movlw b'10000'
 00046A EC?? F???      00270     call DATA_WRITE
-00046E 0E11           00271     movlw b'10001'
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 11
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00046E 0E11           00271     movlw b'10001'
 000470 EC?? F???      00272     call DATA_WRITE
 000474 0E18           00273     movlw b'11000'
 000476 EC?? F???      00274     call DATA_WRITE
@@ -646,13 +647,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0004EE 0E05           00321     movlw   .5 ; Write sixth square.
 0004F0 EC?? F???      00322     call    DATA_WRITE
                       00323     ; one space
-0004F4 0E06           00324     movlw   0x06 ; Move cursor to 0x05.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 12
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0004F4 0E06           00324     movlw   0x06 ; Move cursor to 0x05.
 0004F6 8EE8           00325     bsf    WREG, 7, A 
 0004F8 EC?? F???      00326     call    INSTRUCTION_WRITE
                       00327     
@@ -705,13 +706,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00374     
 000568 0E04           00375     movlw   .4 ; Write fifth square.
 00056A EC?? F???      00376     call    DATA_WRITE
-00056E 0E05           00377     movlw   .5 ; Write sixth square.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 13
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00056E 0E05           00377     movlw   .5 ; Write sixth square.
 000570 EC?? F???      00378     call    DATA_WRITE
                       00379     
                       00380     ; second line of lcd
@@ -764,13 +765,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0005DE EC?? F???      00427     call    DATA_WRITE
 0005E2 0E56           00428     movlw   'V' ; Write a 'V'.
 0005E4 EC?? F???      00429     call    DATA_WRITE
-0005E8 0E45           00430     movlw   'E' ; Write a 'E'.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 14
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0005E8 0E45           00430     movlw   'E' ; Write a 'E'.
 0005EA EC?? F???      00431     call    DATA_WRITE
 0005EE 0E52           00432     movlw   'R' ; Write a 'R'.
 0005F0 EC?? F???      00433     call    DATA_WRITE
@@ -823,13 +824,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000652 EC?? F???      00480     call    DATA_WRITE    
 000656 0E45           00481     movlw   'E'                 
 000658 EC?? F???      00482     call    DATA_WRITE    
-00065C 0E56           00483     movlw   'V'                 
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 15
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00065C 0E56           00483     movlw   'V'                 
 00065E EC?? F???      00484     call    DATA_WRITE    
 000662 0E45           00485     movlw   'E'                 
 000664 EC?? F???      00486     call    DATA_WRITE    
@@ -882,13 +883,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0006BC 0E01           00533     movlw   .1          
 0006BE EC?? F???      00534     call    DATA_WRITE
 0006C2 EC?? F???      00535     call    DELAY_100ms
-                      00536     
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 16
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00536     
                       00537     ;2   
 0006C6 0E02           00538     movlw   0x02
 0006C8 8EE8           00539     bsf     WREG, 7, A          
@@ -941,13 +942,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00586     
                       00587     ;5
 000726 0E02           00588     movlw   0x02
-000728 8EE8           00589     bsf     WREG, 7, A          
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 17
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000728 8EE8           00589     bsf     WREG, 7, A          
 00072A EC?? F???      00590     call    INSTRUCTION_WRITE
                       00591     
 00072E 0E05           00592     movlw   .5          
@@ -1000,13 +1001,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00639     
 000798 0E53           00640     movlw   'S'                 
 00079A EC?? F???      00641     call    DATA_WRITE
-00079E 0E43           00642     movlw   'C'                 
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 18
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00079E 0E43           00642     movlw   'C'                 
 0007A0 EC?? F???      00643     call    DATA_WRITE
 0007A4 0E4F           00644     movlw   'O'                 
 0007A6 EC?? F???      00645     call    DATA_WRITE
@@ -1059,13 +1060,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00692 
 000822                00693 SHOW_TIMES_OVER
 000822 0E01           00694     movlw   b'00000001'         ; Clear display and return to home position.
-000824 EC?? F???      00695     call    INSTRUCTION_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 19
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000824 EC?? F???      00695     call    INSTRUCTION_WRITE
 000828 EC?? F???      00696     call    DELAY_100ms
 00082C 0E04           00697     movlw   0x04        
 00082E 8EE8           00698     bsf     WREG, 7, A          
@@ -1118,13 +1119,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000898 0E52           00745     movlw   'R'                 
 00089A EC?? F???      00746     call    DATA_WRITE
 00089E 0E45           00747     movlw   'E'                 
-0008A0 EC?? F???      00748     call    DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 20
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0008A0 EC?? F???      00748     call    DATA_WRITE
 0008A4 0E3A           00749     movlw   ':'                 
 0008A6 EC?? F???      00750     call    DATA_WRITE
                       00751    
@@ -1177,13 +1178,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00798     
                       00799     ;acceder EEPROM3
 000920 0E03           00800     movlw   .3
-000922 6EA9           00801     movwf   EEADR, A
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 21
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000922 6EA9           00801     movwf   EEADR, A
 000924 80A6           00802     bsf     EECON1, 0, A ;habilitar lectura
 000926 50A8           00803     movf    EEDATA, W, A
                       00804     
@@ -1236,13 +1237,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000980 EC?? F???      00851     call    DATA_WRITE    
 000984 0E43           00852     movlw   'C'                 
 000986 EC?? F???      00853     call    DATA_WRITE    
-00098A 0E4F           00854     movlw   'O'                 
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 22
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 22
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00098A 0E4F           00854     movlw   'O'                 
 00098C EC?? F???      00855     call    DATA_WRITE      
 000990 0E52           00856     movlw   'R'                 
 000992 EC?? F???      00857     call    DATA_WRITE     
@@ -1295,13 +1296,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0009FA EC?? F???      00904     call    INSTRUCTION_WRITE
                       00905     
 0009FE 0E47           00906     movlw   'G'                 
-000A00 EC?? F???      00907     call    DATA_WRITE
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 23
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000A00 EC?? F???      00907     call    DATA_WRITE
 000A04 0E41           00908     movlw   'A'                 
 000A06 EC?? F???      00909     call    DATA_WRITE
 000A0A 0E4D           00910     movlw   'M'                 
@@ -1354,13 +1355,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000A78 EC?? F???      00957     call    DATA_WRITE
 000A7C 0E53           00958     movlw   'S'                 
 000A7E EC?? F???      00959     call    DATA_WRITE
-000A82 0012           00960     return
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 24
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000A82 0012           00960     return
                       00961 
 000A84                00962 PRINT_SCORE
 000A84 500D           00963     movf    puntaje_apoyo, W, A
@@ -1413,13 +1414,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00032     
 000AEE                00033 BOTON_START_STOP
 000AEE A081           00034     btfss   fila1                       ; Revisar si sigue presionado el boton.
-000AF0 EF?? F???      00035     goto    BOTON_START_STOP            ; Si aun no se suleta, esperar.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 25
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000AF0 EF?? F???      00035     goto    BOTON_START_STOP            ; Si aun no se suleta, esperar.
 000AF4 0E30           00036     movlw   '0'
 000AF6 6E05           00037     movwf   puntaje
 000AF8 EC?? F???      00038     call    DELAY_20ms                  ; Antirebote.
@@ -1472,13 +1473,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000B66 EC?? F???      00085     call    DELAY_20ms                  ; Antirebote.
 000B6A EC?? F???      00086     call    ON_GREEN
 000B6E EF?? F???      00087     goto    JUEGO
-                      00088     
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 26
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00088     
 000B72                00089 BOTON_HIGHSCORE
 000B72 A081           00090     btfss   fila1                       ; Revisar si sigue presionado el boton.
 000B74 EF?? F???      00091     goto    BOTON_HIGHSCORE             ; Si aun no se suleta, esperar.
@@ -1531,13 +1532,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000BE4 EC?? F???      00033     call    DELAY_100ms
 000BE8 EC?? F???      00034     call    DELAY_100ms
 000BEC EC?? F???      00035     call    DELAY_100ms
-000BF0 EC?? F???      00036     call    DELAY_100ms
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 27
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 27
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000BF0 EC?? F???      00036     call    DELAY_100ms
 000BF4 EC?? F???      00037     call    DELAY_100ms
 000BF8 9689           00038     bcf     led_blanco
 000BFA 0012           00039     return
@@ -1590,13 +1591,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000C58 5009           00086     movf    shifter, W, A 
 000C5A 0802           00087     sublw   .2
 000C5C A4D8           00088     btfss   STATUS, 2, A                ; checa si restando 1 se vuelve 0
-000C5E EF?? F???      00089     goto    LED_11
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 28
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 28
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000C5E EF?? F???      00089     goto    LED_11
 000C62 840C           00090     bsf     sec_aleatoria, 2, A ; significa que 10 -> led naranj es el esperado "0100"
 000C64 0012           00091     return
                       00092 
@@ -1649,13 +1650,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00031     ;checa si se copio el valor correcto
 000CBE 5024           00032     movf temp_eeprom1, A
 000CC0 80A6           00033     bsf EECON1 , 0, A ; habilita lectura del .2 recien agregado
-000CC2 5CA8           00034     subwf EEDATA, W, A ; resta lectura - temp registro 2 para verificar
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 29
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 29
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000CC2 5CA8           00034     subwf EEDATA, W, A ; resta lectura - temp registro 2 para verificar
 000CC4 A4D8           00035     btfss STATUS, 2, A ; checa si la resta da 0 == iguales
 000CC6 EF?? F???      00036     goto actualizar_2reciente ; si no son iguales , reintenta escritura
 000CCA                00037 actualizar1_reciente    
@@ -1708,13 +1709,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000D1E 9EA6           00084     bcf EECON1, 7, A    ; clear EEPGD control bit
 000D20 80A6           00085     bsf  EECON1 , 0, A  ; habilita lectura del .0 recien agregado
 000D22 50A8           00086     movf    EEDATA,W,  A         ; en este punto el highscore esta en wreg
-000D24 5C05           00087     subwf puntaje, W, A ; resta puntaje - highscore
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 30
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 30
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000D24 5C05           00087     subwf puntaje, W, A ; resta puntaje - highscore
 000D26 B8D8           00088     btfsc STATUS, 4, A ; checa si la resta da negativo, si + == new hs, si - == no actualizar
 000D28 0012           00089     return
 000D2A B4D8           00090     btfsc STATUS, 2, A 
@@ -1767,13 +1768,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000D82 EC?? F???      00033     call    DELAY_20ms
 000D86 EF?? F???      00034     goto    MENU_PRINCIPAL
                       00035     
-000D8A                00036 JUEGO
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 31
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 31
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000D8A                00036 JUEGO
 000D8A 0E30           00037     movlw   '0'
 000D8C 6E05           00038     movwf   puntaje, A
 000D8E EC?? F???      00039     call    SHOW_PUNTAJE
@@ -1826,13 +1827,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00086     
 000DFE                00087 NIVEL3
 000DFE EC?? F???      00088     call    RANDOM_REGISTER
-000E02 C00C F013      00089     movff   sec_aleatoria, sec3
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 32
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 32
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000E02 C00C F013      00089     movff   sec_aleatoria, sec3
                       00090     ; MOSTRAR SECUENCIA.
 000E06 C011 F00B      00091     movff   sec1, encender_led          ; Mostrarle la secuencia al usuario
 000E0A EC?? F???      00092     call    ENCENDER_SECUENCIA
@@ -1885,13 +1886,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00139     
                       00140     ; SECUENCIA 1.
 000E92 C011 F007      00141     movff   sec1, boton_esperado
-000E96 EC?? F???      00142     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 33
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 33
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000E96 EC?? F???      00142     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 000E9A B00A           00143     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 000E9C EF?? F???      00144     goto    MENU_PRINCIPAL
 000EA0 6A0A           00145     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
@@ -1944,13 +1945,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000F22 B00A           00192     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 000F24 EF?? F???      00193     goto    MENU_PRINCIPAL
 000F28 6A0A           00194     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-                      00195     ; SECUENCIA 2.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 34
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 34
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00195     ; SECUENCIA 2.
 000F2A C012 F007      00196     movff   sec2, boton_esperado
 000F2E EC?? F???      00197     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 000F32 B00A           00198     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
@@ -2003,13 +2004,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 000FBA EC?? F???      00245     call    ENCENDER_SECUENCIA
                       00246     
                       00247     ; SECUENCIA 1.
-000FBE C011 F007      00248     movff   sec1, boton_esperado
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 35
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 35
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+000FBE C011 F007      00248     movff   sec1, boton_esperado
 000FC2 EC?? F???      00249     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 000FC6 B00A           00250     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 000FC8 EF?? F???      00251     goto    MENU_PRINCIPAL
@@ -2062,13 +2063,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001042 EC?? F???      00298     call    DELAY_100ms
 001046 C013 F00B      00299     movff   sec3, encender_led          ; Mostrarle la secuencia al usuario
 00104A EC?? F???      00300     call    ENCENDER_SECUENCIA
-00104E EC?? F???      00301     call    DELAY_100ms
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 36
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 36
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00104E EC?? F???      00301     call    DELAY_100ms
 001052 C014 F00B      00302     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
 001056 EC?? F???      00303     call    ENCENDER_SECUENCIA
 00105A EC?? F???      00304     call    DELAY_100ms
@@ -2121,13 +2122,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0010DE C017 F007      00351     movff   sec7, boton_esperado
 0010E2 EC?? F???      00352     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 0010E6 B00A           00353     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
-0010E8 EF?? F???      00354     goto    MENU_PRINCIPAL
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 37
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 37
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0010E8 EF?? F???      00354     goto    MENU_PRINCIPAL
 0010EC 6A0A           00355     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
                       00356     
                       00357     ; NIVEL SUPERADO.
@@ -2180,13 +2181,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00117E EC?? F???      00404     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 001182 B00A           00405     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 001184 EF?? F???      00406     goto    MENU_PRINCIPAL
-001188 6A0A           00407     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 38
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 38
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+001188 6A0A           00407     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
                       00408     ; SECUENCIA 4.
 00118A C014 F007      00409     movff   sec4, boton_esperado
 00118E EC?? F???      00410     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
@@ -2239,13 +2240,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00120E C014 F00B      00457     movff   sec4, encender_led          ; Mostrarle la secuencia al usuario
 001212 EC?? F???      00458     call    ENCENDER_SECUENCIA
 001216 EC?? F???      00459     call    DELAY_100ms
-00121A C015 F00B      00460     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 39
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 39
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00121A C015 F00B      00460     movff   sec5, encender_led          ; Mostrarle la secuencia al usuario
 00121E EC?? F???      00461     call    ENCENDER_SECUENCIA
 001222 EC?? F???      00462     call    DELAY_100ms
 001226 C016 F00B      00463     movff   sec6, encender_led          ; Mostrarle la secuencia al usuario
@@ -2298,13 +2299,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0012B0 6A0A           00510     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
                       00511     ; SECUENCIA 7.
 0012B2 C017 F007      00512     movff   sec7, boton_esperado
-0012B6 EC?? F???      00513     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 40
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 40
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0012B6 EC?? F???      00513     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 0012BA B00A           00514     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 0012BC EF?? F???      00515     goto    MENU_PRINCIPAL
 0012C0 6A0A           00516     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
@@ -2357,13 +2358,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 001352 C019 F00B      00563     movff   sec9, encender_led          ; Mostrarle la secuencia al usuario
 001356 EC?? F???      00564     call    ENCENDER_SECUENCIA
 00135A EC?? F???      00565     call    DELAY_100ms
-00135E C01A F00B      00566     movff   sec10, encender_led         ; Mostrarle la secuencia al usuario
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 41
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 41
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00135E C01A F00B      00566     movff   sec10, encender_led         ; Mostrarle la secuencia al usuario
 001362 EC?? F???      00567     call    ENCENDER_SECUENCIA
                       00568     
                       00569     ; SECUENCIA 1.
@@ -2416,13 +2417,13 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0013E4 6A0A           00616     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
                       00617     ; SECUENCIA 9.
 0013E6 C019 F007      00618     movff   sec9, boton_esperado
-0013EA EC?? F???      00619     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 42
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 42
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+0013EA EC?? F???      00619     call    TIMER_5s                    ; Revisar si presiona boton correcto/STOP/pasan 5 seg.
 0013EE B00A           00620     btfsc   perdio                      ; Revisa si perdio, en cuyo caso regresa a MENU_PRINCIPAL.
 0013F0 EF?? F???      00621     goto    MENU_PRINCIPAL
 0013F4 6A0A           00622     clrf    trayectoria                 ; Preparacion para siguiente secuencia.
@@ -2440,7 +2441,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00140E EF?? F???      00634     goto    MENU_PRINCIPAL
                       00635     
                       00636   end
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 43
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 43
 
 
 SYMBOL TABLE
@@ -2499,7 +2500,7 @@ ADRESL                            00000FC3
 AHEN                              00000001
 AN0                               00000000
 AN1                               00000001
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 44
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 44
 
 
 SYMBOL TABLE
@@ -2558,7 +2559,7 @@ BOTON_AZUL                        00000B30
 BOTON_BLANCO                      00000B18
 BOTON_HIGHSCORE                   00000B72
 BOTON_NARANJA                     00000B00
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 45
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 45
 
 
 SYMBOL TABLE
@@ -2617,7 +2618,7 @@ C2OUT                             00000006
 C2POL                             00000004
 C2R                               00000002
 C2RSEL                            00000004
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 46
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 46
 
 
 SYMBOL TABLE
@@ -2676,7 +2677,7 @@ CM2IE                             00000005
 CM2IF                             00000005
 CM2IP                             00000005
 CMP1MD                            00000003
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 47
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 47
 
 
 SYMBOL TABLE
@@ -2735,7 +2736,7 @@ DDRE                              TRISE
 DECODER                           00000C3C
 DELAY_100ms                       0000006E
 DELAY_100us                       00000062
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 48
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 48
 
 
 SYMBOL TABLE
@@ -2794,7 +2795,7 @@ FAST                              00000001
 FERR                              00000002
 FLTS                              00000002
 FREE                              00000004
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 49
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 49
 
 
 SYMBOL TABLE
@@ -2853,7 +2854,7 @@ IDLEN                             00000007
 INDF0                             00000FEF
 INDF1                             00000FE7
 INDF2                             00000FDF
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 50
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 50
 
 
 SYMBOL TABLE
@@ -2912,7 +2913,7 @@ IRCF2                             00000006
 IRNG0                             00000000
 IRNG1                             00000001
 IRVST                             00000005
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 51
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 51
 
 
 SYMBOL TABLE
@@ -2971,7 +2972,7 @@ LFIOFS                            00000000
 LOOP1                             0000008C
 LOOP_LOSER_LEFT                   00000618
 LOOP_LOSER_RIGHT                  0000062C
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 52
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 52
 
 
 SYMBOL TABLE
@@ -3030,7 +3031,7 @@ OSCFIP                            00000007
 OSCTUNE                           00000F9B
 OSTS                              00000003
 OV                                00000003
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 53
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 53
 
 
 SYMBOL TABLE
@@ -3089,7 +3090,7 @@ POSTINC0                          00000FEE
 POSTINC1                          00000FE6
 POSTINC2                          00000FDE
 PPB0                              00000000
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 54
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 54
 
 
 SYMBOL TABLE
@@ -3148,7 +3149,7 @@ RC1IF                             00000005
 RC1IP                             00000005
 RC2                               00000002
 RC4                               00000004
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 55
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 55
 
 
 SYMBOL TABLE
@@ -3207,7 +3208,7 @@ SDAHT                             00000003
 SE0                               00000005
 SEN                               00000000
 SENDB                             00000003
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 56
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 56
 
 
 SYMBOL TABLE
@@ -3266,7 +3267,7 @@ SRRC1E                            00000000
 SRRC2E                            00000001
 SRRCKE                            00000002
 SRRPE                             00000003
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 57
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 57
 
 
 SYMBOL TABLE
@@ -3325,7 +3326,7 @@ STALLIF                           00000005
 STATUS                            00000FD8
 STCON                             00000FB5
 STEN                              00000007
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 58
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 58
 
 
 SYMBOL TABLE
@@ -3384,7 +3385,7 @@ T1GSPM                            00000004
 T1GSS0                            00000000
 T1GSS1                            00000001
 T1GTM                             00000005
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 59
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 59
 
 
 SYMBOL TABLE
@@ -3443,7 +3444,7 @@ TMR1CS1                           00000007
 TMR1GE                            00000007
 TMR1GIE                           00000000
 TMR1GIF                           00000000
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 60
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 60
 
 
 SYMBOL TABLE
@@ -3502,7 +3503,7 @@ TRISB4                            00000004
 TRISB5                            00000005
 TRISB6                            00000006
 TRISB7                            00000007
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 61
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 61
 
 
 SYMBOL TABLE
@@ -3561,7 +3562,7 @@ UADDR                             00000F63
 UART1MD                           00000006
 UARTMD                            00000006
 UCFG                              00000F62
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 62
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 62
 
 
 SYMBOL TABLE
@@ -3620,7 +3621,7 @@ WIN_ANIMATION_LOOP                00000686
 WPUB                              00000F85
 WPUB0                             00000000
 WPUB1                             00000001
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 63
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 63
 
 
 SYMBOL TABLE
@@ -3679,7 +3680,7 @@ _CP2_ON_5L                        000000FB
 _CP3_OFF_5L                       000000FF
 _CP3_ON_5L                        000000F7
 _CPB_OFF_5H                       000000FF
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 64
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 64
 
 
 SYMBOL TABLE
@@ -3738,7 +3739,7 @@ _LOADING_CHARS_GANAR              0000020A
 _LOADING_CHARS_PERDER             0000033A
 _LOADING_CHARS_TIEMPO             0000019A
 _LOSING_PIXELS                    00000348
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 65
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 65
 
 
 SYMBOL TABLE
@@ -3797,7 +3798,7 @@ _WRT3_ON_6L                       000000F7
 _WRTB_OFF_6H                      000000FF
 _WRTB_ON_6H                       000000BF
 _WRTC_OFF_6H                      000000FF
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 66
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 66
 
 
 SYMBOL TABLE
@@ -3856,7 +3857,7 @@ sec8                              00000018
 sec9                              00000019
 sec_aleatoria                     0000000C
 shifter                           00000009
-MPASM 5.87                          MAIN.ASM   11-22-2021  15:49:33         PAGE 67
+MPASM 5.87                          MAIN.ASM   11-23-2021  10:52:13         PAGE 67
 
 
 SYMBOL TABLE

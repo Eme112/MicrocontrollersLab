@@ -3,13 +3,15 @@
     
     org 0x00
     goto PORTS_CONFIG
-    org 0x08 		; posición para interrupciones.
-    retfie
-    org 0x18		; posición para interrupciones.
+    org 0x08 		; posición para interrupciones de alta prioridad.
+    goto HIGH_INT
+    org 0x18		; posición para interrupciones de baja prioridad.
     retfie
 
-; DEFINICION DE REGISTROS.
-#define	    RX 7
+HIGH_INT
+    bcf	    INTCON, 2, A		; Clear TMR0 flag
+    btg	    LATB, 0, A			; Parpadear para mostrar error.
+    retfie
     
 PORTS_CONFIG
     org 0x30
@@ -17,19 +19,109 @@ PORTS_CONFIG
     clrf    ANSELB, BANKED
     clrf    ANSELC, BANKED
     clrf    TRISB, A			; REGB --> LEDs, salidas.
-    setf    TRISC, A			; REGB, b7 --> Rx (receptor).
-    clrf    LATA  
+    setf    TRISC, A			; REGC, b7 --> Rx (receptor).
+    clrf    LATB  
+    
+TIMER0_CONFIG
+    movlw   b'00000000'			; Pre-escalador 1:2
+    movwf   T0CON	
+    movlw   b'11011100'
+    movwf   TMR0L
+    movlw   b'00001011'
+    movwf   TMR0H
+    bsf	    INTCON, 7, A	    ; Enable interruptions
+    bsf	    INTCON, 5, A	    ; Config TMR0 interrupt
+    bcf	    INTCON, 2, A	    ; Clear TMR0 flag
     
 DATA_TRANSMISSION
     movlw   b'10010000'			; EN, 8bit, cont. rec.
     movwf   RCSTA, A
+    clrf    TXSTA, A			; Low baud rate option.
     movlw   .12				; Baud Rate, para 1200.
     movwf   SPBRG
+    movlw   b'00110010'			; Para entrar en modo sleep.
+    movwf   OSCCON, A
 R1  
     btfss   PIR1, RCIF, A
     bra	    R1
-    movff   RCREG, PORTB
-    bra	    R1
+    
+    ; Si llega hasta aqui significa que ya recibio una entrada del teclado.
+    movf    RCREG, W, A
+    sublw   '0'			; Checar si se presiono un 0 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    CERO
+    movf    RCREG, W, A
+    sublw   '1'				; Checar si se presiono un 1 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    UNO
+    movf    RCREG, W, A
+    sublw   '2'				; Checar si se presiono un 2 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    DOS
+    movf    RCREG, W, A
+    sublw   '3'				; Checar si se presiono un 3 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    TRES
+    movf    RCREG, W, A
+    sublw   '4'				; Checar si se presiono un 4 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    CUATRO
+    movf    RCREG, W, A
+    sublw   '5'				; Checar si se presiono un 5 en el teclado.
+    btfsc   STATUS, Z, A
+    goto    CINCO
+    goto    _ERROR			; Si no se presiono ningun numero del 1-5.
+    
+CERO
+    clrf    LATB, A			; Borrar LEDs.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+UNO
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
+    clrf    LATB, A
+    bsf	    LATB, 0, A			; Marcador de intensidad 1.
+    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+DOS
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
+    clrf    LATB, A
+    bsf	    LATB, 1, A			; Marcador de intensidad 2.
+    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+TRES
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
+    clrf    LATB, A
+    bsf	    LATB, 2, A			; Marcador de intensidad 3.
+    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+CUATRO
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
+    clrf    LATB, A
+    bsf	    LATB, 3, A			; Marcador de intensidad 4.
+    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+CINCO
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
+    clrf    LATB, A
+    bsf	    LATB, 4, A			; Marcador de intensidad 5.
+    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    goto    R1				; Listo para recibir siguiente dato.
+    
+_ERROR
+    movlw   b'00000000'			; Pre-escalador 1:2
+    movwf   T0CON	
+    movlw   b'00001011'
+    movwf   TMR0H
+    movlw   b'11011100'
+    movwf   TMR0L
+    bsf	    T0CON, 7, A			; Encender TIMER0 500ms.
+    clrf    LATB, A			; Apagar LEDs.
+    bsf	    LATB, 0, A			; El LED que parpadea comienza encendido.
+    goto    R1				; Listo para recibir siguiente dato.
     
 ;
 ; CONFIGURATION BITS SETTING, THIS IS REQUIRED TO CONFITURE THE OPERATION OF THE MICROCONTROLLER
