@@ -1,6 +1,6 @@
-    #include "p18f45k50.inc"
+ #include "p18f45k50.inc"
     processor 18f45k50 	; (opcional).
-    
+ #define _XTAL_FREQ 800000
     org 0x00
     goto PORTS_CONFIG
     org 0x08 		; posición para interrupciones de alta prioridad.
@@ -8,6 +8,13 @@
     org 0x18		; posición para interrupciones de baja prioridad.
     retfie
 
+
+PWM	EQU 0x10    
+
+; Esto es lo que se tiene que cambiar
+    movlw	.100 ; para un 100%
+    movwf	CCPR1L
+    
 HIGH_INT
     bcf	    INTCON, 2, A		; Clear TMR0 flag
     btg	    LATB, 0, A			; Parpadear para mostrar error.
@@ -20,9 +27,19 @@ PORTS_CONFIG
     clrf    ANSELC, BANKED
     clrf    TRISB, A			; REGB --> LEDs, salidas.
     setf    TRISC, A			; REGC, b7 --> Rx (receptor).
-    clrf    LATB  
+    clrf    LATB
+    bcf	TRISC, 2, A	; Convertir en salida el PWM.
     
-TIMER0_CONFIG
+TIMER_CONFIG
+    movlw   0xFF		; A esto cambiar el prescalador a uno de 32
+    movwf   T2CON
+    movlw   0x0F
+    movwf   CCP1CON		; Configurar modulo PWM
+    movlw   0xBF
+    movwf   OSCCON
+    movlw   .100
+    movwf   PR2
+    
     movlw   b'00000000'			; Pre-escalador 1:2
     movwf   T0CON	
     movlw   b'11011100'
@@ -42,8 +59,10 @@ DATA_TRANSMISSION
     movlw   b'00110010'			; Para entrar en modo sleep.
     movwf   OSCCON, A
 R1  
+    movff   PWM, CCPR1L
+WAIT
     btfss   PIR1, RCIF, A
-    bra	    R1
+    bra	    WAIT
     
     ; Si llega hasta aqui significa que ya recibio una entrada del teclado.
     movf    RCREG, W, A
@@ -73,42 +92,50 @@ R1
     goto    _ERROR			; Si no se presiono ningun numero del 1-5.
     
 CERO
+    bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A			; Borrar LEDs.
+    movlw   .11230
+    movwf   PWM	
     goto    R1				; Listo para recibir siguiente dato.
     
 UNO
     bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A
     bsf	    LATB, 0, A			; Marcador de intensidad 1.
-    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    movlw   .90
+    movwf   PWM				; 60%
     goto    R1				; Listo para recibir siguiente dato.
     
 DOS
     bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A
     bsf	    LATB, 1, A			; Marcador de intensidad 2.
-    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    movlw   .70
+    movwf   PWM				; 70%
     goto    R1				; Listo para recibir siguiente dato.
     
 TRES
     bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A
     bsf	    LATB, 2, A			; Marcador de intensidad 3.
-    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    movlw   .50
+    movwf   PWM				; 80%
     goto    R1				; Listo para recibir siguiente dato.
     
 CUATRO
     bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A
     bsf	    LATB, 3, A			; Marcador de intensidad 4.
-    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    movlw   .30
+    movwf   PWM				; 90%
     goto    R1				; Listo para recibir siguiente dato.
     
 CINCO
     bcf	    T0CON, 7, A			; Detener TIMER 0 para interrupciones.
     clrf    LATB, A
     bsf	    LATB, 4, A			; Marcador de intensidad 5.
-    ; AQUI HAY QUE PONER EL PWM PARA RANGO PWM.
+    movlw   .5
+    movwf   PWM				; 100%
     goto    R1				; Listo para recibir siguiente dato.
     
 _ERROR
